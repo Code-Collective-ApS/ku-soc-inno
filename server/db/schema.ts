@@ -8,6 +8,14 @@ import {
 } from "drizzle-orm/pg-core";
 import { relations } from "drizzle-orm";
 
+export const fileUploads = pgTable("file_uploads", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  fileName: varchar("file_name").notNull(),
+  fileUrl: varchar("file_url").notNull(),
+  mimeType: varchar("mime_type"), // pdf, docx, etc.
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+});
+
 // --- User Table ---
 export const users = pgTable("users", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
@@ -38,7 +46,7 @@ export const cases = pgTable("cases", {
 // --- Category Tags (Many-to-many with Case) ---
 export const categoryTags = pgTable("category_tags", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  caseId: varchar("case_id").references(() => cases.id),
+  caseId: integer("case_id").references(() => cases.id),
   tag: varchar("tag").notNull().unique(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -80,7 +88,7 @@ export const solutions = pgTable("solutions", {
 export const illustrations = pgTable("illustrations", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   solutionId: integer("solution_id").references(() => solutions.id),
-  imageUrl: varchar("image_url").notNull(),
+  fileUploadId: integer("file_upload_id").references(() => fileUploads.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -89,9 +97,7 @@ export const illustrations = pgTable("illustrations", {
 export const attachments = pgTable("attachments", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   solutionId: integer("solution_id").references(() => solutions.id),
-  fileName: varchar("file_name").notNull(),
-  fileUrl: varchar("file_url").notNull(),
-  fileType: varchar("file_type"), // pdf, docx, etc.
+  fileUploadId: integer("file_upload_id").references(() => fileUploads.id),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -110,4 +116,18 @@ export const solutionsRelations = relations(solutions, ({ many, one }) => ({
   }),
   illustrations: many(illustrations),
   attachments: many(attachments),
+}));
+
+export const illustrationsRelations = relations(illustrations, ({ one }) => ({
+  fileUpload: one(fileUploads, {
+    fields: [illustrations.fileUploadId],
+    references: [fileUploads.id],
+  }),
+}));
+
+export const attachmentsRelations = relations(attachments, ({ one }) => ({
+  fileUpload: one(fileUploads, {
+    fields: [attachments.fileUploadId],
+    references: [fileUploads.id],
+  }),
 }));
