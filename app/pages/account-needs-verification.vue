@@ -40,11 +40,13 @@ callOnce(async () => {
   }
 });
 
+const { $csrfFetch } = useNuxtApp();
+
 async function resendEmail() {
   try {
     loading.value = true;
     error.value = "";
-    const res = await $fetch("/api/auth/verify-email-resend", {
+    const res = await $csrfFetch("/api/auth/verify-email-resend", {
       method: "POST",
     });
     if (!res.ok) {

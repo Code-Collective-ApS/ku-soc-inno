@@ -13,7 +13,7 @@ export function generateVerificationLink(
   const sig = generateSignature(config.verificationSecret, userId, email);
   const _expiration = Date.now() + msPrMinute * validInMinutes; // TODO: make expiration
 
-  const link = `${config.publicHost}/account-verification?sig=${sig}`;
+  const link = `${config.publicHost}/account-automatic-verification?sig=${sig}`;
   console.log(`verification link valid in ${validInMinutes} min:`, link);
   return link;
 }

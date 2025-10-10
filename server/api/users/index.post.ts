@@ -82,6 +82,5 @@ export default defineEventHandler(async (event) => {
 
   console.log("create user success! returning user id");
   await waitABit(beginTime);
-  await refreshUserSession(event, result[0]!.id);
   return { id: result[0]!.id };
 });

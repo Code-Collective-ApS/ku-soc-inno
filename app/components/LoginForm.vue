@@ -48,9 +48,9 @@ const email = ref("");
 const error = ref("");
 const loading = ref(false);
 const { $csrfFetch } = useNuxtApp();
+const { fetch: refreshSession } = useUserSession();
 
 const emit = defineEmits<{
-  "login-success": [];
   close: [boolean];
 }>();
 
@@ -85,7 +85,8 @@ async function onSubmit(event: Event) {
       },
       onResponse: async (res) => {
         if (res.response.status === 200) {
-          emit("login-success");
+          emit("close", true);
+          refreshSession();
           setTimeout(() => {
             resetInputs();
           }, 300); // allow animations to finish :-)

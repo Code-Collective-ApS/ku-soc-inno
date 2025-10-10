@@ -2,7 +2,7 @@ import { eq } from "drizzle-orm";
 import z from "zod";
 import { users } from "~~/server/db/schema";
 
-const queryDto = z.strictObject({
+const bodyDto = z.strictObject({
   sig: z.string().length(64),
 });
 
@@ -27,8 +27,8 @@ export default defineEventHandler(async (event) => {
 
   const config = useRuntimeConfig();
   try {
-    const query = await getValidatedQuery(event, queryDto.parse);
-    const targetSig = query.sig;
+    const body = await readValidatedBody(event, bodyDto.parse);
+    const targetSig = body.sig;
     // TODO: make email a hash instead
     const testSig = generateSignature(
       config.verificationSecret,

@@ -79,6 +79,9 @@ const emit = defineEmits<{
 function resetInputs() {
   password.value = "";
   email.value = "";
+  fullName.value = "";
+  jobTitle.value = "";
+  organization.value = "";
 }
 
 async function onSubmit(event: Event) {

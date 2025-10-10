@@ -2,5 +2,8 @@
   <div />
 </template>
 <script lang="ts" setup>
-await navigateTo("/cases");
+useToasters();
+onMounted(async () => {
+  await navigateTo("/cases");
+});
 </script>

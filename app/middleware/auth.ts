@@ -19,7 +19,7 @@ export default defineNuxtRouteMiddleware((to, _from) => {
   // redirect to email verification page if needed
   const isVerificationPage = [
     "/account-needs-verification",
-    "/account-verification",
+    "/account-automatic-verification",
   ].includes(to.path);
   if (loggedIn && !emailVerifiedAt && !isVerificationPage) {
     // TODO: report error
