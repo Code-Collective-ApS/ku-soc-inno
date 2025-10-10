@@ -3,9 +3,13 @@
     <!-- TODO: research what this does -->
     <NuxtRouteAnnouncer />
     <UApp>
-      <NuxtLayout>
-        <NuxtPage />
-      </NuxtLayout>
+      <LayoutHeader />
+      <UMain>
+        <NuxtLayout>
+          <NuxtPage />
+        </NuxtLayout>
+      </UMain>
+      <FooterSection />
     </UApp>
   </div>
 </template>

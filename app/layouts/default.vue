@@ -1,7 +1,7 @@
 <template>
-  <div>
-    <LayoutHeader />
-    <slot />
-    <div>footer</div>
+  <div class="min-h-full">
+    <UPageSection>
+      <slot />
+    </UPageSection>
   </div>
 </template>

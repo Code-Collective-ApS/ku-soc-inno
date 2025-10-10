@@ -1,28 +1,61 @@
 <template>
-  <UHeader>
+  <UHeader class="bg-gray-100">
     <template #title>
-      <Logo class="h-6 w-auto" />
+      <div class="flex gap-2 justify-center">
+        <p class="font-light text-2xl font-sans">Soc-inno</p>
+      </div>
     </template>
 
-    <UNavigationMenu :items="items" />
+    <UNavigationMenu :items="navItems" />
 
     <template #right>
-      <UColorModeButton />
-
-      <UTooltip text="Open on GitHub" :kbds="['meta', 'G']">
+      <div class="flex items-center gap-1.5">
         <UButton
-          color="neutral"
-          variant="ghost"
-          to="https://github.com/nuxt/ui"
-          target="_blank"
-          icon="i-simple-icons-github"
-          aria-label="GitHub"
-        />
-      </UTooltip>
+          v-if="!loggedIn"
+          class="cursor-pointer"
+          color="secondary"
+          variant="subtle"
+          @click="() => openLoginModal()"
+          >Log in</UButton
+        >
+        <UButton
+          v-if="!loggedIn"
+          class="cursor-pointer"
+          color="primary"
+          variant="subtle"
+          to="/create-account"
+          >Create account</UButton
+        >
+        <UPopover
+          v-if="loggedIn"
+          :content="{ align: 'end', side: 'top', sideOffset: 8 }"
+        >
+          <UButton
+            class="rounded-full cursor-pointer hover:border-gray-400 border border-gray-300 transition-colors"
+            color="neutral"
+            variant="ghost"
+            icon="material-symbols:person-2-outline-rounded"
+            aria-label="Profile menu"
+          />
+          <template #content>
+            <UNavigationMenu
+              orientation="vertical"
+              :items="profileItems"
+              class="data-[orientation=vertical]:w-48"
+            />
+          </template>
+        </UPopover>
+      </div>
     </template>
-
     <template #body>
-      <UNavigationMenu :items="items" orientation="vertical" class="-mx-2.5" />
+      <div>
+        <!-- mobile menu -->
+        <UNavigationMenu
+          :items="navItems"
+          orientation="vertical"
+          class="-mx-2.5"
+        />
+      </div>
     </template>
   </UHeader>
 </template>
@@ -31,31 +64,54 @@
 import type { NavigationMenuItem } from "@nuxt/ui";
 
 const route = useRoute();
+const { clear, loggedIn } = useUserSession();
+const { openLoginModal } = useLoginModal();
 
-const items = computed<NavigationMenuItem[]>(() => [
+const navItems = computed<NavigationMenuItem[]>(() => [
   {
-    label: "Docs",
-    to: "/docs/getting-started",
+    label: "Cases",
+    to: "/cases",
     icon: "i-lucide-book-open",
-    active: route.path.startsWith("/docs/getting-started"),
+    active: route.path.startsWith("/cases"),
   },
   {
-    label: "Components",
-    to: "/docs/components",
-    icon: "i-lucide-box",
-    active: route.path.startsWith("/hallo"),
+    label: "About",
+    to: "/about",
+    icon: "i-lucide-info",
+    active: route.path.startsWith("/about"),
   },
-  {
-    label: "Figma",
-    icon: "i-simple-icons-figma",
-    to: "https://go.nuxt.com/figma-ui",
-    target: "_blank",
-  },
-  {
-    label: "Releases",
-    icon: "i-lucide-rocket",
-    to: "https://github.com/nuxt/ui/releases",
-    target: "_blank",
-  },
+]);
+
+const profileItems = ref<NavigationMenuItem[][]>([
+  [
+    {
+      label: "My account",
+      icon: "i-lucide-box",
+      to: "/profile",
+      active: route.path.startsWith("/profile"),
+    },
+    {
+      label: "Log out",
+      icon: "lucide:log-out",
+      class: "cursor-pointer",
+      onSelect: async () => {
+        await clear();
+        navigateTo("/cases?logged_out=1"); // TODO: implement noti
+      },
+    },
+  ],
+  [
+    {
+      label: "GitHub",
+      icon: "i-simple-icons-github",
+      to: "https://github.com/nuxt/ui",
+      target: "_blank",
+    },
+    {
+      label: "About",
+      icon: "i-lucide-circle-help",
+      disabled: true,
+    },
+  ],
 ]);
 </script>

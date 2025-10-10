@@ -20,9 +20,14 @@ export const fileUploads = pgTable("file_uploads", {
 export const users = pgTable("users", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   fullName: varchar("full_name").notNull(),
+  password: varchar("password").notNull(),
   organization: varchar("organization").notNull(),
   title: varchar("title").notNull(),
   email: varchar("email").notNull(),
+  emailVerifiedAt: timestamp("email_verified_at"),
+  email_verification_requested_at: timestamp({ withTimezone: true })
+    .defaultNow()
+    .notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });

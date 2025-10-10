@@ -8,6 +8,20 @@
       "when": 1759416835045,
       "tag": "0000_closed_red_skull",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "7",
+      "when": 1760094730533,
+      "tag": "0001_young_mandrill",
+      "breakpoints": true
+    },
+    {
+      "idx": 2,
+      "version": "7",
+      "when": 1760102802426,
+      "tag": "0002_dark_killraven",
+      "breakpoints": true
     }
   ]
 }

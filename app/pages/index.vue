@@ -1,3 +1,6 @@
 <template>
-  <div>page komponent</div>
+  <div />
 </template>
+<script lang="ts" setup>
+await navigateTo("/cases");
+</script>
