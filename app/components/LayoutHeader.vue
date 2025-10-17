@@ -15,7 +15,11 @@
           class="cursor-pointer"
           color="secondary"
           variant="subtle"
-          @click="() => openLoginModal()"
+          @click="
+            () => {
+              openLoginModal();
+            }
+          "
           >Log in</UButton
         >
         <UButton

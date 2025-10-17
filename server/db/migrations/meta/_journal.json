@@ -22,6 +22,27 @@
       "when": 1760102802426,
       "tag": "0002_dark_killraven",
       "breakpoints": true
+    },
+    {
+      "idx": 3,
+      "version": "7",
+      "when": 1760623532195,
+      "tag": "0003_bored_gambit",
+      "breakpoints": true
+    },
+    {
+      "idx": 4,
+      "version": "7",
+      "when": 1760623655927,
+      "tag": "0004_right_arachne",
+      "breakpoints": true
+    },
+    {
+      "idx": 5,
+      "version": "7",
+      "when": 1760714661069,
+      "tag": "0005_cynical_the_executioner",
+      "breakpoints": true
     }
   ]
 }

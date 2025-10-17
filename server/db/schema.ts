@@ -35,7 +35,7 @@ export const users = pgTable("users", {
 // --- Case Table ---
 export const cases = pgTable("cases", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  title: varchar("title").notNull(),
+  title: varchar("title").notNull().unique(),
   challengeDescription: text("challenge_description").notNull(),
   importanceDescription: text("importance_description").notNull(),
   freeText: text("free_text"),
@@ -46,13 +46,16 @@ export const cases = pgTable("cases", {
   contactPublic: boolean("contact_public").default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  userId: integer("user_id")
+    .references(() => users.id)
+    .notNull(),
 });
 
 // --- Category Tags (Many-to-many with Case) ---
 export const categoryTags = pgTable("category_tags", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   caseId: integer("case_id").references(() => cases.id),
-  tag: varchar("tag").notNull().unique(),
+  tag: varchar("tag").notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -87,6 +90,9 @@ export const solutions = pgTable("solutions", {
   freeText: text("free_text"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  userId: integer("user_id")
+    .references(() => users.id)
+    .notNull(),
 });
 
 // --- Illustrations (Image uploads)
@@ -107,17 +113,39 @@ export const attachments = pgTable("attachments", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
+export const barrierRelations = relations(barriers, ({ one }) => ({
+  case: one(cases, {
+    fields: [barriers.caseId],
+    references: [cases.id],
+  }),
+}));
+
+export const categoryTagsRelations = relations(categoryTags, ({ one }) => ({
+  case: one(cases, {
+    fields: [categoryTags.caseId],
+    references: [cases.id],
+  }),
+}));
+
 // --- Relations ---
-export const casesRelations = relations(cases, ({ many }) => ({
+export const casesRelations = relations(cases, ({ one, many }) => ({
   categoryTags: many(categoryTags),
   barriers: many(barriers),
   solutions: many(solutions),
+  user: one(users, {
+    fields: [cases.userId],
+    references: [users.id],
+  }),
 }));
 
 export const solutionsRelations = relations(solutions, ({ many, one }) => ({
   case: one(cases, {
     fields: [solutions.caseId],
     references: [cases.id],
+  }),
+  user: one(users, {
+    fields: [solutions.userId],
+    references: [users.id],
   }),
   illustrations: many(illustrations),
   attachments: many(attachments),
