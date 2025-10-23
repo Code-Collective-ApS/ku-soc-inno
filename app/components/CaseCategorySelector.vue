@@ -39,6 +39,7 @@
       <UButton
         size="sm"
         color="secondary"
+        icon="i-mdi-plus"
         @click="
           () => {
             addTag(search);

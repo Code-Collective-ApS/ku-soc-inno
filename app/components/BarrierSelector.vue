@@ -35,13 +35,14 @@
         size="sm"
         color="secondary"
         class="bg-indigo-500"
+        icon="i-mdi-plus"
         @click="
           addBarrier(search);
           search = '';
           input?.inputRef?.focus();
         "
       >
-        Add barrier
+        Tilføj
       </UButton>
     </div>
   </div>

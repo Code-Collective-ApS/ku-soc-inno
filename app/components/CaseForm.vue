@@ -74,7 +74,8 @@
           <div class="flex flex-col gap-y-3">
             <UCheckbox
               v-model="state.contactPublic"
-              label="Make contact information publicly available"
+              class="mb-2"
+              label="Synliggør kontakt information for offentligheden"
             />
             <UFormField label="Kontakt name" name="contactName">
               <UInput v-model="state.contactName" />
