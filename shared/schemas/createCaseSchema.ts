@@ -10,7 +10,10 @@ export const createCaseSchema = z.strictObject({
   contactTitle: z.string().min(2, "Must be at least 2 characters"),
   contactEmail: z.email("Must be a valid email"),
   contactPublic: z.boolean("Must be a valid boolean").default(false),
-  categories: z.array(z.string()).min(1, "You must choose at least 1 category"),
+  categories: z
+    .array(z.string())
+    .min(1, "You must add at least 1 category tag"),
+  barriers: z.array(z.string()).min(1, "You must add at least 1 barrier"),
 });
 
 export type CreateCaseSchema = z.output<typeof createCaseSchema>;

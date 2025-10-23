@@ -2,69 +2,101 @@
   <UForm
     :schema="createCaseSchema"
     :state="state"
-    :validate-on="['change', 'input']"
+    :validate-on="['input', 'change', 'blur']"
     class="space-y-4"
     @submit="onSubmit"
+    @keydown.enter.prevent="
+      () => {
+        // NOTE: This block prevents enter btn from submitting the full form
+        // console.warn('On key down enter event prevented');
+      }
+    "
   >
-    <h2 class="font-bold mt-12">Case specification</h2>
-    <UFormField label="Titel på case" name="title">
-      <UInput v-model="state.title" size="xl" class="w-[420px]" />
-    </UFormField>
+    <div class="grid grid-cols-[1fr_350px] gap-x-9">
+      <div>
+        <h2 class="font-bold">Case specification</h2>
+        <UCard variant="subtle" class="mt-4">
+          <div class="flex flex-col gap-y-3">
+            <UFormField label="Titel på case" name="title">
+              <UInput v-model="state.title" size="xl" class="w-[420px]" />
+            </UFormField>
 
-    <UFormField label="Categories" name="categories">
-      <CaseCategorySelecter v-model="state.categories" />
-    </UFormField>
+            <UFormField label="Vælg nøgleord til casen" name="categories">
+              <CaseCategorySelector v-model="state.categories" />
+            </UFormField>
 
-    <UFormField
-      label="Hvad er casens udfordring kort for talt ?"
-      name="challengeDescription"
-    >
-      <UTextarea
-        v-model="state.challengeDescription"
-        :rows="9"
-        size="xl"
-        class="w-full"
-      />
-    </UFormField>
+            <UFormField
+              label="Hvad er casens udfordring kort for talt ?"
+              name="challengeDescription"
+            >
+              <UTextarea
+                v-model="state.challengeDescription"
+                :rows="9"
+                size="xl"
+                class="w-full"
+              />
+            </UFormField>
 
-    <UFormField
-      label="Hvorfor er denne udfordring vigtig at løse ?"
-      name="importanceDescription"
-    >
-      <UTextarea
-        v-model="state.importanceDescription"
-        :rows="9"
-        size="xl"
-        class="w-full"
-      />
-    </UFormField>
+            <UFormField
+              label="Hvorfor er denne udfordring vigtig at løse ?"
+              name="importanceDescription"
+            >
+              <UTextarea
+                v-model="state.importanceDescription"
+                :rows="9"
+                size="xl"
+                class="w-full"
+              />
+            </UFormField>
 
-    <UFormField label="Free text" name="freeText">
-      <UTextarea v-model="state.freeText" :rows="9" class="w-full" size="xl" />
-    </UFormField>
+            <UFormField label="Løsningsbarrierer" name="barriers">
+              <BarrierSelector v-model="state.barriers" />
+            </UFormField>
 
-    <h2 class="font-bold mt-12">Kontakt information</h2>
-    <UCheckbox
-      v-model="state.contactPublic"
-      label="Make contact information publicly available"
-    />
-    <UFormField label="Kontakt name" name="contactName">
-      <UInput v-model="state.contactName" />
-    </UFormField>
+            <UFormField
+              label="Andet, der er relevant at nævne?"
+              name="freeText"
+            >
+              <UTextarea
+                v-model="state.freeText"
+                :rows="9"
+                class="w-full"
+                size="xl"
+              />
+            </UFormField>
+          </div>
+        </UCard>
+      </div>
 
-    <UFormField label="Kontakt titel" name="contactTitle">
-      <UInput v-model="state.contactTitle" />
-    </UFormField>
+      <div>
+        <h2 class="font-bold">Kontakt information</h2>
+        <UCard variant="subtle" class="mt-4">
+          <div class="flex flex-col gap-y-3">
+            <UCheckbox
+              v-model="state.contactPublic"
+              label="Make contact information publicly available"
+            />
+            <UFormField label="Kontakt name" name="contactName">
+              <UInput v-model="state.contactName" />
+            </UFormField>
 
-    <UFormField label="Kontakt organization" name="contactOrganization">
-      <UInput v-model="state.contactOrganization" />
-    </UFormField>
+            <UFormField label="Kontakt titel" name="contactTitle">
+              <UInput v-model="state.contactTitle" />
+            </UFormField>
 
-    <UFormField label="Kontakt email" name="contactEmail">
-      <UInput v-model="state.contactEmail" />
-    </UFormField>
-
-    <UButton class="cursor-pointer" type="submit"> Opret case </UButton>
+            <UFormField label="Kontakt organization" name="contactOrganization">
+              <UInput v-model="state.contactOrganization" />
+            </UFormField>
+            <UFormField label="Kontakt email" name="contactEmail">
+              <UInput v-model="state.contactEmail" />
+            </UFormField>
+          </div>
+        </UCard>
+        <UButton size="xl" class="cursor-pointer mt-6" type="submit">
+          Opret case
+        </UButton>
+      </div>
+    </div>
   </UForm>
 </template>
 
@@ -87,6 +119,7 @@ const state = reactive<Partial<CreateCaseSchema>>({
   contactPublic: false,
   contactTitle: user.value?.title || "",
   categories: [],
+  barriers: [],
   freeText: "",
   importanceDescription: "",
 });

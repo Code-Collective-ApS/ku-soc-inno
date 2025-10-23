@@ -1,4 +1,4 @@
-import { cases, categoryTags } from "../../db/schema";
+import { barriers, cases, categoryTags } from "../../db/schema";
 import { createCaseSchema } from "~~/shared/schemas/createCaseSchema";
 
 export default defineEventHandler(async (event) => {
@@ -31,6 +31,16 @@ export default defineEventHandler(async (event) => {
   await db.insert(categoryTags).values(newTags).returning({
     id: categoryTags.id,
     tag: categoryTags.tag,
+  });
+
+  // create tags
+  const newBarriers = body.barriers.map((barrier) => ({
+    barrier,
+    caseId: createdCase[0].id,
+  }));
+  await db.insert(barriers).values(newBarriers).returning({
+    id: categoryTags.id,
+    barrier: barriers.barrier,
   });
 
   setResponseStatus(event, 201);
