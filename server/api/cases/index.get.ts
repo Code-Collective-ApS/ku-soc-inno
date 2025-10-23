@@ -20,7 +20,7 @@ export default defineEventHandler(async (event) => {
   });
 
   for (let i = 0; i < res.length; i++) {
-    const c = res[i];
+    const c = res[i] as CaseResponse;
     const includeContactInfo = c.userId === user?.id || c.contactPublic;
     if (!includeContactInfo) {
       stripCaseForContactInfo(c);

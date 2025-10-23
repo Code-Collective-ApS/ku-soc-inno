@@ -26,7 +26,7 @@ export default defineEventHandler(async (event) => {
   // create tags
   const newTags = body.categories.map((tag) => ({
     tag,
-    caseId: createdCase[0].id,
+    caseId: createdCase[0]!.id,
   }));
   await db.insert(categoryTags).values(newTags).returning({
     id: categoryTags.id,
@@ -36,7 +36,7 @@ export default defineEventHandler(async (event) => {
   // create tags
   const newBarriers = body.barriers.map((barrier) => ({
     barrier,
-    caseId: createdCase[0].id,
+    caseId: createdCase[0]!.id,
   }));
   await db.insert(barriers).values(newBarriers).returning({
     id: categoryTags.id,

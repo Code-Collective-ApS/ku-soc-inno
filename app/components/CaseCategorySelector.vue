@@ -2,13 +2,7 @@
   <div class="w-full max-w-md space-y-4">
     <div v-if="value.length > 0" class="flex gap-2">
       <div v-for="tag in value" :key="tag">
-        <UBadge
-          :key="tag"
-          size="md"
-          variant="soft"
-          color="secondary"
-          :label="tag"
-        >
+        <UBadge size="md" variant="soft" color="secondary" :label="tag">
           <template #trailing>
             <UButton
               variant="ghost"

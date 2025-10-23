@@ -5,7 +5,6 @@
         <div
           :key="barrier"
           class="bg-indigo-50 p-3 items-center flex justify-between rounded-lg border border-indigo-300"
-          @close="value = value.filter((t) => t !== barrier)"
         >
           <span>{{ barrier }} </span>
           <UButton

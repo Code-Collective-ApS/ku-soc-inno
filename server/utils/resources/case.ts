@@ -1,5 +1,6 @@
 import { desc, sql } from "drizzle-orm";
 import { cases } from "~~/server/db/schema";
+import { db } from "../db";
 
 export const selectNewestCases = db.query.cases
   .findMany({
