@@ -5,12 +5,6 @@
     :validate-on="['input', 'change', 'blur']"
     class="space-y-4"
     @submit="onSubmit"
-    @keydown.enter.prevent="
-      () => {
-        // NOTE: This block prevents enter btn from submitting the full form
-        // console.warn('On key down enter event prevented');
-      }
-    "
   >
     <div class="grid grid-cols-[1fr_350px] gap-x-9">
       <div>
@@ -18,7 +12,17 @@
         <UCard variant="subtle" class="mt-4">
           <div class="flex flex-col gap-y-3">
             <UFormField label="Titel på case" name="title">
-              <UInput v-model="state.title" size="xl" class="w-[420px]" />
+              <UInput
+                v-model="state.title"
+                size="xl"
+                class="w-[420px]"
+                @keydown.enter.prevent="
+                  () => {
+                    // NOTE: This block prevents enter btn from submitting the full form
+                    // console.warn('On key down enter event prevented');
+                  }
+                "
+              />
             </UFormField>
 
             <UFormField label="Vælg nøgleord til casen" name="categories">
@@ -78,18 +82,21 @@
               label="Synliggør kontakt information for offentligheden"
             />
             <UFormField label="Kontakt name" name="contactName">
-              <UInput v-model="state.contactName" />
+              <UInput v-model="state.contactName" @keydown.enter.prevent="" />
             </UFormField>
 
             <UFormField label="Kontakt titel" name="contactTitle">
-              <UInput v-model="state.contactTitle" />
+              <UInput v-model="state.contactTitle" @keydown.enter.prevent="" />
             </UFormField>
 
             <UFormField label="Kontakt organization" name="contactOrganization">
-              <UInput v-model="state.contactOrganization" />
+              <UInput
+                v-model="state.contactOrganization"
+                @keydown.enter.prevent=""
+              />
             </UFormField>
             <UFormField label="Kontakt email" name="contactEmail">
-              <UInput v-model="state.contactEmail" />
+              <UInput v-model="state.contactEmail" @keydown.enter.prevent="" />
             </UFormField>
           </div>
         </UCard>
@@ -139,21 +146,19 @@ async function onSubmit(event: FormSubmitEvent<CreateCaseSchema>) {
           icon: "i-mdi-check",
           color: "success",
         });
-      } else {
-        const msg = await parseApiError(
-          ctx.error || ctx.response || "Unknown error",
+      } else if (ctx.response.ok) {
+        throw new Error(
+          "Response status code is not recognized: " + ctx.response.status,
         );
-        toast.add({
-          title: msg,
-          color: "error",
-        });
       }
     },
     onResponseError: async (ctx) => {
       const msg = await parseApiError(
-        ctx.error || ctx.response || "Unknown error",
+        ctx.error || ctx.response || ctx || "Unknown error",
       );
+      console.log("make toast 0 !");
       toast.add({
+        icon: "material-symbols:error-circle-rounded-outline-sharp",
         title: msg,
         color: "error",
       });

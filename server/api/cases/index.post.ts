@@ -1,9 +1,25 @@
+import { eq } from "drizzle-orm";
 import { barriers, cases, categoryTags } from "../../db/schema";
 import { createCaseSchema } from "~~/shared/schemas/createCaseSchema";
 
 export default defineEventHandler(async (event) => {
   const body = await readValidatedBody(event, createCaseSchema.parse);
   const { user } = await requireUserSession(event);
+
+  // check for duplicate title
+  const existingCase = await db.query.cases.findFirst({
+    where: eq(cases.title, body.title),
+    columns: {
+      id: true,
+    },
+  });
+
+  if (existingCase) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: "The case title is already in use. It must be unique.",
+    });
+  }
 
   const createdCase = await db
     .insert(cases)
