@@ -30,6 +30,7 @@
           to="/create-account"
           >Create account</UButton
         >
+        <p class="text-xs text-gray-500">{{ user?.email }}</p>
         <UPopover
           v-if="loggedIn"
           :content="{ align: 'end', side: 'top', sideOffset: 8 }"
@@ -68,7 +69,7 @@
 import type { NavigationMenuItem } from "@nuxt/ui";
 
 const route = useRoute();
-const { clear, loggedIn } = useUserSession();
+const { user, clear, loggedIn } = useUserSession();
 const { openLoginModal } = useLoginModal();
 
 const navItems = computed<NavigationMenuItem[]>(() => [
