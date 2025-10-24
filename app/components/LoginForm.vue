@@ -48,11 +48,20 @@ const email = ref("");
 const error = ref("");
 const loading = ref(false);
 const { $csrfFetch } = useNuxtApp();
-const { fetch: refreshSession } = useUserSession();
+const { fetch: refreshSession, user } = useUserSession();
 
 const emit = defineEmits<{
   close: [boolean];
 }>();
+
+const route = useRoute();
+const toast = useToast();
+const redirectTo = computed(() =>
+  typeof route.query.redirectTo === "string" &&
+  route.query.redirectTo.startsWith("/")
+    ? route.query.redirectTo
+    : "/cases",
+);
 
 function resetInputs() {
   password.value = "";
@@ -86,10 +95,16 @@ async function onSubmit(event: Event) {
       onResponse: async (res) => {
         if (res.response.status === 200) {
           emit("close", true);
-          refreshSession();
+          await refreshSession();
           setTimeout(() => {
             resetInputs();
           }, 300); // allow animations to finish :-)
+          toast.add({
+            color: "success",
+            title: `Logged in as ${user.value?.fullName}`,
+            icon: "i-mdi-check",
+          });
+          makeSuccessRedirect();
         }
       },
     });
@@ -101,5 +116,13 @@ async function onSubmit(event: Event) {
   }
 
   return false;
+}
+
+async function makeSuccessRedirect() {
+  if (redirectTo.value) {
+    await navigateTo(redirectTo.value);
+  } else {
+    await navigateTo("/cases");
+  }
 }
 </script>

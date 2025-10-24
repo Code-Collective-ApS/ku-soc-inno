@@ -1,8 +1,5 @@
 <template>
-  <div>
-    <div>login page</div>
-    <div>TODO: open login modal and redirect to root</div>
-  </div>
+  <div />
 </template>
 
 <script lang="ts" setup>
@@ -30,6 +27,13 @@ onMounted(async () => {
   const result = await openLoginModal();
   if (result) {
     await navigateTo(redirectTo.value);
+  } else {
+    await navigateTo({
+      path: "/cases",
+      query: {
+        redirectTo: redirectTo.value,
+      },
+    });
   }
 });
 </script>
