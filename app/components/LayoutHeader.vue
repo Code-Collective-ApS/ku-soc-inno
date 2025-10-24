@@ -35,7 +35,7 @@
           :content="{ align: 'end', side: 'top', sideOffset: 8 }"
         >
           <UButton
-            class="rounded-full cursor-pointer hover:border-gray-400 border border-gray-300 transition-colors"
+            class="rounded-full bg-white hover:bg-white cursor-pointer hover:border-gray-400 border border-gray-300 transition-colors"
             color="neutral"
             variant="ghost"
             icon="material-symbols:person-2-outline-rounded"
@@ -102,19 +102,6 @@ const profileItems = ref<NavigationMenuItem[][]>([
         await clear();
         navigateTo("/cases?logged_out=1"); // TODO: implement noti
       },
-    },
-  ],
-  [
-    {
-      label: "GitHub",
-      icon: "i-simple-icons-github",
-      to: "https://github.com/nuxt/ui",
-      target: "_blank",
-    },
-    {
-      label: "About",
-      icon: "i-lucide-circle-help",
-      disabled: true,
     },
   ],
 ]);
