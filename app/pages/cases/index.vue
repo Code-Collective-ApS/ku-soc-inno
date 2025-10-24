@@ -1,7 +1,7 @@
 <template>
   <div class="awdkjhawdkjh">
     <UPageHero
-      headline="soc-inno v0.1.0"
+      :headline="`soc-inno v${pkgVersion}`"
       title="Explore sociological cases"
       description="A Nuxt/Vue-integrated UI library providing a rich set of fully-styled, accessible and highly customizable components for building modern web applications."
       :links="[
@@ -35,4 +35,10 @@ const { error } = await useAsyncData(
     server: false,
   },
 );
+const versionStore = useVersionStore();
+const { version: pkgVersion } = storeToRefs(versionStore);
+await useAsyncData("version", versionStore.refreshVersion, {
+  immediate: true,
+  server: true,
+});
 </script>
