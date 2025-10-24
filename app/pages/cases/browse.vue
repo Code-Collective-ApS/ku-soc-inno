@@ -6,14 +6,7 @@
       class="mb-3"
     />
     <PageTitle>Browse cases</PageTitle>
-    <div class="flex gap-3 flex-col">
-      <div v-for="c in cases" :key="c.id">
-        <UPageCard :title="c.title" variant="subtle">
-          <p>{{ c.challengeDescription }}</p>
-          <NuxtLink :to="`/cases/${c.id}`">Open</NuxtLink>
-        </UPageCard>
-      </div>
-    </div>
+    <CaseBrowser :cases="cases" />
     <div v-if="error" class="text-error-500" v-text="error" />
   </UContainer>
 </template>
