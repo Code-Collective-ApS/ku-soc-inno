@@ -10,7 +10,9 @@
         <UButton color="secondary" variant="outline" to="/cases/new"
           >Opret ny case</UButton
         >
-        <UButton variant="outline">Opret løsning på denne case</UButton>
+        <UButton variant="outline" :to="`/cases/${caseId}/new-solution`"
+          >Opret løsning på denne case</UButton
+        >
       </div>
     </div>
     <div v-if="currentCase" class="[&>*>p]:font-bold flex flex-col gap-y-3">
