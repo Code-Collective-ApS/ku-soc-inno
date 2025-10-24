@@ -13,7 +13,7 @@
               />
             </div>
           </div>
-          <p>{{ c.challengeDescription }}</p>
+          <p class="whitespace-pre-line">{{ c.challengeDescription }}</p>
           <div class="text-right">
             <UButton
               variant="link"
