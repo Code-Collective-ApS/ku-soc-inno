@@ -113,12 +113,10 @@ async function onSubmit(event: Event) {
       },
       onResponse: async (res) => {
         if (res.response.status === 200) {
+          resetInputs();
           successMsg.value =
             "Success! We've sent you an email to finish account setup";
           emit("create-account-success");
-          setTimeout(() => {
-            resetInputs();
-          }, 300); // allow animations to finish :-)
         }
       },
     });

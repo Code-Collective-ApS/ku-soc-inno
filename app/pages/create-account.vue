@@ -1,10 +1,39 @@
 <template>
-  <div>
-    <PageTitle>Create account</PageTitle>
-    <div class="max-w-72">
-      <CreateAccountForm />
-    </div>
-  </div>
+  <div />
 </template>
 
-<script lang="ts" setup></script>
+<script lang="ts" setup>
+const { openCreateAccountModal } = useModals();
+
+const { loggedIn, user } = useUserSession();
+const route = useRoute();
+const redirectTo = computed(() =>
+  typeof route.query.redirectTo === "string" &&
+  route.query.redirectTo.startsWith("/")
+    ? route.query.redirectTo
+    : "/cases",
+);
+
+await callOnce(async () => {
+  const verifiedAt = user.value?.emailVerifiedAt;
+  if (loggedIn.value && verifiedAt) {
+    await navigateTo(redirectTo.value);
+  } else if (loggedIn.value && !verifiedAt) {
+    await navigateTo("/account-needs-verification");
+  }
+});
+
+onMounted(async () => {
+  const result = await openCreateAccountModal();
+  if (result) {
+    await navigateTo(redirectTo.value);
+  } else {
+    await navigateTo({
+      path: "/cases",
+      query: {
+        redirectTo: redirectTo.value,
+      },
+    });
+  }
+});
+</script>

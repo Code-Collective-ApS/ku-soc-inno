@@ -3,7 +3,7 @@
 </template>
 
 <script lang="ts" setup>
-const { openLoginModal } = useLoginModal();
+const { openLoginModal } = useModals();
 
 const { loggedIn, user } = useUserSession();
 const route = useRoute();

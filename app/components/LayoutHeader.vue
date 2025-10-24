@@ -27,7 +27,11 @@
           class="cursor-pointer"
           color="primary"
           variant="subtle"
-          to="/create-account"
+          @click="
+            () => {
+              openCreateAccountModal();
+            }
+          "
           >Create account</UButton
         >
         <p class="text-xs text-gray-500">{{ user?.email }}</p>
@@ -70,7 +74,7 @@ import type { NavigationMenuItem } from "@nuxt/ui";
 
 const route = useRoute();
 const { user, clear, loggedIn } = useUserSession();
-const { openLoginModal } = useLoginModal();
+const { openLoginModal, openCreateAccountModal } = useModals();
 
 const navItems = computed<NavigationMenuItem[]>(() => [
   {
