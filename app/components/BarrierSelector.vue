@@ -25,7 +25,7 @@
         type="text"
         class="min-w-80"
         placeholder="F.eks økonomi, risikotilbageholdenhed, tid, .."
-        @keyup.prevent.enter="
+        @keydown.prevent.enter="
           addBarrier(search);
           search = '';
         "

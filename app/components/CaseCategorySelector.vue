@@ -23,7 +23,7 @@
         v-model="search"
         type="text"
         placeholder="Indtast nøgleord"
-        @keyup.prevent.enter="
+        @keydown.prevent.enter="
           () => {
             addTag(search);
             search = '';
