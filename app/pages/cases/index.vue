@@ -18,7 +18,7 @@
         },
       ]"
     />
-    <div v-if="error" class="text-error-500" v-text="error" />
+    <div v-if="error" class="text-center text-error-500" v-text="error" />
   </div>
 </template>
 
