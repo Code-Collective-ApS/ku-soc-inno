@@ -46,7 +46,16 @@ export const useCasesStore = defineStore("cases", () => {
     });
   }
 
-  function fetchCase(id: number): Promise<{ case: CaseResponse }> {
+  async function fetchCase(id: number): Promise<{ case: CaseResponse }> {
+    // TODO: make more generic / replace with function / something else
+    const existingIndex = cases.value.findIndex((c) => c.id === id);
+    if (existingIndex !== -1) {
+      const existingCase = cases.value[existingIndex] as CaseResponse;
+      const res: Record<string, CaseResponse> = {};
+      res.case = existingCase;
+      // console.log("using cached case");
+      return res as { case: CaseResponse };
+    }
     return useRequestFetch()(`/api/cases/${id}`, {
       server: true,
       credentials: "include",
