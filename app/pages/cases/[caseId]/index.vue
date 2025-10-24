@@ -44,11 +44,15 @@
 
       <div class="mb-3">
         <p>Hvad er casens udfordring kort for talt ?</p>
-        <div>{{ currentCase.challengeDescription }}</div>
+        <div class="whitespace-pre-line">
+          {{ currentCase.challengeDescription }}
+        </div>
       </div>
       <div class="mb-3">
         <p>Hvorfor er denne udfordring vigtig at løse ?</p>
-        <div>{{ currentCase.importanceDescription }}</div>
+        <div class="whitespace-pre-line">
+          {{ currentCase.importanceDescription }}
+        </div>
       </div>
       <div class="mb-3">
         <p>Løsningsbarrierer</p>
@@ -67,7 +71,7 @@
       </div>
       <div class="mb-3">
         <p>Andet, der er relevant at nævne?</p>
-        <div>{{ currentCase.freeText }}</div>
+        <div class="whitespace-pre-line">{{ currentCase.freeText }}</div>
       </div>
       <div>
         <p>Kontakt information</p>
