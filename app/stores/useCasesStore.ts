@@ -21,7 +21,6 @@ export const useCasesStore = defineStore("cases", () => {
       onResponse: async (ctx) => {
         if (ctx.response._data?.cases && ctx.response.status === 200) {
           cases.value = ctx.response._data.cases as CaseResponse[];
-          console.log("got", cases.value.length, "cases");
           pending.value = false;
         } else {
           console.log(

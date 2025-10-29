@@ -13,6 +13,7 @@ export const fileUploads = pgTable("file_uploads", {
   fileName: varchar("file_name").notNull(),
   fileUrl: varchar("file_url").notNull(),
   mimeType: varchar("mime_type"), // pdf, docx, etc.
+  lastModified: timestamp("last_modified").notNull().defaultNow(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
 
@@ -85,7 +86,6 @@ export const solutions = pgTable("solutions", {
   solutionDescription: text("solution_description"),
   isTested: boolean("is_tested").default(false),
   testingText: text("testing_text"),
-  primaryPdfUrl: varchar("primary_pdf_url"),
   primaryPdfPublic: boolean("primary_pdf_public").default(false),
   freeText: text("free_text"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
@@ -95,8 +95,8 @@ export const solutions = pgTable("solutions", {
     .notNull(),
 });
 
-// --- Illustrations (Image uploads)
-export const illustrations = pgTable("illustrations", {
+// --- Solution Illustrations (Image uploads)
+export const solutionIllustrations = pgTable("solution_illustrations", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   solutionId: integer("solution_id").references(() => solutions.id),
   fileUploadId: integer("file_upload_id").references(() => fileUploads.id),
@@ -104,8 +104,17 @@ export const illustrations = pgTable("illustrations", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-// --- Attachments
-export const attachments = pgTable("attachments", {
+// --- Solution Attachments
+export const solutionAttachments = pgTable("solution_attachments", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  solutionId: integer("solution_id").references(() => solutions.id),
+  fileUploadId: integer("file_upload_id").references(() => fileUploads.id),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+});
+
+// --- Solution Primary PDF
+export const solutionPdfs = pgTable("solution_pdfs", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   solutionId: integer("solution_id").references(() => solutions.id),
   fileUploadId: integer("file_upload_id").references(() => fileUploads.id),
@@ -147,20 +156,34 @@ export const solutionsRelations = relations(solutions, ({ many, one }) => ({
     fields: [solutions.userId],
     references: [users.id],
   }),
-  illustrations: many(illustrations),
-  attachments: many(attachments),
+  illustrations: many(solutionIllustrations),
+  attachments: many(solutionAttachments),
+  solutionPdfs: many(solutionPdfs),
 }));
 
-export const illustrationsRelations = relations(illustrations, ({ one }) => ({
+export const illustrationsRelations = relations(
+  solutionIllustrations,
+  ({ one }) => ({
+    fileUpload: one(fileUploads, {
+      fields: [solutionIllustrations.fileUploadId],
+      references: [fileUploads.id],
+    }),
+  }),
+);
+
+export const solutionPdfsRelations = relations(solutionPdfs, ({ one }) => ({
   fileUpload: one(fileUploads, {
-    fields: [illustrations.fileUploadId],
+    fields: [solutionPdfs.fileUploadId],
     references: [fileUploads.id],
   }),
 }));
 
-export const attachmentsRelations = relations(attachments, ({ one }) => ({
-  fileUpload: one(fileUploads, {
-    fields: [attachments.fileUploadId],
-    references: [fileUploads.id],
+export const attachmentsRelations = relations(
+  solutionAttachments,
+  ({ one }) => ({
+    fileUpload: one(fileUploads, {
+      fields: [solutionAttachments.fileUploadId],
+      references: [fileUploads.id],
+    }),
   }),
-}));
+);

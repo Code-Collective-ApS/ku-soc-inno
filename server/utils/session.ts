@@ -39,7 +39,6 @@ export async function refreshUserSession(
       emailVerifiedAt: user[0].emailVerifiedAt,
     },
   };
-  console.log("Got user session:", newSess);
   await setUserSession(event, newSess);
   const sess = await requireUserSession(event);
   return sess;

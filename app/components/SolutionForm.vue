@@ -20,7 +20,7 @@
               name="solutionDescription"
             >
               <UTextarea
-                v-model="state.solutionCategory"
+                v-model="state.solutionDescription"
                 :rows="9"
                 size="xl"
                 class="w-full"
@@ -47,28 +47,33 @@
               />
             </UFormField>
 
-            <UFormField label="Hovedopgave (PDF)">
-              <UFileUpload
-                v-model="mainAssignment"
-                required
-                color="neutral"
-                class="h-24 mb-6 w-full max-w-64"
-                description="PDF (max. 3MB)"
-                accept="application/pdf"
-                :ui="{
-                  base: [
-                    'w-full flex-1 bg-default border border-gray-400 flex flex-col gap-2 items-stretch justify-center rounded-lg focus-visible:outline-2',
-                    'transition-[background]',
-                  ],
-                }"
-              />
+            <UFormField label="Hovedopgave (PDF)" name="primaryPdf">
+              <div class="flex gap-x-3 w-full">
+                <UFileUpload
+                  v-model="state.primaryPdf"
+                  name="primaryPdfUrl"
+                  position="outside"
+                  color="neutral"
+                  layout="list"
+                  class="grid grid-cols-2 2xl:grid-cols-3 w-full"
+                  description="PDF (max. 3MB)"
+                  accept="application/pdf"
+                  :ui="{
+                    base: [
+                      'w-full flex-1 bg-default border border-gray-400 flex flex-col gap-2 items-stretch justify-center rounded-lg focus-visible:outline-2',
+                      'transition-[background]',
+                    ],
+                  }"
+                />
+              </div>
             </UFormField>
 
             <UFormField
+              name="illustrations"
               label="Upload 1-5 billeder, storyboards eller tilsvarende materiale, der illustrerer løsning som billedfil (jpg eller png)"
             >
               <MultipleImagesFormComponent
-                v-model="illustrations"
+                v-model="state.illustrations"
                 :min="1"
                 :max="5"
               />
@@ -76,8 +81,9 @@
 
             <UFormField
               label="Du kan evt. vedhæfte relaterede pdf, word, excel, lyd og videofiler til løsningen"
+              name="attachments"
             >
-              <AttachmentsFormComponent v-model="attachments" />
+              <AttachmentsFormComponent v-model="state.attachments" />
             </UFormField>
 
             <UFormField
@@ -96,10 +102,23 @@
       </div>
 
       <div>
-        <h2 class="font-bold">Opret løsning</h2>
-        <UButton size="xl" class="cursor-pointer mt-6" type="submit">
-          Bekræft
-        </UButton>
+        <h2 class="font-bold mb-4">Opret løsning</h2>
+        <UCard variant="subtle" size="sm">
+          <UFormField
+            class="mb-6"
+            label="Vil du offentliggøre hovedopgaven?"
+            name="primaryPdfPublic"
+          >
+            <URadioGroup
+              v-model="state.primaryPdfPublic"
+              :items="isPrimaryPdfPublic"
+            />
+          </UFormField>
+
+          <UButton size="xl" class="cursor-pointer" type="submit">
+            Bekræft
+          </UButton>
+        </UCard>
       </div>
     </div>
   </UForm>
@@ -116,6 +135,10 @@ const isTestedRadios = ref([
   { label: "Ja", value: true },
   { label: "Nej", value: false },
 ]);
+const isPrimaryPdfPublic = ref([
+  { label: "Ja", value: true },
+  { label: "Nej", value: false },
+]);
 
 const props = defineProps({
   caseId: {
@@ -129,25 +152,40 @@ const { $csrfFetch } = useNuxtApp();
 const state = reactive<Partial<CreateSolutionSchema>>({
   isTested: false,
   primaryPdfPublic: false,
-  primaryPdfUrl: "",
+  primaryPdf: undefined,
+  attachments: [],
+  illustrations: [],
   solutionCategory: "",
   solutionDescription: "",
   testingText: "",
   freeText: "",
 });
 
-// TODO: actually upload these
-const mainAssignment = ref<File | undefined>(undefined);
-const illustrations = ref<File[]>([]);
-const attachments = ref<File[]>([]);
-
 const toast = useToast();
-async function onSubmit(event: FormSubmitEvent<CreateSolutionSchema>) {
-  console.log(event.data);
+
+async function onSubmit(
+  event: undefined | FormSubmitEvent<CreateSolutionSchema>,
+) {
+  const payload = event?.data ?? state;
+
+  const body = new FormData();
+  body.append("isTested", !!state.isTested + "");
+  body.append("primaryPdfPublic", !!state.primaryPdfPublic + "");
+  body.append("solutionCategory", state.solutionCategory ?? "");
+  body.append("solutionDescription", state.solutionDescription ?? "");
+  body.append("testingText", state.testingText ?? "");
+  body.append("freeText", state.freeText ?? "");
+  body.append("primaryPdf", payload.primaryPdf!, payload.primaryPdf?.name);
+  for (const illu of payload.illustrations!) {
+    body.append("illustrations[]", illu!, illu!.name);
+  }
+  for (const att of payload.attachments!) {
+    body.append("attachments[]", att!, att!.name);
+  }
 
   await $csrfFetch(`/api/cases/${props.caseId}/solution`, {
     method: "POST",
-    body: event.data,
+    body: body,
     onResponse: async (ctx) => {
       if (ctx.response.status === 201) {
         toast.add({

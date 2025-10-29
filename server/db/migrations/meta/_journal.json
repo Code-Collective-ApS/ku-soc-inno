@@ -43,6 +43,27 @@
       "when": 1760714661069,
       "tag": "0005_cynical_the_executioner",
       "breakpoints": true
+    },
+    {
+      "idx": 6,
+      "version": "7",
+      "when": 1761745659871,
+      "tag": "0006_mixed_tattoo",
+      "breakpoints": true
+    },
+    {
+      "idx": 7,
+      "version": "7",
+      "when": 1761747962804,
+      "tag": "0007_mean_thunderbolts",
+      "breakpoints": true
+    },
+    {
+      "idx": 8,
+      "version": "7",
+      "when": 1761748033602,
+      "tag": "0008_yellow_proteus",
+      "breakpoints": true
     }
   ]
 }

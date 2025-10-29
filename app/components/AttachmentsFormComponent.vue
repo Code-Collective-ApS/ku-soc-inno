@@ -3,7 +3,6 @@
     <UFileUpload
       v-model="value"
       multiple
-      required
       variant="button"
       layout="list"
       color="neutral"

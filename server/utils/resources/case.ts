@@ -79,6 +79,8 @@ export const selectCaseById = db.query.cases
       solutions: {
         columns: {
           id: true,
+          solutionCategory: true,
+          solutionDescription: true,
           updatedAt: true,
         },
       },

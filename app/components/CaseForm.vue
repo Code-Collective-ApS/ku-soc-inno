@@ -134,8 +134,6 @@ const state = reactive<Partial<CreateCaseSchema>>({
 
 const toast = useToast();
 async function onSubmit(event: FormSubmitEvent<CreateCaseSchema>) {
-  console.log(event.data);
-
   await $csrfFetch("/api/cases", {
     method: "POST",
     body: event.data,
@@ -156,7 +154,6 @@ async function onSubmit(event: FormSubmitEvent<CreateCaseSchema>) {
       const msg = await parseApiError(
         ctx.error || ctx.response || ctx || "Unknown error",
       );
-      console.log("make toast 0 !");
       toast.add({
         icon: "material-symbols:error-circle-rounded-outline-sharp",
         title: msg,

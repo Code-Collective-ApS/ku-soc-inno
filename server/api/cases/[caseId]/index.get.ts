@@ -1,14 +1,14 @@
 import * as z from "zod";
 import { selectCaseById } from "~~/server/utils/resources/case";
-const queryDto = z.strictObject({
-  id: z.coerce.number().positive(),
+const paramDto = z.strictObject({
+  caseId: z.coerce.number().positive(),
 });
 
 export default defineEventHandler(async (event) => {
   const { user } = await getUserSession(event);
-  const params = await getValidatedRouterParams(event, queryDto.parse);
+  const params = await getValidatedRouterParams(event, paramDto.parse);
 
-  const caseRes = await selectCaseById.execute({ id: params.id });
+  const caseRes = await selectCaseById.execute({ id: params.caseId });
   if (!caseRes) {
     throw createError({
       statusCode: 404,

@@ -14,6 +14,7 @@
     "db:dev": "yarn db:generate && yarn db:migrate"
   },
   "dependencies": {
+    "@aws-sdk/client-s3": "^3.919.0",
     "@nuxt/eslint": "1.9.0",
     "@nuxt/ui": "4.0.1",
     "@pinia/nuxt": "0.11.2",
@@ -38,6 +39,7 @@
     "@iconify-json/simple-icons": "^1.2.54",
     "@types/node": "^24.6.2",
     "@types/pg": "^8.15.5",
-    "drizzle-kit": "^0.31.5"
+    "drizzle-kit": "^0.31.5",
+    "h3-formidable": "^1.0.0"
   }
 }

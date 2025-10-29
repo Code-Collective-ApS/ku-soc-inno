@@ -1,0 +1,2 @@
+-- do nothing (last migration is hand-fixed)
+-- ALTER TABLE "file_uploads" ALTER COLUMN "last_modified" SET DEFAULT now();

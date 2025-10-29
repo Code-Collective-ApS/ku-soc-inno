@@ -16,7 +16,6 @@ export async function parseApiError(_res: ApiErrorType): Promise<string> {
     _res = (_res as FetchContext<AnyBody, ResponseType>).response as Response;
   }
 
-  console.log("hello", _res as FetchError);
   if (
     (_res as { _data: AnyBody })?._data?.data?.message &&
     (_res as { _data: AnyBody })?._data?.data?.message.startsWith("[")

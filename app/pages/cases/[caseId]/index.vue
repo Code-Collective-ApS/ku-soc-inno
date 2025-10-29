@@ -95,7 +95,7 @@
 </template>
 
 <script setup lang="ts">
-import { prettyDate } from "~~/shared/datetime";
+import { prettyDate } from "~~/shared/utils/datetime";
 import type { BreadcrumbItem } from "@nuxt/ui";
 const route = useRoute();
 const caseId = parseInt((route.params?.caseId as string) || "NaN");
