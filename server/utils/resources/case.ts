@@ -37,6 +37,8 @@ export const selectNewestCases = db.query.cases
       solutions: {
         columns: {
           id: true,
+          solutionCategory: true,
+          solutionDescription: true,
           updatedAt: true,
         },
       },
