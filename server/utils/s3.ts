@@ -41,14 +41,33 @@ export async function getUpload(
   const fullPath = config.s3Prefix + key;
   const { s3, destroy } = getS3();
 
-  // console.log('getting upload:', { bucket: config.s3BucketName, fullPath })
-  const res = await s3.send(
+  console.log("getting upload:", { bucket: config.s3BucketName, fullPath });
+
+  const resProm = s3.send(
     new GetObjectCommand({
       Bucket: config.s3BucketName,
       Key: fullPath,
       Range: range || undefined,
     }),
   );
+
+  const timeoutProm = new Promise<void>((resolve) =>
+    setTimeout(() => {
+      resolve();
+    }, 2000),
+  );
+
+  const promRes = await Promise.race([resProm, timeoutProm]);
+
+  // if no metadata, we hit the timeout error
+  if (!promRes?.$metadata) {
+    throw createError({
+      statusMessage: "S3 connection timed out",
+      statusCode: 400,
+    });
+  }
+
+  const res: GetObjectCommandOutput = promRes;
 
   // validate response
   if (
@@ -69,8 +88,9 @@ export async function getUpload(
     destroy();
   });
   readable.on("error", (_err) => {
+    console.error("Got stream error");
     console.error(_err);
-    // captureException(_err);
+    // TODO: report error
     destroy();
     throw createError({
       statusCode: 500,
