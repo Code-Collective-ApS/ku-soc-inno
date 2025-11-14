@@ -1,6 +1,8 @@
 import type { Files } from "h3-formidable";
 import * as fs from "node:fs";
 import { prettyByteSize } from "~~/shared/utils/text";
+import { fileUploads } from "../db/schema";
+import { eq } from "drizzle-orm";
 
 export function readFormidableFormFiles(
   files: Files,
@@ -72,4 +74,24 @@ export function readFormidableFormFiles(
   }
 
   return resultFiles;
+}
+
+export async function fetchFileUpload(fileUploadId: number) {
+  const urlRes = await db
+    .select({
+      fileUrl: fileUploads.fileUrl,
+    })
+    .from(fileUploads)
+    .where(eq(fileUploads.id, fileUploadId));
+
+  const fileUrl = urlRes?.[0]?.fileUrl;
+  if (!fileUrl) {
+    // TODO: report error
+    throw createError({
+      statusCode: 404,
+      statusMessage: "File does not exist",
+    });
+  }
+
+  return getUpload(fileUrl);
 }
