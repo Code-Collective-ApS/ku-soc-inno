@@ -11,7 +11,8 @@
     "postinstall": "nuxt prepare",
     "db:migrate": "drizzle-kit migrate",
     "db:generate": "drizzle-kit generate",
-    "db:dev": "yarn db:generate && yarn db:migrate"
+    "db:dev": "yarn db:generate && yarn db:migrate",
+    "db:seed": "yarn tsx --env-file=.env ./server/db/seed.ts"
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.919.0",
@@ -40,6 +41,7 @@
     "@types/node": "^24.6.2",
     "@types/pg": "^8.15.5",
     "drizzle-kit": "^0.31.5",
-    "h3-formidable": "^1.0.0"
+    "h3-formidable": "^1.0.0",
+    "tsx": "^4.20.6"
   }
 }

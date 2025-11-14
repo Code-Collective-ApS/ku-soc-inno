@@ -47,9 +47,21 @@ export const cases = pgTable("cases", {
   contactPublic: boolean("contact_public").default(false),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  sector: varchar("sector").notNull(),
+  organizationType: varchar("sector").notNull(),
   userId: integer("user_id")
     .references(() => users.id)
     .notNull(),
+});
+
+export const predefinedCaseSectors = pgTable("predefined_case_sectors", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  caseSector: varchar("case_sector").notNull().unique(),
+});
+
+export const predefinedCaseOrgTypes = pgTable("predefined_case_org_types", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  orgType: varchar("org_type").notNull().unique(),
 });
 
 // --- Category Tags (Many-to-many with Case) ---
@@ -74,7 +86,7 @@ export const predefinedSolutionCategories = pgTable(
   "predefined_solution_cats",
   {
     id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-    solutionCategory: varchar("solution_category").notNull(), // e.g., product, process, service...
+    solutionCategory: varchar("solution_category").notNull().unique(), // e.g., product, process, service...
   },
 );
 

@@ -1,0 +1,3 @@
+ALTER TABLE "predefined_case_org_types" ADD CONSTRAINT "predefined_case_org_types_org_type_unique" UNIQUE("org_type");--> statement-breakpoint
+ALTER TABLE "predefined_case_sectors" ADD CONSTRAINT "predefined_case_sectors_case_sector_unique" UNIQUE("case_sector");--> statement-breakpoint
+ALTER TABLE "predefined_solution_cats" ADD CONSTRAINT "predefined_solution_cats_solution_category_unique" UNIQUE("solution_category");
