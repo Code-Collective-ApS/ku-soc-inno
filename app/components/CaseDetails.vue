@@ -74,7 +74,7 @@
 <script lang="ts" setup>
 defineProps({
   currentCase: {
-    type: Object as PropType<CaseResponse>,
+    type: Object as PropType<CaseSerialized>,
     required: true,
   },
 });

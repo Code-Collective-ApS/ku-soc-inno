@@ -51,6 +51,7 @@
 
 <script setup lang="ts">
 import type { BreadcrumbItem } from "@nuxt/ui";
+import { useCasesStore } from "~/stores/useCasesStore";
 const route = useRoute();
 const caseId = parseInt((route.params?.caseId as string) || "NaN");
 if (isNaN(caseId)) {
@@ -68,7 +69,7 @@ const { data } = await useAsyncData(
   () => casesStore.fetchCase(caseId),
   {
     immediate: true,
-    server: false,
+    server: true,
   },
 );
 const currentCase = computed(() => data?.value?.case);

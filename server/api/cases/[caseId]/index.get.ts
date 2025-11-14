@@ -1,5 +1,5 @@
 import * as z from "zod";
-import { selectCaseById } from "~~/server/utils/resources/case";
+import { selectCaseById, serializeCase } from "~~/server/utils/resources/case";
 const paramDto = z.strictObject({
   caseId: z.coerce.number().positive(),
 });
@@ -22,5 +22,8 @@ export default defineEventHandler(async (event) => {
     stripCaseForContactInfo(caseRes);
   }
 
-  return { case: caseRes };
+  // typescript makes me crazy sometimes
+  return {
+    case: serializeCase(caseRes),
+  } satisfies { case: CaseSerialized };
 });

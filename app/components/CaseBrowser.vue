@@ -31,7 +31,7 @@
 <script setup lang="ts">
 defineProps({
   cases: {
-    type: Array as PropType<CaseResponse[]>,
+    type: Array as PropType<CaseSerialized[]>,
     required: false,
     default: () => [],
   },

@@ -1,4 +1,5 @@
 import * as z from "zod";
+import { serializeCases } from "~~/server/utils/resources/case";
 
 const invalidTakeErr = "Invalid query parameter `take`";
 const invalidOffsErr = "Invalid query parameter `offset`";
@@ -27,5 +28,5 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  return { cases: res };
+  return { cases: serializeCases(res) } satisfies { cases: CaseSerialized[] };
 });

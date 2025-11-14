@@ -112,46 +112,47 @@
 </template>
 
 <script setup lang="ts">
-import type { SolutionResponse } from "~~/server/utils/resources/solution";
+import type { CaseSerialized } from "~~/server/utils/resources/case";
+import type { SolutionSerialized } from "~~/server/utils/resources/solution";
 
 const props = defineProps({
   solution: {
-    type: Object as PropType<SolutionResponse>,
+    type: Object as PropType<SolutionSerialized>,
     required: true,
   },
   relatedCase: {
-    type: Object as PropType<CaseResponse>,
+    type: Object as PropType<CaseSerialized>,
     required: true,
   },
 });
 
+const origin = useRequestURL().origin;
+
 const illustrationUrls = computed<string[]>(
   () =>
-    props.solution.illustrations?.map((illu) => {
-      return (
-        window.location.origin +
-        `/api/solutions/${props.solution.id}/illustrations/${illu.id}`
-      );
-    }) || [],
+    props.solution.illustrations?.map(
+      (illu: SolutionIllustrationSerialized) => {
+        return (
+          origin +
+          `/api/solutions/${props.solution.id}/illustrations/${illu.id}`
+        );
+      },
+    ) || [],
 );
 
 const pdfs = computed(
   () =>
-    props.solution.solutionPdfs?.map((pdf) => ({
+    props.solution.solutionPdfs?.map((pdf: SolutionPdfSerialized) => ({
       ...pdf,
-      url:
-        window.location.origin +
-        `/api/solutions/${props.solution.id}/pdfs/${pdf.id}`,
+      url: origin + `/api/solutions/${props.solution.id}/pdfs/${pdf.id}`,
     })) || [],
 );
 
 const attachments = computed(
   () =>
-    props.solution.attachments?.map((att) => ({
+    props.solution.attachments?.map((att: SolutionAttachmentSerialized) => ({
       ...att,
-      url:
-        window.location.origin +
-        `/api/solutions/${props.solution.id}/attachments/${att.id}`,
+      url: origin + `/api/solutions/${props.solution.id}/attachments/${att.id}`,
     })) || [],
 );
 </script>

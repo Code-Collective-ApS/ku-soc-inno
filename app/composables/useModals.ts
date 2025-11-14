@@ -1,4 +1,7 @@
-import { CreateAccountModal, FancyImageModal, LoginModal } from "#components";
+import CreateAccountModal from "../components/CreateAccountModal.vue";
+import LoginModal from "../components/LoginModal.vue";
+import FancyImageModal from "../components/FancyImageModal.vue";
+import { useOverlay } from "#imports";
 
 export function useModals() {
   const overlay = useOverlay();

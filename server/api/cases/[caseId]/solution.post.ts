@@ -50,9 +50,11 @@ function getFiles(
     maxIllustrationSize,
     ["image/jpg", "image/png"],
   );
-  const primaryPdf: File = readFormidableFormFiles(rawPrimaryPdf, maxPdfSize, [
-    "application/pdf",
-  ])?.[0];
+  const primaryPdf: File | undefined = readFormidableFormFiles(
+    rawPrimaryPdf,
+    maxPdfSize,
+    ["application/pdf"],
+  )?.[0];
   const obj = {
     attachments,
     illustrations,
@@ -139,7 +141,7 @@ export default defineEventHandler(async (event) => {
   try {
     const prefix = "solution/" + insertedId;
     for (let i = 0; i < parsedFiles.attachments.length; i++) {
-      const file = parsedFiles.attachments[i];
+      const file = parsedFiles.attachments[i] as File;
       const buf = await file.bytes();
       const fileUrl = prefix + "/attachments/" + i;
       await uploadFile(fileUrl, buf);
@@ -147,14 +149,14 @@ export default defineEventHandler(async (event) => {
     }
 
     for (let i = 0; i < parsedFiles.illustrations.length; i++) {
-      const file = parsedFiles.illustrations[i];
+      const file = parsedFiles.illustrations[i] as File;
       const buf = await file.bytes();
       const fileUrl = prefix + "/illustrations/" + i;
       await uploadFile(fileUrl, buf);
       illustrationObjects.push(generateFileUploadRow(file, fileUrl));
     }
 
-    const pdf = parsedFiles.primaryPdf;
+    const pdf = parsedFiles.primaryPdf as File;
     const pdfBuf = await pdf.bytes();
     const pdfUrl = prefix + "/primary-pdf.pdf";
     await uploadFile(pdfUrl, pdfBuf);

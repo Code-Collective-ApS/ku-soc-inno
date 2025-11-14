@@ -1,3 +1,6 @@
+import { useRoute, useToast, computed, watch, navigateTo } from "#imports";
+import type { LocationQuery } from "vue-router";
+
 export function useToasters() {
   const route = useRoute();
   const toast = useToast();
@@ -6,7 +9,7 @@ export function useToasters() {
 
   watch(
     [_path, _query],
-    async ([path, query]) => {
+    async ([path, query]: [string, LocationQuery]) => {
       console.log({ query, path });
       if (query?.emailVerified === "1") {
         toast.add({

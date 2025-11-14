@@ -1,5 +1,8 @@
 import * as z from "zod";
-import { stripSolutionForPdfs } from "~~/server/utils/resources/solution";
+import {
+  serializeSolution,
+  stripSolutionForPdfs,
+} from "~~/server/utils/resources/solution";
 
 const paramDto = z.strictObject({
   solutionId: z.coerce.number().positive(),
@@ -25,5 +28,8 @@ export default defineEventHandler(async (event) => {
     stripSolutionForPdfs(solRes);
   }
 
-  return { solution: solRes };
+  // typescript makes me crazy sometimes
+  return {
+    solution: serializeSolution(solRes),
+  } as { solution: SolutionSerialized };
 });

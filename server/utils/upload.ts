@@ -1,8 +1,11 @@
+import { createError } from "h3";
 import type { Files } from "h3-formidable";
 import * as fs from "node:fs";
 import { prettyByteSize } from "~~/shared/utils/text";
 import { fileUploads } from "../db/schema";
 import { eq } from "drizzle-orm";
+import { db } from "./db";
+import { getUpload } from "./s3";
 
 export function readFormidableFormFiles(
   files: Files,

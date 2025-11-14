@@ -31,6 +31,7 @@
 </template>
 
 <script setup lang="ts">
+import { useToast } from "#imports";
 const emit = defineEmits<{ close: [boolean] }>();
 const props = defineProps({
   src: {

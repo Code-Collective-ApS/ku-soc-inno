@@ -23,6 +23,9 @@
 </template>
 
 <script setup lang="ts">
+import { useCasesStore } from "~/stores/useCasesStore";
+import { useVersionStore } from "~/stores/useVersionStore";
+
 useToasters();
 const casesStore = useCasesStore();
 const casesOffset = ref(0);

@@ -1,3 +1,6 @@
+import { defineStore } from "pinia";
+import { ref, parseApiError, useRequestFetch } from "#imports";
+
 export const useVersionStore = defineStore("versionStore", () => {
   const version = ref("");
   const pending = ref(false);

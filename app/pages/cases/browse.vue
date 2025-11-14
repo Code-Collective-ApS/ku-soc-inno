@@ -13,6 +13,7 @@
 
 <script setup lang="ts">
 import type { BreadcrumbItem } from "@nuxt/ui";
+import { useCasesStore } from "~/stores/useCasesStore";
 useToasters();
 const casesStore = useCasesStore();
 const { cases } = storeToRefs(casesStore);

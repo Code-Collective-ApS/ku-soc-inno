@@ -12,7 +12,7 @@
     }"
   >
     <template #body>
-      <LoginForm @close="(ok) => emit('close', ok)" />
+      <LoginForm @close="(ok: boolean) => emit('close', ok)" />
     </template>
   </UModal>
 </template>

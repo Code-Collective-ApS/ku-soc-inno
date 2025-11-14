@@ -7,20 +7,38 @@
         class="mb-3"
       />
     </div>
-    <div v-if="currentSolution && currentCase">
+    <div
+      v-if="
+        !solutionPending &&
+        !casePending &&
+        !caseError &&
+        !solutionError &&
+        currentSolution &&
+        currentCase
+      "
+    >
       <SolutionDetails
         :solution="currentSolution"
         :related-case="currentCase"
       />
+    </div>
+    <div
+      v-if="!solutionPending && !casePending && (caseError || solutionError)"
+      class="my-6 text-red-500"
+    >
+      error: {{ caseError || solutionError }}
     </div>
   </UContainer>
 </template>
 
 <script lang="ts" setup>
 import type { BreadcrumbItem } from "@nuxt/ui";
+import { useCasesStore } from "~/stores/useCasesStore";
+import { useSolutionsStore } from "~/stores/useSolutionsStore";
 const route = useRoute();
 const caseId = parseInt((route.params?.caseId as string) || "NaN");
 const solutionId = parseInt((route.params?.solutionId as string) || "NaN");
+
 if (isNaN(caseId)) {
   // TODO: report error
   throw createError({
@@ -38,28 +56,32 @@ if (isNaN(solutionId)) {
 
 // fetch case on load
 const casesStore = useCasesStore();
-const { data: caseData } = await useAsyncData(
-  "case",
-  () => casesStore.fetchCase(caseId),
-  {
-    immediate: true,
-    server: false,
-  },
-);
+const {
+  data: caseData,
+  error: caseError,
+  pending: casePending,
+} = await useAsyncData("case", () => casesStore.fetchCase(caseId), {
+  immediate: true,
+  server: true,
+});
 const currentCase = computed(() => caseData?.value?.case);
 
 // fetch case on load
 const solutionsStore = useSolutionsStore();
-const { data: solutionData } = await useAsyncData(
+const {
+  data: solutionData,
+  error: solutionError,
+  pending: solutionPending,
+} = await useAsyncData(
   "solution",
   () => solutionsStore.fetchSolution(solutionId),
   {
     immediate: true,
-    server: false,
+    server: true,
   },
 );
-const currentSolution = computed(() => solutionData?.value?.solution);
 
+const currentSolution = computed(() => solutionData?.value?.solution);
 const breadcrumb = computed<BreadcrumbItem[]>(() => [
   {
     label: "Cases",

@@ -1,5 +1,7 @@
 import { Readable } from "node:stream";
 import type { ReadableStream } from "node:stream/web";
+import { createError } from "h3";
+import { useRuntimeConfig } from "#imports";
 import {
   S3Client,
   GetObjectCommand,
