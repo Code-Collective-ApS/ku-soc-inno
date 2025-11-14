@@ -60,7 +60,7 @@
                   accept="application/pdf"
                   :ui="{
                     base: [
-                      'w-full flex-1 bg-default border border-gray-400 flex flex-col gap-2 items-stretch justify-center rounded-lg focus-visible:outline-2',
+                      'w-full flex-1 bg-default border border-gray-400 cursor-pointer flex flex-col gap-2 items-stretch justify-center rounded-lg focus-visible:outline-2',
                       'transition-[background]',
                     ],
                   }"

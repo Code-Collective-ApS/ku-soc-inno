@@ -1,10 +1,10 @@
-import CreateAccountModal from "~/components/CreateAccountModal.vue";
-import LoginModal from "~/components/LoginModal.vue";
+import { CreateAccountModal, FancyImageModal, LoginModal } from "#components";
 
 export function useModals() {
   const overlay = useOverlay();
   const loginModal = overlay.create(LoginModal);
   const createAccountModal = overlay.create(CreateAccountModal);
+  const imageModal = overlay.create(FancyImageModal);
 
   async function openLoginModal(): Promise<boolean> {
     console.log("login modal opening!");
@@ -21,8 +21,15 @@ export function useModals() {
     return result;
   }
 
+  async function openFancyImageModal(src: string): Promise<boolean> {
+    const modalInstance = imageModal.open({ src });
+    const result = await modalInstance.result;
+    return result;
+  }
+
   return {
     openLoginModal,
     openCreateAccountModal,
+    openFancyImageModal,
   };
 }

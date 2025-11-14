@@ -19,7 +19,19 @@
         Københavns Universitet &copy;
         <span v-text="new Date().getFullYear()" />
       </p>
+      <ClientOnly>
+        <p v-if="emailIsClear" class="text-sm text-gray-500">{{ email }}</p>
+      </ClientOnly>
       <KULogo class="mt-6" />
     </div>
   </UFooter>
 </template>
+
+<script setup lang="ts">
+const emailIsClear = ref(false);
+const email = ref(btoa("nfb@codecollective.dk"));
+onBeforeMount(() => {
+  email.value = atob(email.value);
+  emailIsClear.value = true;
+});
+</script>
