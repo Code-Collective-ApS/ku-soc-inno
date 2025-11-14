@@ -124,7 +124,7 @@ export default defineEventHandler(async (event) => {
 
   const res = await db
     .insert(solutions)
-    .values({ ...parsedFields, userId: user.id, caseId: caseRes.id })
+    .values({ ...parsedFields, userId: user.id, caseId: params.caseId })
     .returning({
       id: solutions.id,
     });
@@ -217,10 +217,14 @@ export default defineEventHandler(async (event) => {
     })),
   );
 
+  console.log({
+    insertedIllustrationFileUploads,
+    insertedAttachmentFileUploads,
+    insertedPdfFileUpload,
+  });
+
   // remove temporary files if any
   await dispose();
 
   setResponseStatus(event, 201);
-
-  return "hello";
 });

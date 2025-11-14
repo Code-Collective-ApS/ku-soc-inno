@@ -64,6 +64,20 @@
       "when": 1761748033602,
       "tag": "0008_yellow_proteus",
       "breakpoints": true
+    },
+    {
+      "idx": 9,
+      "version": "7",
+      "when": 1761750852066,
+      "tag": "0009_flippant_golden_guardian",
+      "breakpoints": true
+    },
+    {
+      "idx": 10,
+      "version": "7",
+      "when": 1763114073679,
+      "tag": "0010_redundant_wilson_fisk",
+      "breakpoints": true
     }
   ]
 }

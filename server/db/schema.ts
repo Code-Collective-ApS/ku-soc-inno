@@ -12,7 +12,7 @@ export const fileUploads = pgTable("file_uploads", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   fileName: varchar("file_name").notNull(),
   fileUrl: varchar("file_url").notNull(),
-  mimeType: varchar("mime_type"), // pdf, docx, etc.
+  mimeType: varchar("mime_type").notNull(), // pdf, docx, etc.
   lastModified: timestamp("last_modified").notNull().defaultNow(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
 });
@@ -83,10 +83,10 @@ export const solutions = pgTable("solutions", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   caseId: integer("case_id").references(() => cases.id),
   solutionCategory: varchar("solution_category").notNull(), // e.g., product, process, service...
-  solutionDescription: text("solution_description"),
-  isTested: boolean("is_tested").default(false),
+  solutionDescription: text("solution_description").notNull(),
+  isTested: boolean("is_tested").default(false).notNull(),
   testingText: text("testing_text"),
-  primaryPdfPublic: boolean("primary_pdf_public").default(false),
+  primaryPdfPublic: boolean("primary_pdf_public").default(false).notNull(),
   freeText: text("free_text"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
@@ -98,8 +98,12 @@ export const solutions = pgTable("solutions", {
 // --- Solution Illustrations (Image uploads)
 export const solutionIllustrations = pgTable("solution_illustrations", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  solutionId: integer("solution_id").references(() => solutions.id),
-  fileUploadId: integer("file_upload_id").references(() => fileUploads.id),
+  solutionId: integer("solution_id")
+    .references(() => solutions.id)
+    .notNull(),
+  fileUploadId: integer("file_upload_id")
+    .references(() => fileUploads.id)
+    .notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -107,8 +111,12 @@ export const solutionIllustrations = pgTable("solution_illustrations", {
 // --- Solution Attachments
 export const solutionAttachments = pgTable("solution_attachments", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  solutionId: integer("solution_id").references(() => solutions.id),
-  fileUploadId: integer("file_upload_id").references(() => fileUploads.id),
+  solutionId: integer("solution_id")
+    .references(() => solutions.id)
+    .notNull(),
+  fileUploadId: integer("file_upload_id")
+    .references(() => fileUploads.id)
+    .notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -116,8 +124,12 @@ export const solutionAttachments = pgTable("solution_attachments", {
 // --- Solution Primary PDF
 export const solutionPdfs = pgTable("solution_pdfs", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  solutionId: integer("solution_id").references(() => solutions.id),
-  fileUploadId: integer("file_upload_id").references(() => fileUploads.id),
+  solutionId: integer("solution_id")
+    .references(() => solutions.id)
+    .notNull(),
+  fileUploadId: integer("file_upload_id")
+    .references(() => fileUploads.id)
+    .notNull(),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
@@ -156,9 +168,15 @@ export const solutionsRelations = relations(solutions, ({ many, one }) => ({
     fields: [solutions.userId],
     references: [users.id],
   }),
-  illustrations: many(solutionIllustrations),
-  attachments: many(solutionAttachments),
-  solutionPdfs: many(solutionPdfs),
+  illustrations: many(solutionIllustrations, {
+    relationName: "solutionIllustrations",
+  }),
+  attachments: many(solutionAttachments, {
+    relationName: "solutionAttachments",
+  }),
+  solutionPdfs: many(solutionPdfs, {
+    relationName: "solutionPdfs",
+  }),
 }));
 
 export const illustrationsRelations = relations(
@@ -167,6 +185,7 @@ export const illustrationsRelations = relations(
     fileUpload: one(fileUploads, {
       fields: [solutionIllustrations.fileUploadId],
       references: [fileUploads.id],
+      relationName: "solutionIllustrations",
     }),
   }),
 );
@@ -175,6 +194,7 @@ export const solutionPdfsRelations = relations(solutionPdfs, ({ one }) => ({
   fileUpload: one(fileUploads, {
     fields: [solutionPdfs.fileUploadId],
     references: [fileUploads.id],
+    relationName: "solutionPdfs",
   }),
 }));
 
@@ -184,6 +204,7 @@ export const attachmentsRelations = relations(
     fileUpload: one(fileUploads, {
       fields: [solutionAttachments.fileUploadId],
       references: [fileUploads.id],
+      relationName: "solutionAttachments",
     }),
   }),
 );
