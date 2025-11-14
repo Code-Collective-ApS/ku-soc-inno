@@ -1,6 +1,11 @@
 import { desc, eq, sql } from "drizzle-orm";
 import { cases } from "~~/server/db/schema";
 import { db } from "../db";
+import {
+  type SwapDatesWithStrings,
+  serializeManyDates,
+  serializeDates,
+} from "../datetime";
 
 export const selectNewestCases = db.query.cases
   .findMany({
@@ -93,6 +98,27 @@ export const selectCaseById = db.query.cases
 export type CaseResponse = Awaited<
   ReturnType<typeof selectNewestCases.execute>
 >[number];
+
+export type CaseSerialized = SwapDatesWithStrings<CaseResponse> & {
+  solutions: {
+    id: number;
+    updatedAt: string;
+    solutionCategory: string;
+    solutionDescription: string;
+  }[];
+};
+
+// typescript makes me crazy sometimes
+export function serializeCase(_case: CaseResponse): CaseSerialized {
+  return {
+    ...serializeDates(_case),
+    solutions: serializeManyDates(_case.solutions),
+  };
+}
+
+export function serializeCases(_cases: CaseResponse[]): CaseSerialized[] {
+  return _cases.map(serializeCase);
+}
 
 export function stripCaseForContactInfo(_case: CaseResponse): CaseResponse {
   _case.contactName = "";

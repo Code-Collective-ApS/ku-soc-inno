@@ -1,5 +1,6 @@
 import { eq } from "drizzle-orm";
 import type { H3Event } from "h3";
+import { setResponseHeader, createError } from "h3";
 import {
   fileUploads,
   solutionAttachments,
@@ -7,7 +8,9 @@ import {
   solutionPdfs,
   solutions,
 } from "~~/server/db/schema";
+import { type SwapDatesWithStrings, serializeManyDates } from "../datetime";
 import { db } from "../db";
+import { fetchFileUpload } from "~~/server/utils/upload";
 
 export function selectSolutionIllustrations(solutionId: number) {
   return db
@@ -77,26 +80,22 @@ export async function selectSolutionById(id: number) {
     .from(solutions)
     .where(eq(solutions.id, id));
 
-  if (!solutions)
+  if (solRes.length === 0)
     throw createError({
       statusCode: 404,
       statusMessage: "Solution was not found!",
     });
+
   type _SolutionResponse = (typeof solRes)[number] & {
     attachments: SolutionAttachmentResponse;
     illustrations: SolutionIllustrationResponse;
     solutionPdfs: SolutionPdfResponse;
   };
 
-  const solution: Partial<_SolutionResponse> = solRes[0];
-
+  const solution: Partial<_SolutionResponse> = solRes[0]!;
   solution.illustrations = await selectSolutionIllustrations(id);
   solution.solutionPdfs = await selectSolutionPdfs(id);
   solution.attachments = await selectSolutionAttachments(id);
-
-  console.log("got these illustrations directly from db!:");
-  console.log(solution.illustrations);
-
   return solution as _SolutionResponse;
 }
 
@@ -109,6 +108,27 @@ export type SolutionIllustrationResponse = Awaited<
 >;
 export type SolutionPdfResponse = Awaited<
   ReturnType<typeof selectSolutionPdfs>
+>;
+
+export type SolutionPdfSerialized = SwapDatesWithStrings<
+  SolutionPdfResponse[number]
+>;
+export type SolutionAttachmentSerialized = SwapDatesWithStrings<
+  SolutionAttachmentResponse[number]
+>;
+export type SolutionIllustrationSerialized = SwapDatesWithStrings<
+  SolutionIllustrationResponse[number]
+>;
+
+export type SolutionSerialized = SwapDatesWithStrings<
+  Omit<
+    Omit<Omit<SolutionResponse, "attachments">, "solutionPdfs">,
+    "illustrations"
+  > & {
+    attachments: SolutionAttachmentSerialized[];
+    solutionPdfs: SolutionPdfSerialized[];
+    illustrations: SolutionIllustrationSerialized[];
+  }
 >;
 
 export function stripSolutionForPdfs(
@@ -168,4 +188,24 @@ export async function serveSolutionFile<
   }
 
   return readable;
+}
+
+// typescript makes me crazy sometimes
+export function serializeSolution(
+  _solution: SolutionResponse,
+): SolutionSerialized {
+  return {
+    ..._solution,
+    updatedAt: _solution.updatedAt?.toISOString?.(),
+    createdAt: _solution.createdAt?.toISOString?.(),
+    attachments: serializeManyDates<SolutionAttachmentResponse[number]>(
+      _solution.attachments,
+    ),
+    solutionPdfs: serializeManyDates<SolutionPdfResponse[number]>(
+      _solution.solutionPdfs,
+    ),
+    illustrations: serializeManyDates<SolutionIllustrationResponse[number]>(
+      _solution.illustrations,
+    ),
+  } satisfies SolutionSerialized;
 }
