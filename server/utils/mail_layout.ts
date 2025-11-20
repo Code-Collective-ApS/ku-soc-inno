@@ -301,13 +301,11 @@ export const generateMail = (
                   >
                     <tr>
                       <td class="content-block">
-                        <span class="apple-link"
-                          >ode Collective ApS, CVR 43805150</span
+                        <span class="apple-link">Sociologisk Institut - Københavns Universitet</span
                         >
                         <br />
-                        You receive these emails because you requested a new
-                        Soc-inno account. <br />
-                        You are free to ignore and delete this email.
+                        Du modtager denne email fordi du har anmodet om en
+                        Soc-inno konto.
                       </td>
                     </tr>
                   </table>
