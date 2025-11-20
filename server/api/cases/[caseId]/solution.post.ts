@@ -9,6 +9,7 @@ import { uploadFile } from "~~/server/utils/s3";
 import {
   fileUploads,
   solutionAttachments,
+  solutionCategories,
   solutionIllustrations,
   solutionPdfs,
   solutions,
@@ -225,6 +226,13 @@ export default defineEventHandler(async (event) => {
       solutionId: insertedId,
     })),
   );
+
+  // add solution categories
+  await db
+    .insert(solutionCategories)
+    .values(
+      parsedFields.solutionCategories.map((cat) => ({ solutionCategory: cat })),
+    );
 
   console.log({
     insertedIllustrationFileUploads,

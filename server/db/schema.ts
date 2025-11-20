@@ -90,9 +90,9 @@ export const solutions = pgTable("solutions", {
     .notNull(),
 });
 
-export const solutionCategories = pgTable("predefined_solution_cats", {
+export const solutionCategories = pgTable("solution_cats", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  solutionCategory: varchar("solution_category").notNull().unique(), // e.g., product, process, service...
+  solutionCategory: varchar("solution_category").notNull(),
   solutionId: integer("solution_id").references(() => solutions.id),
 });
 
