@@ -63,37 +63,45 @@ export function selectSolutionPdfs(solutionId: number) {
 }
 
 export async function selectSolutionById(id: number) {
-  const solRes = await db
-    .select({
-      id: solutions.id,
-      userId: solutions.userId,
-      caseId: solutions.caseId,
-      solutionDescription: solutions.solutionDescription,
-      solutionCategory: solutions.solutionCategory,
-      freeText: solutions.freeText,
-      isTested: solutions.isTested,
-      testingText: solutions.testingText,
-      primaryPdfPublic: solutions.primaryPdfPublic,
-      updatedAt: solutions.updatedAt,
-      createdAt: solutions.createdAt,
-      dataText: solutions.dataText,
-    })
-    .from(solutions)
-    .where(eq(solutions.id, id));
+  const solRes = await db.query.solutions.findFirst({
+    columns: {
+      id: true,
+      userId: true,
+      caseId: true,
+      solutionDescription: true,
+      freeText: true,
+      isTested: true,
+      testingText: true,
+      primaryPdfPublic: true,
+      updatedAt: true,
+      createdAt: true,
+      dataText: true,
+    },
+    with: {
+      solutionCategories: {
+        columns: {
+          id: true,
+          solutionCategory: true,
+        },
+      },
+    },
+    where: eq(solutions.id, id),
+  });
 
-  if (solRes.length === 0)
+  if (!solRes)
     throw createError({
       statusCode: 404,
       statusMessage: "Solution was not found!",
     });
 
-  type _SolutionResponse = (typeof solRes)[number] & {
+  type _SolutionResponse = typeof solRes & {
     attachments: SolutionAttachmentResponse;
     illustrations: SolutionIllustrationResponse;
     solutionPdfs: SolutionPdfResponse;
+    solutionCategories: SolutionCategoryResponse[];
   };
 
-  const solution: Partial<_SolutionResponse> = solRes[0]!;
+  const solution: Partial<_SolutionResponse> = solRes;
   solution.illustrations = await selectSolutionIllustrations(id);
   solution.solutionPdfs = await selectSolutionPdfs(id);
   solution.attachments = await selectSolutionAttachments(id);
@@ -104,6 +112,10 @@ export type SolutionResponse = Awaited<ReturnType<typeof selectSolutionById>>;
 export type SolutionAttachmentResponse = Awaited<
   ReturnType<typeof selectSolutionAttachments>
 >;
+export type SolutionCategoryResponse = {
+  id: number;
+  solutionCategory: string;
+};
 export type SolutionIllustrationResponse = Awaited<
   ReturnType<typeof selectSolutionIllustrations>
 >;

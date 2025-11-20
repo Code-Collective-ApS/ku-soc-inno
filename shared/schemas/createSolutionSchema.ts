@@ -1,9 +1,10 @@
+import { SOLUTION_CATEGORIES_VALUES } from "#imports";
 import * as z from "zod";
 
 export const createSolutionFieldsSchema = z.strictObject({
-  solutionCategory: z
-    .string()
-    .min(2, "Du skal vælge en kategori til løsningen"),
+  solutionCategories: z
+    .array(z.enum(SOLUTION_CATEGORIES_VALUES))
+    .min(1, "Du skal vælge/indtaste minimum 1 løsningskategori"),
   solutionDescription: z
     .string()
     .min(2, "Du skal indtaste en beskrivelse af løsningen"),

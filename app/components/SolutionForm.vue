@@ -12,7 +12,7 @@
         <UCard variant="subtle" class="mt-4">
           <div class="flex flex-col gap-y-3">
             <UFormField label="Kategori på løsningen" name="solutionCategory">
-              <SolutionCategoryDropdown v-model="state.solutionCategory" />
+              <SolutionCategoryDropdown v-model="state.solutionCategories" />
             </UFormField>
 
             <UFormField
@@ -86,8 +86,17 @@
               <AttachmentsFormComponent v-model="state.attachments" />
             </UFormField>
 
+            <UFormField label="Dataindsamling" name="dataText">
+              <UTextarea
+                v-model="state.dataText"
+                :rows="9"
+                class="w-full"
+                size="xl"
+              />
+            </UFormField>
+
             <UFormField
-              label="Andet, der er relevant at nævne?"
+              label="Tilføj evt. opmærksomhedspunkter omkring test og/eller implementering"
               name="freeText"
             >
               <UTextarea
@@ -97,6 +106,16 @@
                 size="xl"
               />
             </UFormField>
+          </div>
+
+          <div class="mt-6">
+            <UButton
+              size="xl"
+              class="cursor-pointer"
+              @click="(e) => onSubmit(e)"
+            >
+              Opret løsning
+            </UButton>
           </div>
         </UCard>
       </div>
@@ -114,10 +133,6 @@
               :items="isPrimaryPdfPublic"
             />
           </UFormField>
-
-          <UButton size="xl" class="cursor-pointer" type="submit">
-            Bekræft
-          </UButton>
         </UCard>
       </div>
     </div>
@@ -125,7 +140,7 @@
 </template>
 
 <script lang="ts" setup>
-import type { FormSubmitEvent } from "@nuxt/ui";
+import type { FormSubmitEvent } from "#ui/types";
 import {
   createSolutionSchema,
   type CreateSolutionSchema,
@@ -155,26 +170,33 @@ const state = reactive<Partial<CreateSolutionSchema>>({
   primaryPdf: undefined,
   attachments: [],
   illustrations: [],
-  solutionCategory: "",
+  solutionCategories: [],
   solutionDescription: "",
   testingText: "",
   freeText: "",
+  dataText: "",
 });
 
 const toast = useToast();
 
 async function onSubmit(
-  event: undefined | FormSubmitEvent<CreateSolutionSchema>,
+  event: undefined | MouseEvent | FormSubmitEvent<CreateSolutionSchema>,
 ) {
-  const payload = event?.data ?? state;
+  const payload =
+    (event as FormSubmitEvent<CreateSolutionSchema>)?.data ?? state;
+  console.log("payload:", payload);
 
   const body = new FormData();
   body.append("isTested", !!state.isTested + "");
   body.append("primaryPdfPublic", !!state.primaryPdfPublic + "");
-  body.append("solutionCategory", state.solutionCategory ?? "");
+  body.append(
+    "solutionCategories",
+    JSON.stringify(state.solutionCategories) || "[]",
+  );
   body.append("solutionDescription", state.solutionDescription ?? "");
   body.append("testingText", state.testingText ?? "");
   body.append("freeText", state.freeText ?? "");
+  body.append("dataText", state.dataText ?? "");
   body.append("primaryPdf", payload.primaryPdf!, payload.primaryPdf?.name);
   for (const illu of payload.illustrations!) {
     body.append("illustrations[]", illu!, illu!.name);
@@ -193,6 +215,13 @@ async function onSubmit(
           icon: "i-mdi-check",
           color: "success",
         });
+        const insertedId = ctx.response?._data?.solutionId;
+        if (typeof insertedId !== "number") {
+          throw new Error(
+            "Create solution endpoint did not return inserted id",
+          );
+        }
+        navigateTo(`/cases/${props.caseId}/solutions/${insertedId}`);
       } else if (ctx.response.ok) {
         throw new Error(
           "Response status code is not recognized: " + ctx.response.status,

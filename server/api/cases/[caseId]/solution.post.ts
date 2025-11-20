@@ -21,13 +21,16 @@ const paramDto = z.strictObject({
 });
 
 function getFields(fields: Fields) {
+  const solutionCategories = JSON.parse(fields.solutionCategories?.[0]);
+  console.log("got solution cats::::", solutionCategories);
   const obj = {
-    solutionCategory: fields.solutionCategory?.[0],
+    solutionCategories: solutionCategories,
     solutionDescription: fields.solutionDescription?.[0],
     isTested: fields.isTested?.[0] === "true",
     testingText: fields.testingText?.[0],
     primaryPdfPublic: fields.primaryPdfPublic?.[0] === "true",
     freeText: fields.freeText?.[0],
+    dataText: fields.dataText?.[0],
   };
   return createSolutionFieldsSchema.parseAsync(obj);
 }
@@ -108,12 +111,16 @@ export default defineEventHandler(async (event) => {
     maxTotalFileSize: 1 * 1024 * 1024 * 1024,
   });
 
+  console.log("parsing fields!");
   const parsedFields = await getFields(fields).catch((e) => {
+    console.log("parsing fields error!");
+    console.error(e);
     throw createError({
       statusCode: 400,
       message: e.message,
     });
   });
+  console.log("parsing fields done!");
 
   const { parse, dispose } = getFiles(
     files,
@@ -229,4 +236,6 @@ export default defineEventHandler(async (event) => {
   await dispose();
 
   setResponseStatus(event, 201);
+
+  return { solutionId: res[0]!.id };
 });

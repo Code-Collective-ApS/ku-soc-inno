@@ -73,19 +73,10 @@ export const barriers = pgTable("barriers", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
-export const predefinedSolutionCategories = pgTable(
-  "predefined_solution_cats",
-  {
-    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-    solutionCategory: varchar("solution_category").notNull().unique(), // e.g., product, process, service...
-  },
-);
-
 // --- Solution Table ---
 export const solutions = pgTable("solutions", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   caseId: integer("case_id").references(() => cases.id),
-  solutionCategory: varchar("solution_category").notNull(), // e.g., product, process, service...
   solutionDescription: text("solution_description").notNull(),
   isTested: boolean("is_tested").default(false).notNull(),
   dataText: text("data_text").notNull(),
@@ -97,6 +88,12 @@ export const solutions = pgTable("solutions", {
   userId: integer("user_id")
     .references(() => users.id)
     .notNull(),
+});
+
+export const solutionCategories = pgTable("predefined_solution_cats", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  solutionCategory: varchar("solution_category").notNull().unique(), // e.g., product, process, service...
+  solutionId: integer("solution_id").references(() => solutions.id),
 });
 
 // --- Solution Illustrations (Image uploads)
@@ -152,7 +149,17 @@ export const categoryTagsRelations = relations(categoryTags, ({ one }) => ({
   }),
 }));
 
-// --- Relations ---
+export const solutionCategoryRelations = relations(
+  solutionCategories,
+  ({ one }) => ({
+    solution: one(solutions, {
+      fields: [solutionCategories.solutionId],
+      references: [solutions.id],
+      relationName: "solutionCategories",
+    }),
+  }),
+);
+
 export const casesRelations = relations(cases, ({ one, many }) => ({
   categoryTags: many(categoryTags),
   barriers: many(barriers),
@@ -171,6 +178,9 @@ export const solutionsRelations = relations(solutions, ({ many, one }) => ({
   user: one(users, {
     fields: [solutions.userId],
     references: [users.id],
+  }),
+  solutionCategories: many(solutionCategories, {
+    relationName: "solutionCategories",
   }),
   illustrations: many(solutionIllustrations, {
     relationName: "solutionIllustrations",

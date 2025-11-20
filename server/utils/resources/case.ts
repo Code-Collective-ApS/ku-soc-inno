@@ -43,9 +43,16 @@ export const selectNewestCases = db.query.cases
         },
       },
       solutions: {
+        with: {
+          solutionCategories: {
+            columns: {
+              id: true,
+              solutionCategory: true,
+            },
+          },
+        },
         columns: {
           id: true,
-          solutionCategory: true,
           solutionDescription: true,
           updatedAt: true,
         },
@@ -90,9 +97,16 @@ export const selectCaseById = db.query.cases
         },
       },
       solutions: {
+        with: {
+          solutionCategories: {
+            columns: {
+              id: true,
+              solutionCategory: true,
+            },
+          },
+        },
         columns: {
           id: true,
-          solutionCategory: true,
           solutionDescription: true,
           updatedAt: true,
         },
@@ -109,7 +123,10 @@ export type CaseSerialized = SwapDatesWithStrings<CaseResponse> & {
   solutions: {
     id: number;
     updatedAt: string;
-    solutionCategory: string;
+    solutionCategories: {
+      id: number;
+      solutionCategory: string;
+    }[];
     solutionDescription: string;
   }[];
 };
