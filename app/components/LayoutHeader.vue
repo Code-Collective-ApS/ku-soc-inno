@@ -70,7 +70,7 @@
 </template>
 
 <script setup lang="ts">
-import type { NavigationMenuItem } from "@nuxt/ui";
+import type { NavigationMenuItem } from "#ui/types";
 
 const route = useRoute();
 const { user, clear, loggedIn } = useUserSession();
