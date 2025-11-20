@@ -184,7 +184,6 @@ async function onSubmit(
 ) {
   const payload =
     (event as FormSubmitEvent<CreateSolutionSchema>)?.data ?? state;
-  console.log("payload:", payload);
 
   const body = new FormData();
   body.append("isTested", !!state.isTested + "");

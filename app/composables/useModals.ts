@@ -10,17 +10,13 @@ export function useModals() {
   const imageModal = overlay.create(FancyImageModal);
 
   async function openLoginModal(): Promise<boolean> {
-    console.log("login modal opening!");
     const modalInstance = loginModal.open({});
     const result = await modalInstance.result;
-    console.log("login modal close with reuslt:", result);
     return result;
   }
   async function openCreateAccountModal(): Promise<boolean> {
-    console.log("create account modal opening!");
     const modalInstance = createAccountModal.open({});
     const result = await modalInstance.result;
-    console.log("create account modal close with reuslt:", result);
     return result;
   }
 

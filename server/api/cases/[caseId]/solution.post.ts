@@ -23,7 +23,6 @@ const paramDto = z.strictObject({
 
 function getFields(fields: Fields) {
   const solutionCategories = JSON.parse(fields.solutionCategories?.[0]);
-  console.log("got solution cats::::", solutionCategories);
   const obj = {
     solutionCategories: solutionCategories,
     solutionDescription: fields.solutionDescription?.[0],
@@ -112,16 +111,13 @@ export default defineEventHandler(async (event) => {
     maxTotalFileSize: 1 * 1024 * 1024 * 1024,
   });
 
-  console.log("parsing fields!");
   const parsedFields = await getFields(fields).catch((e) => {
-    console.log("parsing fields error!");
     console.error(e);
     throw createError({
       statusCode: 400,
       message: e.message,
     });
   });
-  console.log("parsing fields done!");
 
   const { parse, dispose } = getFiles(
     files,
@@ -228,11 +224,12 @@ export default defineEventHandler(async (event) => {
   );
 
   // add solution categories
-  await db
-    .insert(solutionCategories)
-    .values(
-      parsedFields.solutionCategories.map((cat) => ({ solutionCategory: cat })),
-    );
+  await db.insert(solutionCategories).values(
+    parsedFields.solutionCategories.map((cat) => ({
+      solutionCategory: cat,
+      solutionId: res[0]!.id,
+    })),
+  );
 
   console.log({
     insertedIllustrationFileUploads,

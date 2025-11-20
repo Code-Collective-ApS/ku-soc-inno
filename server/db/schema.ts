@@ -92,8 +92,10 @@ export const solutions = pgTable("solutions", {
 
 export const solutionCategories = pgTable("solution_cats", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  solutionCategory: varchar("solution_category").notNull(),
-  solutionId: integer("solution_id").references(() => solutions.id),
+  solutionCategory: varchar("solution_category").notNull(), // e.g., product, process, service...
+  solutionId: integer("solution_id")
+    .references(() => solutions.id)
+    .notNull(),
 });
 
 // --- Solution Illustrations (Image uploads)

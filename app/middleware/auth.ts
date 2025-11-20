@@ -3,9 +3,6 @@ export default defineNuxtRouteMiddleware((to, _from) => {
   const loggedIn = sess?.loggedIn?.value;
   const user = sess?.user.value;
   const emailVerifiedAt = user?.emailVerifiedAt;
-  console.log("loggedIn:", loggedIn);
-  console.log("user:", user);
-  console.log("email_verified_at:", emailVerifiedAt);
 
   // redirect the user to the login screen if they're not authenticated
   if (!loggedIn) {

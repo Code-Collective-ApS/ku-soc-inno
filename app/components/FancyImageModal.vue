@@ -58,8 +58,5 @@ function copyLink() {
     icon: "i-mdi-check",
     color: "success",
   });
-
-  console.log("props.src is", props.src);
-  console.log("url is", url);
 }
 </script>

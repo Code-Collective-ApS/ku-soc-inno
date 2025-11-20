@@ -18,7 +18,6 @@ const signature = route.query?.sig;
 
 await callOnce(async () => {
   if (user.value?.emailVerifiedAt) {
-    console.log("User is already verified");
     await navigateTo("/?emailVerified=2");
   }
 });
@@ -41,7 +40,6 @@ const { data, pending, error, refresh } = await useCsrfFetch(
     onResponse: async (ctx) => {
       console.log("got verify-email response:", ctx.response?._data);
       if (ctx.response.status === 204) {
-        console.log("response was 204");
         await navigateTo("/?emailVerified=2", { replace: true });
       }
       if (ctx.response?._data?.isValid) {
