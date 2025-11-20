@@ -23,6 +23,9 @@ export const selectNewestCases = db.query.cases
       userId: true,
       createdAt: true,
       updatedAt: true,
+      organizationType: true,
+      sector: true,
+      dataText: true,
     },
     limit: sql.placeholder("limit"),
     offset: sql.placeholder("offset"),
@@ -69,6 +72,9 @@ export const selectCaseById = db.query.cases
       userId: true,
       createdAt: true,
       updatedAt: true,
+      organizationType: true,
+      sector: true,
+      dataText: true,
     },
     with: {
       barriers: {

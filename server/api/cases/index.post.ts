@@ -34,10 +34,15 @@ export default defineEventHandler(async (event) => {
       title: body.title,
       freeText: body.freeText,
       userId: user.id,
+      organizationType: body.organizationType,
+      sector: body.organizationSector,
+      dataText: body.dataText,
     })
     .returning({
       id: cases.id,
     });
+
+  const caseId = createdCase[0]!.id;
 
   // create tags
   const newTags = body.categories.map((tag) => ({
@@ -60,4 +65,6 @@ export default defineEventHandler(async (event) => {
   });
 
   setResponseStatus(event, 201);
+
+  return { caseId: caseId };
 });

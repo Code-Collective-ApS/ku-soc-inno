@@ -5,14 +5,16 @@
       :items="breadcrumb"
       class="mb-3"
     />
-    <PageTitle>Create new case</PageTitle>
+    <PageTitle>Opret ny case</PageTitle>
     <CaseForm />
   </UContainer>
 </template>
 
 <script setup lang="ts">
-import type { BreadcrumbItem } from "@nuxt/ui";
+import type { BreadcrumbItem } from "#ui/types";
+
 useToasters();
+
 const breadcrumb = ref<BreadcrumbItem[]>([
   {
     label: "Cases",
@@ -20,7 +22,7 @@ const breadcrumb = ref<BreadcrumbItem[]>([
     to: "/cases",
   },
   {
-    label: "Create new",
+    label: "Opret ny",
     to: "/cases/new",
   },
 ]);

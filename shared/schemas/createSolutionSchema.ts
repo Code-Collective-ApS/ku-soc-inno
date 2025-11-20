@@ -12,6 +12,9 @@ export const createSolutionFieldsSchema = z.strictObject({
     .string()
     .min(2, "Du skal indtaste tekst om testning af løsningen"),
   primaryPdfPublic: z.boolean(),
+  dataText: z
+    .string()
+    .min(2, "Du skal indtaste en beskrivelse af dataindsamlingen"),
   freeText: z.string().optional().default(""),
 });
 

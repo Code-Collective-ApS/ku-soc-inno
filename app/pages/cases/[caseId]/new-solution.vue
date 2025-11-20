@@ -47,7 +47,7 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => [
     to: `/cases/${currentCase.value?.id}`,
   },
   {
-    label: "Create new solution",
+    label: "Opret ny løsning",
   },
 ]);
 

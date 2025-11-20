@@ -40,6 +40,7 @@ export const cases = pgTable("cases", {
   challengeDescription: text("challenge_description").notNull(),
   importanceDescription: text("importance_description").notNull(),
   freeText: text("free_text"),
+  dataText: text("data_text").notNull(),
   contactName: varchar("contact_name").notNull(),
   contactOrganization: varchar("contact_organization").notNull(),
   contactTitle: varchar("contact_title").notNull(),
@@ -48,20 +49,10 @@ export const cases = pgTable("cases", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   sector: varchar("sector").notNull(),
-  organizationType: varchar("sector").notNull(),
+  organizationType: varchar("organization_type").notNull(),
   userId: integer("user_id")
     .references(() => users.id)
     .notNull(),
-});
-
-export const predefinedCaseSectors = pgTable("predefined_case_sectors", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  caseSector: varchar("case_sector").notNull().unique(),
-});
-
-export const predefinedCaseOrgTypes = pgTable("predefined_case_org_types", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  orgType: varchar("org_type").notNull().unique(),
 });
 
 // --- Category Tags (Many-to-many with Case) ---
@@ -97,6 +88,7 @@ export const solutions = pgTable("solutions", {
   solutionCategory: varchar("solution_category").notNull(), // e.g., product, process, service...
   solutionDescription: text("solution_description").notNull(),
   isTested: boolean("is_tested").default(false).notNull(),
+  dataText: text("data_text").notNull(),
   testingText: text("testing_text"),
   primaryPdfPublic: boolean("primary_pdf_public").default(false).notNull(),
   freeText: text("free_text"),

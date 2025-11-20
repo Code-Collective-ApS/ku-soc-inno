@@ -1,0 +1,1 @@
+ALTER TABLE "cases" ADD COLUMN "organization_type" varchar NOT NULL;

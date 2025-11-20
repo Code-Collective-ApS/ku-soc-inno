@@ -42,7 +42,7 @@
           type="submit"
           size="lg"
           color="success"
-          class="px-12"
+          class="px-12 cursor-pointer"
         >
           Create account
         </UButton>

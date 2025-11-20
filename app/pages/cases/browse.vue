@@ -6,20 +6,24 @@
       class="mb-3"
     />
     <PageTitle>Browse cases</PageTitle>
-    <CaseBrowser :cases="cases" />
+    <CaseBrowser
+      :cases="cases"
+      :refresh-cases="refresh"
+      :pending-cases="pending"
+    />
     <div v-if="error" class="text-error-500" v-text="error" />
   </UContainer>
 </template>
 
 <script setup lang="ts">
-import type { BreadcrumbItem } from "@nuxt/ui";
+import type { BreadcrumbItem } from "#ui/types";
 import { useCasesStore } from "~/stores/useCasesStore";
 useToasters();
 const casesStore = useCasesStore();
 const { cases } = storeToRefs(casesStore);
 const casesOffset = ref(0);
 const casesTake = ref(6);
-const { error } = await useAsyncData(
+const { error, refresh, pending } = await useAsyncData(
   "cases",
   () => casesStore.fetchCases(casesTake, casesOffset),
   {

@@ -76,6 +76,7 @@ export async function selectSolutionById(id: number) {
       primaryPdfPublic: solutions.primaryPdfPublic,
       updatedAt: solutions.updatedAt,
       createdAt: solutions.createdAt,
+      dataText: solutions.dataText,
     })
     .from(solutions)
     .where(eq(solutions.id, id));

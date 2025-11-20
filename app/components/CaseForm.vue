@@ -57,6 +57,15 @@
               <BarrierSelector v-model="state.barriers" />
             </UFormField>
 
+            <UFormField label="Dataindsamling" name="dataText">
+              <UTextarea
+                v-model="state.dataText"
+                :rows="9"
+                class="w-full"
+                size="xl"
+              />
+            </UFormField>
+
             <UFormField
               label="Andet, der er relevant at nævne?"
               name="freeText"
@@ -70,46 +79,68 @@
             </UFormField>
           </div>
         </UCard>
-      </div>
-
-      <div>
-        <h2 class="font-bold">Kontakt information</h2>
-        <UCard variant="subtle" class="mt-4">
-          <div class="flex flex-col gap-y-3">
-            <UCheckbox
-              v-model="state.contactPublic"
-              class="mb-2"
-              label="Synliggør kontakt information for offentligheden"
-            />
-            <UFormField label="Kontakt name" name="contactName">
-              <UInput v-model="state.contactName" @keydown.enter.prevent="" />
-            </UFormField>
-
-            <UFormField label="Kontakt titel" name="contactTitle">
-              <UInput v-model="state.contactTitle" @keydown.enter.prevent="" />
-            </UFormField>
-
-            <UFormField label="Kontakt organization" name="contactOrganization">
-              <UInput
-                v-model="state.contactOrganization"
-                @keydown.enter.prevent=""
-              />
-            </UFormField>
-            <UFormField label="Kontakt email" name="contactEmail">
-              <UInput v-model="state.contactEmail" @keydown.enter.prevent="" />
-            </UFormField>
-          </div>
-        </UCard>
         <UButton size="xl" class="cursor-pointer mt-6" type="submit">
           Opret case
         </UButton>
+      </div>
+
+      <div class="flex flex-col gap-8">
+        <div>
+          <h2 class="font-bold">Organisation</h2>
+          <UCard variant="subtle" class="mt-4 relative">
+            <div class="flex flex-col gap-y-3">
+              <UFormField label="Type" name="organizationType">
+                <OrganizationTypeInput v-model="state.organizationType" />
+              </UFormField>
+
+              <UFormField label="Sektor" name="organizationSector">
+                <OrganizationSectorInput v-model="state.organizationSector" />
+              </UFormField>
+            </div>
+          </UCard>
+        </div>
+        <div>
+          <h2 class="font-bold">Kontaktinformation</h2>
+          <UCard variant="subtle" class="mt-4 relative">
+            <div class="flex flex-col gap-y-3">
+              <UCheckbox
+                v-model="state.contactPublic"
+                class="mb-2"
+                label="Synliggør kontaktinformation for offentligheden"
+              />
+              <UFormField label="Navn" name="contactName">
+                <UInput v-model="state.contactName" @keydown.enter.prevent="" />
+              </UFormField>
+
+              <UFormField label="Titel" name="contactTitle">
+                <UInput
+                  v-model="state.contactTitle"
+                  @keydown.enter.prevent=""
+                />
+              </UFormField>
+
+              <UFormField label="Organisation" name="contactOrganization">
+                <UInput
+                  v-model="state.contactOrganization"
+                  @keydown.enter.prevent=""
+                />
+              </UFormField>
+              <UFormField label="Email" name="contactEmail">
+                <UInput
+                  v-model="state.contactEmail"
+                  @keydown.enter.prevent=""
+                />
+              </UFormField>
+            </div>
+          </UCard>
+        </div>
       </div>
     </div>
   </UForm>
 </template>
 
 <script lang="ts" setup>
-import type { FormSubmitEvent } from "@nuxt/ui";
+import type { FormSubmitEvent } from "#ui/types";
 import {
   createCaseSchema,
   type CreateCaseSchema,
@@ -130,6 +161,9 @@ const state = reactive<Partial<CreateCaseSchema>>({
   barriers: [],
   freeText: "",
   importanceDescription: "",
+  organizationSector: undefined,
+  organizationType: undefined,
+  dataText: "",
 });
 
 const toast = useToast();
@@ -144,6 +178,11 @@ async function onSubmit(event: FormSubmitEvent<CreateCaseSchema>) {
           icon: "i-mdi-check",
           color: "success",
         });
+        const id = ctx?.response?._data?.caseId;
+        if (typeof id !== "number") {
+          throw new Error("Returned case id was not a number");
+        }
+        navigateTo(`/cases/${id}`);
       } else if (ctx.response.ok) {
         throw new Error(
           "Response status code is not recognized: " + ctx.response.status,
