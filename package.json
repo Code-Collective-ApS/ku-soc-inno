@@ -16,9 +16,9 @@
   },
   "dependencies": {
     "@aws-sdk/client-s3": "^3.919.0",
-    "@nuxt/eslint": "1.9.0",
-    "@nuxt/ui": "4.0.1",
-    "@pinia/nuxt": "0.11.2",
+    "@nuxt/eslint": "^1.10.0",
+    "@nuxt/ui": "4.2.0",
+    "@pinia/nuxt": "^0.11.3",
     "@types/nodemailer": "^7.0.2",
     "drizzle-orm": "^0.44.6",
     "eslint": "^9.37.0",
