@@ -108,10 +108,23 @@
             </UFormField>
           </div>
 
+          <UAlert
+            v-if="errorMsg"
+            title="Løsningen blev ikke oprettet. Fejlmeddelelse:"
+            :description="errorMsg"
+            variant="soft"
+            color="error"
+            icon="i-mdi-error-outline"
+            class="mb-3 mt-6"
+          >
+            {{ errorMsg }}
+          </UAlert>
+
           <div class="mt-6">
             <UButton
               size="xl"
               class="cursor-pointer"
+              :loading="loading"
               @click="(e) => onSubmit(e)"
             >
               Opret løsning
@@ -145,6 +158,7 @@ import {
   createSolutionSchema,
   type CreateSolutionSchema,
 } from "~~/shared/schemas/createSolutionSchema";
+const loading = ref(false);
 
 const isTestedRadios = ref([
   { label: "Ja", value: true },
@@ -154,6 +168,7 @@ const isPrimaryPdfPublic = ref([
   { label: "Ja", value: true },
   { label: "Nej", value: false },
 ]);
+const errorMsg = ref("");
 
 const props = defineProps({
   caseId: {
@@ -182,6 +197,8 @@ const toast = useToast();
 async function onSubmit(
   event: undefined | MouseEvent | FormSubmitEvent<CreateSolutionSchema>,
 ) {
+  loading.value = true;
+  errorMsg.value = "";
   const payload =
     (event as FormSubmitEvent<CreateSolutionSchema>)?.data ?? state;
 
@@ -204,17 +221,18 @@ async function onSubmit(
     body.append("attachments[]", att!, att!.name);
   }
 
-  await $csrfFetch(`/api/cases/${props.caseId}/solution`, {
+  $csrfFetch(`/api/cases/${props.caseId}/solution`, {
     method: "POST",
     body: body,
     onResponse: async (ctx) => {
       if (ctx.response.status === 201) {
         toast.add({
-          title: "The solution was successfully created",
+          title: "Løsningen blev oprettet",
           icon: "i-mdi-check",
           color: "success",
         });
         const insertedId = ctx.response?._data?.solutionId;
+        loading.value = false;
         if (typeof insertedId !== "number") {
           throw new Error(
             "Create solution endpoint did not return inserted id",
@@ -222,6 +240,7 @@ async function onSubmit(
         }
         navigateTo(`/cases/${props.caseId}/solutions/${insertedId}`);
       } else if (ctx.response.ok) {
+        loading.value = false;
         throw new Error(
           "Response status code is not recognized: " + ctx.response.status,
         );
@@ -231,11 +250,9 @@ async function onSubmit(
       const msg = await parseApiError(
         ctx.error || ctx.response || ctx || "Unknown error",
       );
-      toast.add({
-        icon: "material-symbols:error-circle-rounded-outline-sharp",
-        title: msg,
-        color: "error",
-      });
+      errorMsg.value = msg;
+      // TODO: report error
+      loading.value = false;
     },
   });
 }
