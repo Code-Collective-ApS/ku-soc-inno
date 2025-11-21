@@ -8,6 +8,10 @@ export function updatePassword(userId: number, hashedPassword: string) {
     .where(eq(users.id, userId));
 }
 
+export function updateEmail(userId: number, email: string) {
+  return db.update(users).set({ email: email }).where(eq(users.id, userId));
+}
+
 export function setEmailVerified(userId: number) {
   return db
     .update(users)

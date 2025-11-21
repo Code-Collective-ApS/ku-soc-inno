@@ -94,8 +94,8 @@ const navItems = computed<NavigationMenuItem[]>(() => [
 const profileItems = ref<NavigationMenuItem[][]>([
   [
     {
-      label: "My account",
-      icon: "i-lucide-box",
+      label: "Profil",
+      icon: "i-lucide-user",
       to: "/profile",
       active: route.path.startsWith("/profile"),
     },
