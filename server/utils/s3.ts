@@ -115,13 +115,27 @@ export async function uploadFile(
   const { s3, destroy } = getS3();
 
   try {
-    const res = await s3.send(
-      new PutObjectCommand({
-        Bucket: config.s3BucketName,
-        Key: config.s3Prefix + key,
-        Body: contents,
-      }),
+    let fetchDone = false;
+    const resProm = s3
+      .send(
+        new PutObjectCommand({
+          Bucket: config.s3BucketName,
+          Key: config.s3Prefix + key,
+          Body: contents,
+        }),
+      )
+      .then((_res) => {
+        fetchDone = true;
+        return _res;
+      });
+    const timeoutProm = new Promise<void>((ok, reject) =>
+      setTimeout(() => {
+        if (!fetchDone) reject("S3 File upload timeout error");
+        ok();
+      }, 10000),
     );
+    const [res] = await Promise.all([resProm, timeoutProm]);
+
     if (res.$metadata.httpStatusCode !== 200) {
       console.error("upload not succeeded!", res.$metadata);
       const err = createError({
