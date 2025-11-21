@@ -12,11 +12,11 @@ const ruleMap: Record<PasswordValidationRule, RegExp> = {
 
 const ruleErrors: Record<PasswordValidationRule, string> = {
   upper_digit_symbol:
-    "Adgangskoden skal indeholde mindst ét symbol, ét tal, ét stort bogstav og ét lille bogstav",
+    "Adgangskoden skal indeholde mindst 1 symbol, 1 tal, 1 stort bogstav og 1 lille bogstav",
   upper:
-    "Adgangskoden skal indeholde mindst ét stort bogstav og ét lille bogstav",
+    "Adgangskoden skal indeholde mindst 1 stort bogstav og 1 lille bogstav",
   upper_digit:
-    "Adgangskoden skal indeholde mindst ét tal, ét stort bogstav og ét lille bogstav",
+    "Adgangskoden skal indeholde mindst 1 tal, 1 stort bogstav og 1 lille bogstav",
 };
 
 /**
