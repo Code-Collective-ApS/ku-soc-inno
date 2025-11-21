@@ -1,6 +1,5 @@
-import { eq } from "drizzle-orm";
 import z from "zod";
-import { users } from "~~/server/db/schema";
+import { setEmailVerified } from "~~/server/utils/resources/user";
 
 const bodyDto = z.strictObject({
   sig: z.string().length(64),
@@ -21,7 +20,8 @@ export default defineEventHandler(async (event) => {
   if (user.emailVerifiedAt) {
     throw createError({
       statusCode: 204,
-      statusMessage: "Your account is already verified " + user.emailVerifiedAt,
+      statusMessage:
+        "Din konto er allerede verificeret " + user.emailVerifiedAt,
     });
   }
 
@@ -40,10 +40,7 @@ export default defineEventHandler(async (event) => {
 
     console.log({ targetSig, testSig, isValid });
     if (isValid) {
-      await db
-        .update(users)
-        .set({ emailVerifiedAt: new Date() })
-        .where(eq(users.id, user.id));
+      await setEmailVerified(user.id);
       console.log("successfully verified user", user.email);
       await refreshUserSession(event, user.id);
     } else {

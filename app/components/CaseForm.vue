@@ -174,7 +174,7 @@ async function onSubmit(event: FormSubmitEvent<CreateCaseSchema>) {
     onResponse: async (ctx) => {
       if (ctx.response.status === 201) {
         toast.add({
-          title: "Your cases was successfully saved",
+          title: "Casen er nu oprettet",
           icon: "i-mdi-check",
           color: "success",
         });

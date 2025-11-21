@@ -20,8 +20,8 @@ export function useToasters() {
         await navigateTo(path);
       } else if (query?.emailVerified === "2") {
         toast.add({
-          title: "Your account is already verified!",
-          description: "Welcome to Soc-inno 😇",
+          title: "Din konto er allerede verificeret!",
+          description: "Velkommen til Soc-inno 😇",
           icon: "noto:party-popper",
         });
         await navigateTo(path);

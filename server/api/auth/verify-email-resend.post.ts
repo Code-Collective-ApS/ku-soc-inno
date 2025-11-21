@@ -6,7 +6,7 @@ export default defineEventHandler(async (event) => {
   const { user: userSess } = await requireUserSession(event);
   if (userSess.emailVerifiedAt) {
     throw createError({
-      statusMessage: "Your email is already verified",
+      statusMessage: "Din email er allerede verificeret",
       statusCode: 400,
     });
   }

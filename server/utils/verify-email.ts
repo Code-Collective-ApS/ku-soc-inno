@@ -39,7 +39,7 @@ export async function sendVerifyEmailEmail(
     const link = generateVerificationLink(userId, email);
     await sendMail(
       email,
-      "Welcome to Soc-inno! Finish setting up your account",
+      "Velkommen til Soc-Inno! Færdiggør opsætning af din nye konto",
       verifyEmailTemplate(name, link),
       true,
     );
