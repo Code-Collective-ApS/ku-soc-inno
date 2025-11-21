@@ -50,9 +50,9 @@ export const cases = pgTable("cases", {
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   sector: varchar("sector").notNull(),
   organizationType: varchar("organization_type").notNull(),
-  userId: integer("user_id")
-    .references(() => users.id)
-    .notNull(),
+  userId: integer("user_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
 });
 
 // --- Category Tags (Many-to-many with Case) ---
@@ -85,9 +85,9 @@ export const solutions = pgTable("solutions", {
   freeText: text("free_text"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
-  userId: integer("user_id")
-    .references(() => users.id)
-    .notNull(),
+  userId: integer("user_id").references(() => users.id, {
+    onDelete: "set null",
+  }),
 });
 
 export const solutionCategories = pgTable("solution_cats", {

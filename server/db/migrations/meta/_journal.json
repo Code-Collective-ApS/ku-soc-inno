@@ -127,6 +127,20 @@
       "when": 1763659493711,
       "tag": "0017_eager_wonder_man",
       "breakpoints": true
+    },
+    {
+      "idx": 18,
+      "version": "7",
+      "when": 1763727210448,
+      "tag": "0018_lame_human_cannonball",
+      "breakpoints": true
+    },
+    {
+      "idx": 19,
+      "version": "7",
+      "when": 1763727300040,
+      "tag": "0019_military_sauron",
+      "breakpoints": true
     }
   ]
 }
