@@ -28,7 +28,13 @@
             class="shadow-md"
           >
             <div class="flex justify-between items-start">
-              <p>{{ s.solutionDescription }}</p>
+              <div class="overflow-hidden -mr-3 pr-3 relative">
+                <pre class="font-sans text-sm w-full whitespace-pre-line">{{
+                  s.solutionDescription.length > 200
+                    ? s.solutionDescription.slice(0, 640) + "..."
+                    : s.solutionDescription
+                }}</pre>
+              </div>
               <UButton
                 variant="link"
                 class="cursor-pointer"
@@ -37,10 +43,14 @@
                 >Open</UButton
               >
             </div>
-            <div>
-              <UBadge color="secondary" variant="soft">{{
-                s.solutionCategory
-              }}</UBadge>
+            <div class="flex gap-3">
+              <UBadge
+                v-for="cat in s.solutionCategories"
+                :key="cat.id"
+                color="secondary"
+                variant="soft"
+                >{{ cat.solutionCategory }}</UBadge
+              >
             </div>
           </UPageCard>
         </div>
