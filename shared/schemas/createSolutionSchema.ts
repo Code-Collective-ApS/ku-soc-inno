@@ -1,9 +1,8 @@
-import { SOLUTION_CATEGORIES_VALUES } from "#imports";
 import * as z from "zod";
 
 export const createSolutionFieldsSchema = z.strictObject({
   solutionCategories: z
-    .array(z.enum(SOLUTION_CATEGORIES_VALUES))
+    .array(z.string().min(2))
     .min(1, "Du skal vælge/indtaste minimum 1 løsningskategori"),
   solutionDescription: z
     .string()
