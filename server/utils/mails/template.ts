@@ -1,7 +1,13 @@
+export function escapeHTML(s: string) {
+  return s.replace(/[^0-9A-Za-z ]/g, (c) => "&#" + c.charCodeAt(0) + ";");
+}
+
 export const generateMail = (
   subject: string,
   content: string,
   preview: string,
+  recipientLoggedInAs: string | undefined,
+  isAdminNotification = false,
 ) => {
   const html = `
     <!doctype html>
@@ -301,11 +307,35 @@ export const generateMail = (
                   >
                     <tr>
                       <td class="content-block">
-                        <span class="apple-link">Sociologisk Institut - Københavns Universitet</span
-                        >
-                        <br />
-                        Du modtager denne email fordi du har anmodet om en
-                        Soc-inno konto.
+                        <span>
+                        ${
+                          isAdminNotification
+                            ? `
+
+                            Denne email er sendt til din
+                            Soc-inno administrator-bruger "${escapeHTML(recipientLoggedInAs!)}".
+                            <br />
+
+                        `
+                            : recipientLoggedInAs
+                              ? `
+                          Denne email er en system-email sendt fra din Soc-inno konto "${recipientLoggedInAs}".<br />
+                          Hvis du ikke ønsker at modtage denne e-mail, kan du slette din konto i appen eller ved at skrive en e-mail til os.
+                        `
+                              : `
+                              Du modtager denne email fordi du har anmodet om en
+                              Soc-inno konto.
+                          <br />
+                          <br />
+                        `
+                        }
+                        </span>
+                        <p>If anything seems wrong, please contact the maintainers at
+                        <a href="mailto:hello@codecollective.dk">hello@codecollective.dk</a>.
+                        </p>
+                        <span class="apple-link">
+                          Soc-inno &copy ${new Date().getFullYear()} Sociologisk Institut, Københavns Universitet
+                        </span>
                       </td>
                     </tr>
                   </table>

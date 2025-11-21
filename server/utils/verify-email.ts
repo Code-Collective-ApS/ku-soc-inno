@@ -1,5 +1,5 @@
 import crypto from "node:crypto";
-import { verifyEmailTemplate } from "./mails/verify-email";
+import { verifyEmailTemplate } from "./mails/templates/verify-email";
 
 const msPrMinute = 1000 * 60;
 

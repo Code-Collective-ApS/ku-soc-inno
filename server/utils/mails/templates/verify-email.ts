@@ -1,12 +1,12 @@
-import { generateMail } from "../mail_layout";
+import { generateMail, escapeHTML } from "../template";
 
 export const verifyEmailTemplate = (
-  name: string,
+  username: string,
   verifyLink: string,
 ): string => {
   const content = `
-    <p>Hello ${name}, and welcome to Soc-inno!</p>
-    <p>Please verify your email to finish setting up your new account.</p>
+    <p>Hej ${escapeHTML(username)}, og velkommen!</p>
+    <p>Tryk på dette link for at verificere din email og færdiggøre opsætningen af din Soc-Inno konto.</p>
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
       <tbody>
         <tr>
@@ -14,7 +14,7 @@ export const verifyEmailTemplate = (
             <table role="presentation" border="0" cellpadding="0" cellspacing="0">
               <tbody>
                 <tr>
-                  <td><a href="${verifyLink}" target="_blank">Verify email</a></td>
+                  <td><a href="${verifyLink}" target="_blank">Verificér email</a></td>
                 </tr>
               </tbody>
             </table>
@@ -22,14 +22,13 @@ export const verifyEmailTemplate = (
         </tr>
       </tbody>
     </table>
-    <p>Good luck!</p>
-    <p>If not, please reach out to the maintainers on nfb@codecollective.dk</p>
   `;
-  const previewText = `Welcome to Soc-inno! Please verify your email`;
+  const previewText = `Velkommen til Soc-inno! Verificér din email`;
   const fullHtml = generateMail(
-    "Please verify your email",
+    "Færdiggør opsætning af Soc-Inno konto",
     content,
     previewText,
+    undefined,
   );
   return fullHtml;
 };
