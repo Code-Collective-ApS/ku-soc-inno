@@ -1,7 +1,7 @@
 import { z } from "zod";
 import { eq, or } from "drizzle-orm";
 import { users } from "~~/server/db/schema";
-// import { sendVerifyEmailEmail } from "~~/server/utils/email-verification";
+import { isStrongEnough } from "~~/shared/utils/password_validation";
 
 const bodySchema = z.strictObject({
   password: z.string().min(6),
@@ -16,6 +16,15 @@ const debug = true;
 export default defineEventHandler(async (event) => {
   const { email, password, fullName, organization, title } =
     await readValidatedBody(event, bodySchema.parse);
+
+  const passwordValidationErr = isStrongEnough(password, 6, "upper_digit");
+  if (passwordValidationErr) {
+    throw createError({
+      statusCode: 400,
+      statusMessage: passwordValidationErr,
+    });
+  }
+
   if (debug) console.log("got valid create user request");
   const beginTime = new Date().getTime();
 
