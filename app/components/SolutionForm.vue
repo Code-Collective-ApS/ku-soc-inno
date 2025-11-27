@@ -86,15 +86,6 @@
               <AttachmentsFormComponent v-model="state.attachments" />
             </UFormField>
 
-            <UFormField label="Dataindsamling" name="dataText">
-              <UTextarea
-                v-model="state.dataText"
-                :rows="9"
-                class="w-full"
-                size="xl"
-              />
-            </UFormField>
-
             <UFormField
               label="Tilføj evt. opmærksomhedspunkter omkring test og/eller implementering"
               name="freeText"
@@ -189,7 +180,6 @@ const state = reactive<Partial<CreateSolutionSchema>>({
   solutionDescription: "",
   testingText: "",
   freeText: "",
-  dataText: "",
 });
 
 const toast = useToast();
@@ -212,7 +202,6 @@ async function onSubmit(
   body.append("solutionDescription", state.solutionDescription ?? "");
   body.append("testingText", state.testingText ?? "");
   body.append("freeText", state.freeText ?? "");
-  body.append("dataText", state.dataText ?? "");
   body.append("primaryPdf", payload.primaryPdf!, payload.primaryPdf?.name);
   for (const illu of payload.illustrations!) {
     body.append("illustrations[]", illu!, illu!.name);

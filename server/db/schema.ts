@@ -79,7 +79,6 @@ export const solutions = pgTable("solutions", {
   caseId: integer("case_id").references(() => cases.id),
   solutionDescription: text("solution_description").notNull(),
   isTested: boolean("is_tested").default(false).notNull(),
-  dataText: text("data_text").notNull(),
   testingText: text("testing_text"),
   primaryPdfPublic: boolean("primary_pdf_public").default(false).notNull(),
   freeText: text("free_text"),

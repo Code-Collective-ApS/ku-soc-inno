@@ -1,0 +1,1 @@
+ALTER TABLE "solutions" DROP COLUMN "data_text";

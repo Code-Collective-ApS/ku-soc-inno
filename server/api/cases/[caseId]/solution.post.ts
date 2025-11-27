@@ -30,7 +30,6 @@ function getFields(fields: Fields) {
     testingText: fields.testingText?.[0],
     primaryPdfPublic: fields.primaryPdfPublic?.[0] === "true",
     freeText: fields.freeText?.[0],
-    dataText: fields.dataText?.[0],
   };
   return createSolutionFieldsSchema.parseAsync(obj);
 }

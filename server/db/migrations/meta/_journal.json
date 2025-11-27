@@ -141,6 +141,13 @@
       "when": 1763727300040,
       "tag": "0019_military_sauron",
       "breakpoints": true
+    },
+    {
+      "idx": 20,
+      "version": "7",
+      "when": 1764272411124,
+      "tag": "0020_amazing_vampiro",
+      "breakpoints": true
     }
   ]
 }

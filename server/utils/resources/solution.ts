@@ -75,7 +75,6 @@ export async function selectSolutionById(id: number) {
       primaryPdfPublic: true,
       updatedAt: true,
       createdAt: true,
-      dataText: true,
     },
     with: {
       solutionCategories: {
