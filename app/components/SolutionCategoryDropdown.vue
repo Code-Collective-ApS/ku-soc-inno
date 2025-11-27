@@ -2,7 +2,7 @@
   <UInputMenu
     v-model="value"
     class="w-full"
-    placeholder="Vælg/skriv løsningskategori"
+    placeholder="Vælg/skriv nøgleord"
     value-key="value"
     :items="items"
     create-item

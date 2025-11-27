@@ -3,7 +3,7 @@ import * as z from "zod";
 export const createSolutionFieldsSchema = z.strictObject({
   solutionCategories: z
     .array(z.string().min(2))
-    .min(1, "Du skal vælge/indtaste minimum 1 løsningskategori"),
+    .min(1, "Du skal vælge/indtaste minimum 1 nøgleord til løsningen"),
   solutionDescription: z
     .string()
     .min(2, "Du skal indtaste en beskrivelse af løsningen"),

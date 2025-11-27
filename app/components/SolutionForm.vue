@@ -11,7 +11,10 @@
         <h2 class="font-bold">Løsning specifikation</h2>
         <UCard variant="subtle" class="mt-4">
           <div class="flex flex-col gap-y-3">
-            <UFormField label="Kategori på løsningen" name="solutionCategory">
+            <UFormField
+              label="Skriv minimum 1 nøgleord som beskriver typen af løsning"
+              name="solutionCategory"
+            >
               <SolutionCategoryDropdown v-model="state.solutionCategories" />
             </UFormField>
 
@@ -47,7 +50,7 @@
               />
             </UFormField>
 
-            <UFormField label="Hovedopgave (PDF)" name="primaryPdf">
+            <UFormField label="Rapport (PDF)" name="primaryPdf">
               <div class="flex gap-x-3 w-full">
                 <UFileUpload
                   v-model="state.primaryPdf"
@@ -66,6 +69,17 @@
                   }"
                 />
               </div>
+            </UFormField>
+
+            <UFormField
+              class="mb-6"
+              label="Vil du offentliggøre rapporten?"
+              name="primaryPdfPublic"
+            >
+              <URadioGroup
+                v-model="state.primaryPdfPublic"
+                :items="isPrimaryPdfPublic"
+              />
             </UFormField>
 
             <UFormField
@@ -124,21 +138,7 @@
         </UCard>
       </div>
 
-      <div>
-        <h2 class="font-bold mb-4">Opret løsning</h2>
-        <UCard variant="subtle" size="sm">
-          <UFormField
-            class="mb-6"
-            label="Vil du offentliggøre hovedopgaven?"
-            name="primaryPdfPublic"
-          >
-            <URadioGroup
-              v-model="state.primaryPdfPublic"
-              :items="isPrimaryPdfPublic"
-            />
-          </UFormField>
-        </UCard>
-      </div>
+      <div></div>
     </div>
   </UForm>
 </template>
