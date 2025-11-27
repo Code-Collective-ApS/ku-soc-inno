@@ -51,6 +51,8 @@ export default defineNuxtConfig({
         process.env.NUXT_MAX_ATTACHMENT_SIZE,
         10 * mb,
       ),
+      adminName: process.env.NUXT_PUBLIC_ADMIN_NAME,
+      adminEmail: process.env.NUXT_PUBLIC_ADMIN_EMAIL,
     },
   },
 });

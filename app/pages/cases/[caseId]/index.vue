@@ -19,24 +19,28 @@
       <CaseDetails :current-case="currentCase" />
     </div>
     <div v-if="currentCase">
-      <div class="mt-6">
-        <p class="font-bold mb-1">Publicerede løsninger på denne case</p>
-        <div class="flex flex-col gap-3">
+      <div class="mt-9">
+        <p class="text-3xl font-serif mb-6">Publicerede løsninger</p>
+        <div class="flex flex-col gap-9">
           <UPageCard
             v-for="s in currentCase?.solutions"
             :key="s.id"
             class="shadow-md"
+            variant="subtle"
           >
             <div class="flex justify-between items-start">
-              <div class="overflow-hidden -mr-3 pr-3 relative">
-                <pre class="font-sans text-sm w-full whitespace-pre-line">{{
-                  s.solutionDescription.length > 200
-                    ? s.solutionDescription.slice(0, 640) + "..."
-                    : s.solutionDescription
-                }}</pre>
+              <div class="overflow-hidden -mr-3 pr-6 relative">
+                <pre
+                  class="font-sans text-sm w-full max-w-4xl whitespace-pre-line"
+                  >{{
+                    s.solutionDescription.length > 200
+                      ? s.solutionDescription.slice(0, 640) + "..."
+                      : s.solutionDescription
+                  }}</pre
+                >
               </div>
               <UButton
-                variant="link"
+                variant="ghost"
                 class="cursor-pointer"
                 trailing-icon="mdi-chevron-right"
                 :to="`/cases/${caseId}/solutions/${s.id}`"
