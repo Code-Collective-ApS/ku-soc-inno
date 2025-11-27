@@ -36,13 +36,13 @@
       </div>
     </div>
     <div class="mb-3">
-      <p>Løsningsbarrierer</p>
+      <p class="mb-3">Løsningsbarrierer</p>
       <div class="inline-block">
-        <div class="flex flex-col gap-2">
+        <div class="flex flex-col gap-3">
           <div v-for="barrier in currentCase.barriers" :key="barrier.id">
             <div
               :key="barrier.id"
-              class="bg-indigo-50 px-3 py-2 items-center flex justify-between rounded-lg border border-indigo-300"
+              class="bg-indigo-50 px-2 py-1 items-center flex justify-between rounded-lg border border-indigo-300"
             >
               <span>{{ barrier.barrier }} </span>
             </div>
