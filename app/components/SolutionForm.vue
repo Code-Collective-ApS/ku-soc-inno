@@ -84,7 +84,7 @@
 
             <UFormField
               name="illustrations"
-              label="Upload 1-5 billeder, storyboards eller tilsvarende materiale, der illustrerer løsning som billedfil (jpg eller png)"
+              label="Upload 0-5 billeder, storyboards eller tilsvarende materiale, der illustrerer løsning som billedfil (jpg eller png)"
             >
               <MultipleImagesFormComponent
                 v-model="state.illustrations"
@@ -202,7 +202,9 @@ async function onSubmit(
   body.append("solutionDescription", state.solutionDescription ?? "");
   body.append("testingText", state.testingText ?? "");
   body.append("freeText", state.freeText ?? "");
-  body.append("primaryPdf", payload.primaryPdf!, payload.primaryPdf?.name);
+  if (payload.primaryPdf) {
+    body.append("primaryPdf", payload.primaryPdf!, payload.primaryPdf?.name);
+  }
   for (const illu of payload.illustrations!) {
     body.append("illustrations[]", illu!, illu!.name);
   }
@@ -239,6 +241,7 @@ async function onSubmit(
       const msg = await parseApiError(
         ctx.error || ctx.response || ctx || "Unknown error",
       );
+
       errorMsg.value = msg;
       // TODO: report error
       loading.value = false;

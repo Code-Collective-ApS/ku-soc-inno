@@ -18,11 +18,9 @@ export const createSolutionFieldsSchema = z.strictObject({
 export const createSolutionFilesSchema = z.strictObject({
   illustrations: z
     .array(z.file())
-    .min(1, "Du skal minimum vælge 1 illustration")
     .max(10, "Du kan vedhæfte maksimum 10 illustrationer"),
   attachments: z
     .array(z.file())
-    .min(1, "Du skal minimum vælge 1 vedhæftet fil")
     .max(10, "Du kan vedhæfte maksimum 10 filer"),
   primaryPdf: z.file("En løsning skal indeholde en hovedopgave"),
 });

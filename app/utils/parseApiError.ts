@@ -1,4 +1,4 @@
-import type { FetchError, FetchContext, ResponseType } from "ofetch";
+import type { FetchContext, ResponseType } from "ofetch";
 
 export async function parseApiError(_res: ApiErrorType): Promise<string> {
   // if res is string, return it already
@@ -17,6 +17,11 @@ export async function parseApiError(_res: ApiErrorType): Promise<string> {
   }
 
   if (
+    (_res as { _data: AnyBody })?._data?.message &&
+    (_res as { _data: AnyBody })?._data?.message.startsWith("[")
+  ) {
+    json = JSON.parse(_res._data.message);
+  } else if (
     (_res as { _data: AnyBody })?._data?.data?.message &&
     (_res as { _data: AnyBody })?._data?.data?.message.startsWith("[")
   ) {

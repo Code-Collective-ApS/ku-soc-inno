@@ -5,6 +5,7 @@
     placeholder="Vælg/skriv nøgleord"
     value-key="value"
     :items="items"
+    autocapitalize="none"
     create-item
     multiple
     @create="onCreate"

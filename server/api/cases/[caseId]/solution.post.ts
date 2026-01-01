@@ -40,9 +40,9 @@ function getFiles(
   maxIllustrationSize: number,
   maxPdfSize: number,
 ) {
-  const rawAttachments = files["attachments[]"];
-  const rawIllustrations = files["illustrations[]"];
-  const rawPrimaryPdf = files.primaryPdf;
+  const rawAttachments = files?.["attachments[]"];
+  const rawIllustrations = files?.["illustrations[]"];
+  const rawPrimaryPdf = files?.primaryPdf;
   const attachments: File[] = readFormidableFormFiles(
     rawAttachments,
     maxAttachmentSize,
@@ -112,9 +112,10 @@ export default defineEventHandler(async (event) => {
 
   const parsedFields = await getFields(fields).catch((e) => {
     console.error(e);
+    const msg = e?.message || 'Unknown error';
     throw createError({
       statusCode: 400,
-      message: e.message,
+      message: msg,
     });
   });
 

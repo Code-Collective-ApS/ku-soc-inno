@@ -13,7 +13,7 @@ export function readFormidableFormFiles(
   allowedTypes?: string[],
 ): File[] {
   const resultFiles: File[] = [];
-  for (const f of files) {
+  for (const f of (files || [])) {
     let lastModified = new Date(f.lastModifiedDate).getTime();
     let fileName = f.originalFilename;
     const size = f.size;
