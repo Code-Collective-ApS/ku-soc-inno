@@ -29,3 +29,7 @@ export const ORGANIZATION_SECTORS: Record<
 export const ORGANIZATION_SECTORS_VALUES = Object.keys(
   ORGANIZATION_SECTORS,
 ) as OrganizationSector[];
+
+export function getPrettySector(s: OrganizationSector) {
+  return ORGANIZATION_SECTORS[s].human;
+}

@@ -4,14 +4,7 @@
       <div v-for="c in cases" :key="c.id">
         <UPageCard :title="c.title" variant="subtle">
           <div class="flex gap-1.5">
-            <div v-for="tag in c.categoryTags" :key="tag.id">
-              <UBadge
-                size="md"
-                variant="soft"
-                color="secondary"
-                :label="tag.tag"
-              />
-            </div>
+            <CaseTags :c="c" />
           </div>
           <p class="whitespace-pre-line">{{ c.challengeDescription }}</p>
           <div class="text-right">

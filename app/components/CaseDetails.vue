@@ -6,9 +6,7 @@
 
     <div>
       <div class="flex gap-1.5">
-        <div v-for="tag in currentCase.categoryTags" :key="tag.id">
-          <UBadge size="md" variant="soft" color="secondary" :label="tag.tag" />
-        </div>
+        <CaseTags :c="currentCase" />
       </div>
     </div>
 
