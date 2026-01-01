@@ -6,11 +6,14 @@
         :items="breadcrumb"
         class="mb-3"
       />
-      <div class="flex gap-1.5">
-        <UButton color="secondary" variant="outline" to="/cases/new"
+      <div class="flex gap-3">
+        <UButton v-if="currentCase && user?.id === currentCase.userId" variant="subtle" color="neutral" icon="i-mdi-pencil" :to="`/cases/${currentCase.id}/edit`">
+          Redigér case
+        </UButton>
+        <UButton color="secondary" variant="subtle" to="/cases/new"
           >Opret ny case</UButton
         >
-        <UButton variant="outline" :to="`/cases/${caseId}/new-solution`"
+        <UButton variant="subtle" :to="`/cases/${caseId}/new-solution`"
           >Opret løsning på denne case</UButton
         >
       </div>
@@ -66,6 +69,7 @@
 <script setup lang="ts">
 import type { BreadcrumbItem } from "@nuxt/ui";
 import { useCasesStore } from "~/stores/useCasesStore";
+const { user } = useUserSession();
 const route = useRoute();
 const caseId = parseInt((route.params?.caseId as string) || "NaN");
 if (isNaN(caseId)) {

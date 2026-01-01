@@ -80,7 +80,7 @@
           </div>
         </UCard>
         <UButton size="xl" class="cursor-pointer mt-6" type="submit">
-          Opret case
+          {{ isEditing ? 'Gem case' : 'Opret case'}}
         </UButton>
       </div>
 
@@ -149,40 +149,55 @@ import {
 const { user } = useUserSession();
 const { $csrfFetch } = useNuxtApp();
 
+const props = defineProps({
+  case: {
+    type: Object as PropType<CaseSerialized>,
+    required: false,
+    default: () => undefined,
+  },
+});
+
+const c = computed(() => props.case);
+const isEditing = computed(() => !!props.case);
+
 const state = reactive<Partial<CreateCaseSchema>>({
-  title: "",
-  challengeDescription: "",
-  contactEmail: user.value?.email || "",
-  contactName: user.value?.fullName || "",
-  contactOrganization: user.value?.organization || "",
-  contactPublic: false,
-  contactTitle: user.value?.title || "",
-  categories: [],
-  barriers: [],
-  freeText: "",
-  importanceDescription: "",
-  organizationSector: undefined,
-  organizationType: undefined,
-  dataText: "",
+  title: c.value?.title || "",
+  challengeDescription: c.value?.challengeDescription || "",
+  contactEmail: c.value?.contactEmail || user.value?.email || "",
+  contactName: c.value?.contactName || user.value?.fullName || "",
+  contactOrganization: c.value?.contactOrganization || user.value?.organization || "",
+  contactPublic: c.value?.contactPublic || false,
+  contactTitle: c.value?.contactTitle || user.value?.title || "",
+  categories: c.value?.categoryTags.map(t => t.tag) || [],
+  barriers: c.value?.barriers?.map(b => b.barrier) || [],
+  freeText: c.value?.freeText || "",
+  importanceDescription: c.value?.importanceDescription || "",
+  organizationSector: c.value?.sector || undefined,
+  organizationType: c.value?.organizationType || undefined,
+  dataText: c.value?.dataText || "",
 });
 
 const toast = useToast();
+const method = computed(() => isEditing.value ? 'PATCH' : 'POST');
+const endpoint = computed(() => isEditing.value ? `/api/cases/${c.value?.id}` : '/api/cases');
 async function onSubmit(event: FormSubmitEvent<CreateCaseSchema>) {
-  await $csrfFetch("/api/cases", {
-    method: "POST",
+  await $csrfFetch(endpoint.value, {
+    method: method.value,
     body: event.data,
     onResponse: async (ctx) => {
-      if (ctx.response.status === 201) {
+      if ([200, 204].includes(ctx.response.status)) {
         toast.add({
-          title: "Casen er nu oprettet",
+          title: isEditing.value ? 'Casen blev gemt' : "Casen er nu oprettet",
           icon: "i-mdi-check",
           color: "success",
         });
-        const id = ctx?.response?._data?.caseId;
-        if (typeof id !== "number") {
-          throw new Error("Returned case id was not a number");
+        if (!isEditing.value) {
+          const id = ctx?.response?._data?.caseId;
+          if (typeof id !== "number") {
+            throw new Error("Returned case id was not a number");
+          }
+          navigateTo(`/cases/${id}`);
         }
-        navigateTo(`/cases/${id}`);
       } else if (ctx.response.ok) {
         throw new Error(
           "Response status code is not recognized: " + ctx.response.status,

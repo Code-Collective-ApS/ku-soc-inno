@@ -43,7 +43,7 @@ export async function getUpload(
   const fullPath = config.s3Prefix + key;
   const { s3, destroy } = getS3();
 
-  console.log("getting upload:", { bucket: config.s3BucketName, fullPath });
+  // console.log("getting upload:", { bucket: config.s3BucketName, fullPath });
 
   const resProm = s3.send(
     new GetObjectCommand({

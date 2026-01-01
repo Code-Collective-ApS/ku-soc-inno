@@ -1,4 +1,6 @@
 import { desc, eq, sql } from "drizzle-orm";
+import type { OrganizationSector } from "~~/shared/utils/organization_sector";
+import type { OrganizationType } from "~~/shared/utils/organization_type";
 import { cases } from "~~/server/db/schema";
 import { db } from "../db";
 import {
@@ -120,6 +122,8 @@ export type CaseResponse = Awaited<
 >[number];
 
 export type CaseSerialized = SwapDatesWithStrings<CaseResponse> & {
+  organizationType: OrganizationType;
+  sector: OrganizationSector;
   solutions: {
     id: number;
     updatedAt: string;
@@ -136,6 +140,8 @@ export function serializeCase(_case: CaseResponse): CaseSerialized {
   return {
     ...serializeDates(_case),
     solutions: serializeManyDates(_case.solutions),
+    organizationType: _case.organizationType as OrganizationType,
+    sector: _case.sector as OrganizationSector,
   };
 }
 
@@ -149,4 +155,13 @@ export function stripCaseForContactInfo(_case: CaseResponse): CaseResponse {
   _case.contactOrganization = "";
   _case.contactTitle = "";
   return _case;
+}
+
+export function requireCaseEditingPermissions(caseRes: CaseResponse, userId: number) {
+  if (caseRes.userId !== userId) {
+    throw createError({
+      statusCode: 403,
+      statusMessage: 'Du har ikke adgang til at redigere i denne case',
+    });
+  }
 }
