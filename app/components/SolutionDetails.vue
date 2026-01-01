@@ -3,7 +3,6 @@
     <div>
       <h1 class="text-3xl font-serif mt-6">
         Løsning på case: {{ relatedCase.title }}
-        {{ relatedCase.title }}
       </h1>
     </div>
 
