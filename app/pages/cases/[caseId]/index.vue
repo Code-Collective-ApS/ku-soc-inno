@@ -13,9 +13,6 @@
         <UButton color="secondary" variant="subtle" to="/cases/new"
           >Opret ny case</UButton
         >
-        <UButton variant="subtle" :to="`/cases/${caseId}/new-solution`"
-          >Opret løsning på denne case</UButton
-        >
       </div>
     </div>
     <div v-if="currentCase">
@@ -23,7 +20,12 @@
     </div>
     <div v-if="currentCase">
       <div class="mt-9">
-        <p class="text-3xl font-serif mb-6">Publicerede løsninger</p>
+        <div class="flex justify-between items-center mb-9">
+          <h3 class="text-3xl font-serif">Publicerede løsninger</h3>
+          <UButton size="xl" variant="subtle" :to="`/cases/${caseId}/new-solution`"
+            >Opret løsning på denne case</UButton
+          >
+        </div>
         <div class="flex flex-col gap-9">
           <UPageCard
             v-for="s in currentCase?.solutions"
