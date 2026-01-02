@@ -168,8 +168,8 @@ const state = reactive<Partial<CreateCaseSchema>>({
   contactOrganization: c.value?.contactOrganization || user.value?.organization || "",
   contactPublic: c.value?.contactPublic || false,
   contactTitle: c.value?.contactTitle || user.value?.title || "",
-  categories: c.value?.categoryTags.map(t => t.tag) || [],
-  barriers: c.value?.barriers?.map(b => b.barrier) || [],
+  categories: c.value?.categoryTags.map(t => (t as { tag: string }).tag) || [],
+  barriers: c.value?.barriers?.map(b => (b as { barrier: string }).barrier) || [],
   freeText: c.value?.freeText || "",
   importanceDescription: c.value?.importanceDescription || "",
   organizationSector: c.value?.sector || undefined,
@@ -185,7 +185,7 @@ async function onSubmit(event: FormSubmitEvent<CreateCaseSchema>) {
     method: method.value,
     body: event.data,
     onResponse: async (ctx) => {
-      if ([200, 204].includes(ctx.response.status)) {
+      if ([201, 204].includes(ctx.response.status)) {
         toast.add({
           title: isEditing.value ? 'Casen blev gemt' : "Casen er nu oprettet",
           icon: "i-mdi-check",
