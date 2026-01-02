@@ -1,8 +1,8 @@
 <template>
   <UModal
     :close="{ onClick: () => emit('close', false) }"
-    title="Create account"
-    description="Required if you want to publish cases and/or solutions."
+    title="Opret konto"
+    description="Påkrævet hvis du vil offentliggøre cases eller løsninger på cases."
     class="max-w-sm w-full"
     :ui="{
       header: 'flex items-center gap-1.5 p-4 sm:px-6 min-h-16',

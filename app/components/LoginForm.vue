@@ -24,17 +24,16 @@
             color="success"
             class="px-12"
           >
-            Log in
+            Log ind
           </UButton>
         </div>
         <div class="flex justify-center">
           <UButton
-            to="/create-account"
             class="cursor-pointer px-0"
             size="xs"
             variant="link"
-            @click="() => emit('close', false)"
-            >I want to create a beta user account</UButton
+            @click="openCreateAccount"
+            >Jeg vil gerne oprette en BETA konto</UButton
           >
         </div>
       </div>
@@ -50,6 +49,7 @@ const loading = ref(false);
 const { $csrfFetch } = useNuxtApp();
 const { fetch: refreshSession, user } = useUserSession();
 
+
 const emit = defineEmits<{
   close: [boolean];
 }>();
@@ -62,6 +62,12 @@ const redirectTo = computed(() =>
     ? route.query.redirectTo
     : "/cases",
 );
+
+async function openCreateAccount() {
+  const createAccountUrl = '/create-account' + (redirectTo.value ? `?redirectTo=${redirectTo.value}` : '');
+  await navigateTo(createAccountUrl);
+  emit('close', false);
+}
 
 function resetInputs() {
   password.value = "";

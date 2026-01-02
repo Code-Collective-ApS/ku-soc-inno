@@ -1,8 +1,8 @@
 <template>
   <UModal
     :close="{ onClick: () => emit('close', false) }"
-    title="Log in"
-    description="Required if you want to publish cases and/or solutions."
+    title="Log ind"
+    description="Påkrævet hvis du vil offentliggøre cases eller løsninger på cases."
     class="max-w-xs"
     :ui="{
       header: 'flex items-center gap-1.5 p-4 sm:px-6 min-h-16',

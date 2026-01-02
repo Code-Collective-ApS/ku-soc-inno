@@ -2,8 +2,8 @@
   <div class="awdkjhawdkjh">
     <UPageHero
       :headline="`soc-inno v${pkgVersion}`"
-      title="Explore sociological cases"
-      description="A Nuxt/Vue-integrated UI library providing a rich set of fully-styled, accessible and highly customizable components for building modern web applications."
+      title="Udforsk sociologiske cases"
+      description="Soc-inno er et offentligt arkiv over sociologiske cases og tilhørende løsninger."
       :links="[
         {
           label: 'Browse cases',
@@ -11,10 +11,10 @@
           to: '/cases/browse',
         },
         {
-          label: 'Create a new case',
+          label: 'Opret ny case',
           to: '/cases/new',
           color: 'secondary',
-          variant: 'outline',
+          variant: 'subtle',
         },
       ]"
     />
