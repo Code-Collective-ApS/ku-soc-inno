@@ -71,5 +71,5 @@ export const ORGANIZATION_TYPES_VALUES = Object.keys(
 ) as OrganizationType[];
 
 export function getPrettyOrgType(s: OrganizationType) {
-  return ORGANIZATION_TYPES[s].human;
+  return ORGANIZATION_TYPES[s]?.human || s;
 }

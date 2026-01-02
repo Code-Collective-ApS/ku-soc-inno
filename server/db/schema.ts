@@ -5,8 +5,9 @@ import {
   boolean,
   timestamp,
   integer,
+  index,
 } from "drizzle-orm/pg-core";
-import { relations } from "drizzle-orm";
+import { relations, sql } from "drizzle-orm";
 
 export const fileUploads = pgTable("file_uploads", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
@@ -53,7 +54,14 @@ export const cases = pgTable("cases", {
   userId: integer("user_id").references(() => users.id, {
     onDelete: "set null",
   }),
-});
+}, (table) => [index('search_index').using(
+  'gin',
+  sql`(
+    setweight(to_tsvector('danish', ${table.title}), 'A') ||
+    setweight(to_tsvector('danish', ${table.challengeDescription}), 'B')
+    setweight(to_tsvector('danish', ${table.importanceDescription}), 'C')
+  )`
+)]);
 
 // --- Category Tags (Many-to-many with Case) ---
 export const categoryTags = pgTable("category_tags", {

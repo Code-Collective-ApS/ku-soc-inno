@@ -1,7 +1,6 @@
 import * as z from "zod";
 import {
   ORGANIZATION_SECTORS_VALUES,
-  ORGANIZATION_TYPES_VALUES,
 } from "#imports";
 
 // TODO: sync max lengths with varchar size in schema
@@ -29,11 +28,7 @@ export const createCaseSchema = z.strictObject({
     .array(z.string().min(1).max(300))
     .min(1, "Du skal tilføje minimum 1 løsningsbarriere")
     .max(300),
-  // organizationType: z.string().min(2, "Mangler").max(300),
-  organizationType: z.enum(
-    ORGANIZATION_TYPES_VALUES,
-    "Det er en ugyldig organisationstype",
-  ),
+  organizationType: z.string().min(2, "Du mangler at tilføje en organisationstype").max(300),
   organizationSector: z.enum(
     ORGANIZATION_SECTORS_VALUES,
     "Det er en ugyldig sektor",

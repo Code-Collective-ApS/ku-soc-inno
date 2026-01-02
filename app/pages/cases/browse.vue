@@ -1,36 +1,18 @@
 <template>
-  <UContainer class="mt-12 mb-16 2xl:mt-16">
+  <UContainer class="mt-12 mb-16 2xl:mt-16 pb-14">
     <UBreadcrumb
       separator-icon="i-lucide-arrow-right"
       :items="breadcrumb"
       class="mb-3"
     />
     <PageTitle>Browse cases</PageTitle>
-    <CaseBrowser
-      :cases="cases"
-      :refresh-cases="refresh"
-      :pending-cases="pending"
-    />
-    <div v-if="error" class="text-error-500" v-text="error" />
+    <CaseBrowser />
   </UContainer>
 </template>
 
 <script setup lang="ts">
 import type { BreadcrumbItem } from "#ui/types";
-import { useCasesStore } from "~/stores/useCasesStore";
 useToasters();
-const casesStore = useCasesStore();
-const { cases } = storeToRefs(casesStore);
-const casesOffset = ref(0);
-const casesTake = ref(6);
-const { error, refresh, pending } = await useAsyncData(
-  "cases",
-  () => casesStore.fetchCases(casesTake, casesOffset),
-  {
-    immediate: true,
-    server: false,
-  },
-);
 const breadcrumb = ref<BreadcrumbItem[]>([
   {
     label: "Cases",
