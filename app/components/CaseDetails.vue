@@ -77,7 +77,7 @@
     <div v-else>
       <p>Kontakt information</p>
       <div class="inline-block">
-        <div class="grid grid-cols-2 [&_*:odd]:text-red-500 mt-1.5">
+        <div class="grid grid-cols-2 mt-1.5">
           <div>Navn</div>
           <div>{{ currentCase.contactName }}</div>
           <div>Titel</div>
