@@ -24,6 +24,6 @@ export default defineEventHandler(async (event) => {
 
   // typescript makes me crazy sometimes
   return {
-    case: serializeCase(caseRes),
+    case: serializeCase(caseRes, user?.id),
   } satisfies { case: CaseSerialized };
 });

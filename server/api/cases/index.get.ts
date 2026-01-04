@@ -28,5 +28,5 @@ export default defineEventHandler(async (event) => {
     }
   }
 
-  return { cases: serializeCases(res) } satisfies { cases: CaseSerialized[] };
+  return { cases: serializeCases(res, user?.id) } satisfies { cases: CaseSerialized[] };
 });

@@ -17,6 +17,7 @@ const pageSize = 5;
 
 export default defineEventHandler(async (event) => {
   const query = await getValidatedQuery(event, queryDto.parse);
+  const { user } = await getUserSession(event);
   const searchText = (query.text || "").toLowerCase().trim();
 
   const pageBegin = (query.page - 1) * pageSize;
@@ -98,7 +99,7 @@ export default defineEventHandler(async (event) => {
 
   // concat and serialize search results using the two methods
   const result = [tagMatchCasesResult, textSearchCaseResult]
-    .map((_cases) => serializeCases(_cases as CaseResponse[]))
+    .map((_cases) => serializeCases(_cases as CaseResponse[], user?.id))
     .reduce((sum, cur) => {
       sum.push(...cur);
       return sum;

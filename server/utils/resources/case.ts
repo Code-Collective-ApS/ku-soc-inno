@@ -3,10 +3,8 @@ import type { OrganizationSector } from "~~/shared/utils/organization_sector";
 import type { OrganizationType } from "~~/shared/utils/organization_type";
 import { cases } from "~~/server/db/schema";
 import { db, type Doc } from "../db";
-import {
-  type SwapDatesWithStrings,
-  serializeDates,
-} from "../datetime";
+import { type SwapDatesWithStrings, serializeDates } from "../datetime";
+import type { PgPreparedQuery, PreparedQueryConfig } from "drizzle-orm/pg-core";
 
 const caseResponseColumns = {
   challengeDescription: true,
@@ -63,27 +61,26 @@ type CaseResponseSolutionCategoryColumns = Pick<
 >;
 
 type CaseResponseSolutionColumns = Pick<
-  (Doc<"solutions"> & { solutionCategories: CaseResponseSolutionCategoryColumns }),
-  "id" | "updatedAt" | "solutionDescription" | 'solutionCategories'
+  Doc<"solutions"> & {
+    solutionCategories: CaseResponseSolutionCategoryColumns[];
+  },
+  "id" | "updatedAt" | "solutionDescription" | "solutionCategories"
 >;
 
-type CaseResponseBarrierColumns = Pick<
-  Doc<"barriers">,
-  'barrier' | 'id'
->;
+type CaseResponseBarrierColumns = Pick<Doc<"barriers">, "barrier" | "id">;
 
-type CaseResponseCategoryColumns = Pick<
-  Doc<"categoryTags">,
-  'tag' | 'id'
->;
+type CaseResponseCategoryColumns = Pick<Doc<"categoryTags">, "tag" | "id">;
 
 export type CaseResponse = Doc<"cases"> & {
-  solutions: CaseResponseSolutionColumns[],
-  categoryTags: CaseResponseCategoryColumns[],
-  barriers: CaseResponseBarrierColumns[],
+  solutions: CaseResponseSolutionColumns[];
+  categoryTags: CaseResponseCategoryColumns[];
+  barriers: CaseResponseBarrierColumns[];
 };
 
-export type CaseSerialized = Omit<SwapDatesWithStrings<CaseResponse>, 'userId'> & {
+export type CaseSerialized = Omit<
+  SwapDatesWithStrings<CaseResponse>,
+  "userId"
+> & {
   organizationType: OrganizationType;
   sector: OrganizationSector;
   solutions: SwapDatesWithStrings<CaseResponseSolutionColumns>[];
@@ -98,7 +95,11 @@ export const selectNewestCases = db.query.cases
     with: caseResponseWith,
     orderBy: desc(cases.createdAt),
   })
-  .prepare("select_cases");
+  .prepare("select_cases") as PgPreparedQuery<
+  PreparedQueryConfig & {
+    execute: CaseResponse[];
+  }
+>;
 
 export const selectCaseById = db.query.cases
   .findFirst({
@@ -106,7 +107,11 @@ export const selectCaseById = db.query.cases
     columns: caseResponseColumns,
     with: caseResponseWith,
   })
-  .prepare("select_case_by_id");
+  .prepare("select_case_by_id") as PgPreparedQuery<
+  PreparedQueryConfig & {
+    execute: CaseResponse;
+  }
+>;
 
 export const selectCasesByIds = (ids: number[]) =>
   db.query.cases
@@ -115,9 +120,16 @@ export const selectCasesByIds = (ids: number[]) =>
       columns: caseResponseColumns,
       with: caseResponseWith,
     })
-    .prepare("select_cases_by_id");
+    .prepare("select_cases_by_id") as PgPreparedQuery<
+    PreparedQueryConfig & {
+      execute: CaseResponse[];
+    }
+  >;
 
-export function serializeCase(_case: CaseResponse, _userId?: number | undefined): CaseSerialized {
+export function serializeCase(
+  _case: CaseResponse,
+  _userId?: number | undefined,
+): CaseSerialized {
   const serializedCase = serializeDates(_case);
 
   return {
@@ -143,8 +155,8 @@ export function serializeCase(_case: CaseResponse, _userId?: number | undefined)
   } satisfies CaseSerialized;
 }
 
-export function serializeCases(_cases: CaseResponse[]): CaseSerialized[] {
-  return _cases.map(serializeCase);
+export function serializeCases(_cases: CaseResponse[], _userId?: number | undefined): CaseSerialized[] {
+  return _cases.map((c) => serializeCase(c, _userId));
 }
 
 export function stripCaseForContactInfo(_case: CaseResponse): CaseResponse {
