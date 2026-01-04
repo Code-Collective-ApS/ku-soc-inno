@@ -12,15 +12,23 @@
 
     <div>
       <div class="inline-block">
-        <div class="text-xs mt-3 mb-3 text-gray-600 grid grid-cols-2 gap-x-3 gap-y-1.5">
-          <div>Oprettet:</div>
-          <div>{{ prettyDate(currentCase.createdAt) }}</div>
+        <div
+          class="text-xs mt-3 mb-3 text-gray-600 grid grid-cols-2 gap-x-3 gap-y-1.5"
+        >
+          <div class="flex items-center gap-1 mt-1">
+            <UIcon class="shrink-0 text-md" name="mdi:briefcase" />
+            <p>Sektor:</p>
+          </div>
+          <div class="mt-1">{{ getPrettySector(currentCase.sector) }}</div>
+          <div class="flex items-center gap-1">
+            <UIcon class="shrink-0 text-md" name="mdi:account-supervisor" />
+            <p>Type af organisation:</p>
+          </div>
+          <div>{{ getPrettyOrgType(currentCase.organizationType) }}</div>
+          <div class="mt-1">Oprettet:</div>
+          <div class="mt-1">{{ prettyDate(currentCase.createdAt) }}</div>
           <div>Opdateret:</div>
           <div>{{ prettyDate(currentCase.updatedAt) }}</div>
-          <div>Sektor:</div>
-          <div>{{ getPrettySector(currentCase.sector) }}</div>
-          <div>Type af organisation:</div>
-          <div>{{ getPrettyOrgType(currentCase.organizationType) }}</div>
         </div>
       </div>
     </div>
@@ -60,9 +68,11 @@
       <p>Andet, der er relevant at nævne?</p>
       <div class="whitespace-pre-line">{{ currentCase.freeText }}</div>
     </div>
-    <div v-if="!currentCase.contactPublic || (user && currentCase.userId !== user.id)">
+    <div v-if="!currentCase.contactPublic || (user && currentCase.isOwned)">
       <p>Kontakt information</p>
-      <div>Kontaktinformationer er kun tilgængelige for Københavns Universitet</div>
+      <div>
+        Kontaktinformationer er kun tilgængelige for Københavns Universitet
+      </div>
     </div>
     <div v-else>
       <p>Kontakt information</p>

@@ -15,7 +15,7 @@
               <UInput
                 v-model="state.title"
                 size="xl"
-                class="w-[420px]"
+                class="w-105"
                 @keydown.enter.prevent="
                   () => {
                     // NOTE: This block prevents enter btn from submitting the full form
@@ -80,7 +80,7 @@
           </div>
         </UCard>
         <UButton size="xl" class="cursor-pointer mt-6" type="submit">
-          {{ isEditing ? 'Gem case' : 'Opret case'}}
+          {{ isEditing ? "Gem case" : "Opret case" }}
         </UButton>
       </div>
 
@@ -90,10 +90,22 @@
           <UCard variant="subtle" class="mt-4 relative">
             <div class="flex flex-col gap-y-3">
               <UFormField label="Type" name="organizationType">
+                <template #label="{ label }">
+                  <div class="flex items-center gap-1.5">
+                    <UIcon name="i-mdi-account-supervisor" />
+                    <p>{{ label }}</p>
+                  </div>
+                </template>
                 <OrganizationTypeInput v-model="state.organizationType" />
               </UFormField>
 
               <UFormField label="Sektor" name="organizationSector">
+                <template #label="{ label }">
+                  <div class="flex items-center gap-1.5">
+                    <UIcon name="i-mdi-briefcase-outline" />
+                    <p>{{ label }}</p>
+                  </div>
+                </template>
                 <OrganizationSectorInput v-model="state.organizationSector" />
               </UFormField>
             </div>
@@ -165,11 +177,14 @@ const state = reactive<Partial<CreateCaseSchema>>({
   challengeDescription: c.value?.challengeDescription || "",
   contactEmail: c.value?.contactEmail || user.value?.email || "",
   contactName: c.value?.contactName || user.value?.fullName || "",
-  contactOrganization: c.value?.contactOrganization || user.value?.organization || "",
+  contactOrganization:
+    c.value?.contactOrganization || user.value?.organization || "",
   contactPublic: c.value?.contactPublic || false,
   contactTitle: c.value?.contactTitle || user.value?.title || "",
-  categories: c.value?.categoryTags.map(t => (t as { tag: string }).tag) || [],
-  barriers: c.value?.barriers?.map(b => (b as { barrier: string }).barrier) || [],
+  categories:
+    c.value?.categoryTags.map((t) => (t as { tag: string }).tag) || [],
+  barriers:
+    c.value?.barriers?.map((b) => (b as { barrier: string }).barrier) || [],
   freeText: c.value?.freeText || "",
   importanceDescription: c.value?.importanceDescription || "",
   organizationSector: c.value?.sector || undefined,
@@ -178,8 +193,10 @@ const state = reactive<Partial<CreateCaseSchema>>({
 });
 
 const toast = useToast();
-const method = computed(() => isEditing.value ? 'PATCH' : 'POST');
-const endpoint = computed(() => isEditing.value ? `/api/cases/${c.value?.id}` : '/api/cases');
+const method = computed(() => (isEditing.value ? "PATCH" : "POST"));
+const endpoint = computed(() =>
+  isEditing.value ? `/api/cases/${c.value?.id}` : "/api/cases",
+);
 async function onSubmit(event: FormSubmitEvent<CreateCaseSchema>) {
   await $csrfFetch(endpoint.value, {
     method: method.value,
@@ -187,7 +204,7 @@ async function onSubmit(event: FormSubmitEvent<CreateCaseSchema>) {
     onResponse: async (ctx) => {
       if ([201, 204].includes(ctx.response.status)) {
         toast.add({
-          title: isEditing.value ? 'Casen blev gemt' : "Casen er nu oprettet",
+          title: isEditing.value ? "Casen blev gemt" : "Casen er nu oprettet",
           icon: "i-mdi-check",
           color: "success",
         });

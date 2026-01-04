@@ -31,29 +31,17 @@
       </div>
     </div>
 
-    <!-- Search results -->
+    <!-- Search result meta text -->
     <p v-if="!errorMsg" class="text-sm text-muted mb-3">
       Viser {{ (page - 1) * pageSize }}-{{ Math.min(page * pageSize, total) }} ud af
       {{ total }} resultater
     </p>
     <p v-if="errorMsg" class="text-sm text-error-500 mb-3">{{ errorMsg }}</p>
+
+    <!-- Search results -->
     <div class="flex gap-6 flex-col">
       <div v-for="c in searchResult" :key="c.id">
-        <UPageCard :title="c.title" variant="subtle">
-          <div class="flex gap-1.5">
-            <CaseTags :c="c" />
-          </div>
-          <p class="whitespace-pre-line">{{ c.challengeDescription }}</p>
-          <div class="text-right">
-            <UButton
-              variant="link"
-              trailing-icon="mdi-chevron-right"
-              :to="`/cases/${c.id}`"
-              class="cursor-pointer"
-              >Open</UButton
-            >
-          </div>
-        </UPageCard>
+        <CaseSearchResultCard :shown-case="c" />
       </div>
       <div v-if="searchResult?.length" class="flex justify-center">
         <UPagination
