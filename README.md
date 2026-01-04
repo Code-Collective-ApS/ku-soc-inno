@@ -1,41 +1,42 @@
-# Nuxt Minimal Starter
+# Soc-inno
 
-Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more.
+A web application that works as a simple collaboration, sharing and archiving platform for sociological cases.
 
-## Setup
+Look at the [Nuxt documentation](https://nuxt.com/docs/getting-started/introduction) to learn more about the framework.
 
-Make sure to install dependencies:
+Feel free to reach out to the [developers](https://codecollective.dk) or the lecturer, [Ghita](https://www.soc.ku.dk/ansatte/professorer/?pure=da/persons/300156), who has designed the app and led the development.
+
+## Setup development environment
+
+1. Install node/npm & yarn
+
+2. Add and edit `.env` file
 
 ```bash
-# npm
-npm install
-
-# pnpm
-pnpm install
-
-# yarn
-yarn install
-
-# bun
-bun install
+cp .env.example .env
 ```
+
+3. Install dependencies:
+
+```bash
+yarn install
+```
+
+4. Create database and run migrations
+
+```bash
+createdb name_of_db
+yarn db:migrate
+```
+
+It is expected to receive a couple of warnings if db is already migrated.
 
 ## Development Server
 
 Start the development server on `http://localhost:3000`:
 
 ```bash
-# npm
-npm run dev
-
-# pnpm
-pnpm dev
-
-# yarn
 yarn dev
-
-# bun
-bun run dev
 ```
 
 ## Production
@@ -43,33 +44,13 @@ bun run dev
 Build the application for production:
 
 ```bash
-# npm
-npm run build
-
-# pnpm
-pnpm build
-
-# yarn
 yarn build
-
-# bun
-bun run build
 ```
 
 Locally preview production build:
 
 ```bash
-# npm
-npm run preview
-
-# pnpm
-pnpm preview
-
-# yarn
 yarn preview
-
-# bun
-bun run preview
 ```
 
 Check out the [deployment documentation](https://nuxt.com/docs/getting-started/deployment) for more information.
