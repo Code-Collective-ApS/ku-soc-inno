@@ -84,7 +84,7 @@ const navItems = computed<NavigationMenuItem[]>(() => [
     active: route.path.startsWith("/cases"),
   },
   {
-    label: "About",
+    label: "Om projektet",
     to: "/about",
     icon: "i-lucide-info",
     active: route.path.startsWith("/about"),
