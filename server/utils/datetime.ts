@@ -1,5 +1,6 @@
 export type SwapDatesWithStrings<T> = {
-  [k in keyof T]: T[k] extends Date ? string : T[k];
+  // [k in keyof T]: T[k] extends Date ? string : T[k];
+  [k in keyof T]: T[k] extends Date ? string : T[k] extends Array<unknown> ? SwapDatesWithStrings<T[k][number]>[] : T[k];
 };
 
 type AnyType = string | number | boolean | null | Date | undefined;
