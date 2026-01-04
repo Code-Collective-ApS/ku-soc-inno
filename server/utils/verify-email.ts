@@ -1,5 +1,6 @@
-import crypto from "node:crypto";
+// import crypto from "node:crypto";
 import { verifyEmailTemplate } from "./mails/templates/verify-email";
+import { generateJwt } from "./signing";
 
 const msPrMinute = 1000 * 60;
 
@@ -10,20 +11,16 @@ export function generateVerificationLink(
 ) {
   // TODO: make email a hash instead (if sending payload at least)
   const config = useRuntimeConfig();
-  const sig = generateSignature(config.verificationSecret, userId, email);
-  const _expiration = Date.now() + msPrMinute * validInMinutes; // TODO: make expiration
+  const expireDate = new Date(Date.now() + msPrMinute * validInMinutes); // TODO: make expiration
+  const jwt = generateJwt(
+    config.verificationSecret,
+    { userId, email },
+    expireDate,
+  );
 
-  const link = `${config.publicHost}/account-automatic-verification?sig=${sig}`;
+  const link = `${config.publicHost}/account-automatic-verification?jwt=${jwt}`;
   console.log(`verification link valid in ${validInMinutes} min:`, link);
   return link;
-}
-
-export function generateSignature(secret: string, ...rawPayload: AnyType[]) {
-  const payload = rawPayload.map((v) => v + "").join("|");
-  const hmac = crypto.createHmac("sha256", secret);
-  hmac.update(payload);
-  const signature = hmac.digest("hex");
-  return signature;
 }
 
 export async function sendVerifyEmailEmail(

@@ -1,14 +1,14 @@
 import z from "zod";
 import { setEmailVerified } from "~~/server/utils/resources/user";
+import { parseJwt } from "~~/server/utils/signing";
 
 const bodyDto = z.strictObject({
-  sig: z.string().length(64),
+  jwt: z.string(),
 });
 
 export default defineEventHandler(async (event) => {
   const sess = await getUserSession(event);
   const user = sess.user;
-  console.log("verify-email got user sess:", user);
   if (!user) {
     throw createError({
       status: 401,
@@ -28,29 +28,17 @@ export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
   try {
     const body = await readValidatedBody(event, bodyDto.parse);
-    const targetSig = body.sig;
-    // TODO: make email a hash instead
-    const testSig = generateSignature(
-      config.verificationSecret,
-      user.id,
-      user.email,
-    );
-
-    const isValid = targetSig === testSig;
-
-    console.log({ targetSig, testSig, isValid });
-    if (isValid) {
-      await setEmailVerified(user.id);
-      console.log("successfully verified user", user.email);
-      await refreshUserSession(event, user.id);
-    } else {
-      // TODO: show pretty error page with contact information and ability to request a new email mby
-      console.error("Email validation signature was invalid");
+    const { error, payload } = parseJwt(config.verificationSecret, body.jwt);
+    if (error) throw new Error(error);
+    if (payload?.userId !== user.id) {
+      throw new Error("Payload has no user id");
     }
+    await setEmailVerified(user.id);
+    console.info("successfully verified user", user.email);
+    await refreshUserSession(event, user.id);
 
     return {
-      targetSig,
-      isValid,
+      isValid: true,
     };
   } catch (e) {
     console.error(e);

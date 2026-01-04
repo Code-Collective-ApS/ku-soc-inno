@@ -30,38 +30,45 @@ export const users = pgTable("users", {
   email_verification_requested_at: timestamp({ withTimezone: true })
     .defaultNow()
     .notNull(),
+  forgot_password_requested_at: timestamp({ withTimezone: true }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
 });
 
 // --- Case Table ---
-export const cases = pgTable("cases", {
-  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
-  title: varchar("title").notNull().unique(),
-  challengeDescription: text("challenge_description").notNull(),
-  importanceDescription: text("importance_description").notNull(),
-  freeText: text("free_text"),
-  dataText: text("data_text").notNull(),
-  contactName: varchar("contact_name").notNull(),
-  contactOrganization: varchar("contact_organization").notNull(),
-  contactTitle: varchar("contact_title").notNull(),
-  contactEmail: varchar("contact_email").notNull(),
-  contactPublic: boolean("contact_public").default(false),
-  createdAt: timestamp("created_at").notNull().defaultNow(),
-  updatedAt: timestamp("updated_at").notNull().defaultNow(),
-  sector: varchar("sector").notNull(),
-  organizationType: varchar("organization_type").notNull(),
-  userId: integer("user_id").references(() => users.id, {
-    onDelete: "set null",
-  }),
-}, (table) => [index('search_index').using(
-  'gin',
-  sql`(
+export const cases = pgTable(
+  "cases",
+  {
+    id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+    title: varchar("title").notNull().unique(),
+    challengeDescription: text("challenge_description").notNull(),
+    importanceDescription: text("importance_description").notNull(),
+    freeText: text("free_text"),
+    dataText: text("data_text").notNull(),
+    contactName: varchar("contact_name").notNull(),
+    contactOrganization: varchar("contact_organization").notNull(),
+    contactTitle: varchar("contact_title").notNull(),
+    contactEmail: varchar("contact_email").notNull(),
+    contactPublic: boolean("contact_public").default(false),
+    createdAt: timestamp("created_at").notNull().defaultNow(),
+    updatedAt: timestamp("updated_at").notNull().defaultNow(),
+    sector: varchar("sector").notNull(),
+    organizationType: varchar("organization_type").notNull(),
+    userId: integer("user_id").references(() => users.id, {
+      onDelete: "set null",
+    }),
+  },
+  (table) => [
+    index("search_index").using(
+      "gin",
+      sql`(
     setweight(to_tsvector('danish', ${table.title}), 'A') ||
     setweight(to_tsvector('danish', ${table.challengeDescription}), 'B')
     setweight(to_tsvector('danish', ${table.importanceDescription}), 'C')
-  )`
-)]);
+  )`,
+    ),
+  ],
+);
 
 // --- Category Tags (Many-to-many with Case) ---
 export const categoryTags = pgTable("category_tags", {
