@@ -2,31 +2,31 @@ import { desc, eq, sql, inArray } from "drizzle-orm";
 import type { OrganizationSector } from "~~/shared/utils/organization_sector";
 import type { OrganizationType } from "~~/shared/utils/organization_type";
 import { cases } from "~~/server/db/schema";
-import { db } from "../db";
+import { db, type Doc } from "../db";
 import {
   type SwapDatesWithStrings,
-  serializeManyDates,
   serializeDates,
 } from "../datetime";
 
 const caseResponseColumns = {
-  id: true,
   challengeDescription: true,
-  contactName: true,
   contactEmail: true,
+  contactName: true,
   contactOrganization: true,
   contactPublic: true,
   contactTitle: true,
-  importanceDescription: true,
-  title: true,
-  freeText: true,
-  userId: true,
   createdAt: true,
-  updatedAt: true,
+  dataText: true,
+  freeText: true,
+  id: true,
+  importanceDescription: true,
   organizationType: true,
   sector: true,
-  dataText: true,
+  title: true,
+  updatedAt: true,
+  userId: true,
 };
+
 const caseResponseWith = {
   barriers: {
     columns: {
@@ -45,7 +45,6 @@ const caseResponseWith = {
       solutionCategories: {
         columns: {
           id: true,
-          updatedAt: true,
           solutionCategory: true,
         },
       },
@@ -58,30 +57,38 @@ const caseResponseWith = {
   },
 };
 
-// TODO: hardcoding only purpose is to improve types (fix in some other way)
-const _selectCases = db.query.cases.findMany({
-  columns: {
-    id: true,
-    challengeDescription: true,
-    contactName: true,
-    contactEmail: true,
-    contactOrganization: true,
-    contactPublic: true,
-    contactTitle: true,
-    importanceDescription: true,
-    title: true,
-    freeText: true,
-    userId: true,
-    createdAt: true,
-    updatedAt: true,
-    organizationType: true,
-    sector: true,
-    dataText: true,
-  } satisfies typeof caseResponseColumns,
-  with: caseResponseWith,
-});
+type CaseResponseSolutionCategoryColumns = Pick<
+  Doc<"solutionCategories">,
+  "id" | "solutionCategory"
+>;
 
-type CaseResponseColumns = Awaited<ReturnType<typeof _selectCases.execute>>;
+type CaseResponseSolutionColumns = Pick<
+  (Doc<"solutions"> & { solutionCategories: CaseResponseSolutionCategoryColumns }),
+  "id" | "updatedAt" | "solutionDescription" | 'solutionCategories'
+>;
+
+type CaseResponseBarrierColumns = Pick<
+  Doc<"barriers">,
+  'barrier' | 'id'
+>;
+
+type CaseResponseCategoryColumns = Pick<
+  Doc<"categoryTags">,
+  'tag' | 'id'
+>;
+
+export type CaseResponse = Doc<"cases"> & {
+  solutions: CaseResponseSolutionColumns[],
+  categoryTags: CaseResponseCategoryColumns[],
+  barriers: CaseResponseBarrierColumns[],
+};
+
+export type CaseSerialized = Omit<SwapDatesWithStrings<CaseResponse>, 'userId'> & {
+  organizationType: OrganizationType;
+  sector: OrganizationSector;
+  solutions: SwapDatesWithStrings<CaseResponseSolutionColumns>[];
+  isOwned: boolean;
+};
 
 export const selectNewestCases = db.query.cases
   .findMany({
@@ -101,50 +108,39 @@ export const selectCaseById = db.query.cases
   })
   .prepare("select_case_by_id");
 
-export const selectCasesByIds = (ids: number[]) => db.query.cases.findMany({
-    where: inArray(cases.id, ids),
-    columns: caseResponseColumns,
-    with: caseResponseWith,
-  })
-  .prepare("select_cases_by_id");
+export const selectCasesByIds = (ids: number[]) =>
+  db.query.cases
+    .findMany({
+      where: inArray(cases.id, ids),
+      columns: caseResponseColumns,
+      with: caseResponseWith,
+    })
+    .prepare("select_cases_by_id");
 
-export type CaseResponse = (Awaited<
-  ReturnType<typeof selectNewestCases.execute>
-> &
-  CaseResponseColumns)[number];
+export function serializeCase(_case: CaseResponse, _userId?: number | undefined): CaseSerialized {
+  const serializedCase = serializeDates(_case);
 
-export type CaseSerialized = SwapDatesWithStrings<CaseResponse> & {
-  organizationType: OrganizationType;
-  sector: OrganizationSector;
-  solutions: {
-    id: number;
-    updatedAt: string;
-    solutionCategories: {
-      id: number;
-      solutionCategory: string;
-    }[];
-    solutionDescription: string;
-  }[];
-};
-
-// typescript makes me crazy sometimes
-export function serializeCase(_case: CaseResponse): CaseSerialized {
   return {
-    ...serializeDates(_case),
-    solutions: serializeManyDates(
-      _case.solutions as {
-        id: number;
-        updatedAt: string;
-        solutionCategories: {
-          id: number;
-          solutionCategory: string;
-        }[];
-        solutionDescription: string;
-      }[],
-    ),
-    organizationType: _case.organizationType as OrganizationType,
-    sector: _case.sector as OrganizationSector,
-  };
+    barriers: serializedCase.barriers,
+    categoryTags: serializedCase.categoryTags,
+    challengeDescription: serializedCase.challengeDescription,
+    contactEmail: serializedCase.contactEmail,
+    contactName: serializedCase.contactName,
+    contactOrganization: serializedCase.contactOrganization,
+    contactPublic: serializedCase.contactPublic,
+    contactTitle: serializedCase.contactTitle,
+    createdAt: serializedCase.createdAt,
+    dataText: serializedCase.dataText,
+    freeText: serializedCase.freeText,
+    id: serializedCase.id,
+    importanceDescription: serializedCase.importanceDescription,
+    organizationType: serializedCase.organizationType as OrganizationType,
+    sector: serializedCase.sector as OrganizationSector,
+    solutions: serializedCase.solutions,
+    title: serializedCase.title,
+    updatedAt: serializedCase.updatedAt,
+    isOwned: _userId ? _case.userId === _userId : false,
+  } satisfies CaseSerialized;
 }
 
 export function serializeCases(_cases: CaseResponse[]): CaseSerialized[] {
