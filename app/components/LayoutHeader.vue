@@ -78,16 +78,16 @@ const { openLoginModal, openCreateAccountModal } = useModals();
 
 const navItems = computed<NavigationMenuItem[]>(() => [
   {
-    label: "Cases",
-    to: "/cases",
-    icon: "i-lucide-book-open",
-    active: route.path.startsWith("/cases"),
+    label: "Forside",
+    to: "/",
+    icon: "i-lucide-info",
+    active: route.path == "/",
   },
   {
-    label: "Om projektet",
-    to: "/about",
-    icon: "i-lucide-info",
-    active: route.path.startsWith("/about"),
+    label: "Cases",
+    to: "/cases/browse",
+    icon: "i-lucide-book-open",
+    active: route.path.startsWith("/cases"),
   },
 ]);
 
