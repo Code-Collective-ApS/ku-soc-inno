@@ -4,7 +4,7 @@
     <div v-else>
       <p v-if="data?.isValid">Verification successfull!</p>
       <p v-else>Verification failed!</p>
-      <pre>signature: {{ signature }}</pre>
+      <pre>signature: {{ jwt }}</pre>
       <pre>response: {{ JSON.stringify(data, null, 4) }}</pre>
     </div>
     <div v-if="error" class="text-red-500">{{ error }}</div>
@@ -14,7 +14,7 @@
 <script lang="ts" setup>
 const route = useRoute();
 const { fetch: refreshUser, user } = useUserSession();
-const signature = route.query?.sig;
+const jwt = route.query?.jwt;
 
 await callOnce(async () => {
   if (user.value?.emailVerifiedAt) {
@@ -22,7 +22,7 @@ await callOnce(async () => {
   }
 });
 
-if (!signature) {
+if (!jwt) {
   throw createError({
     statusCode: 400,
     statusMessage: "You need to provide the correct query parameters",
@@ -35,7 +35,7 @@ const { data, pending, error, refresh } = await useCsrfFetch(
     immediate: false,
     method: "POST",
     body: {
-      sig: signature,
+      jwt: jwt,
     },
     onResponse: async (ctx) => {
       console.log("got verify-email response:", ctx.response?._data);
