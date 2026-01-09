@@ -12,7 +12,7 @@ export default defineEventHandler(async (event) => {
   if (!caseRes) {
     throw createError({
       statusCode: 404,
-      statusMessage: "Case was not found",
+      message: "Case was not found",
     });
   }
 

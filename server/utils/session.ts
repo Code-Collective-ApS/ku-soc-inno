@@ -25,7 +25,7 @@ export async function refreshUserSession(
     await clearUserSession(event);
     throw createError({
       statusCode: 401,
-      statusMessage: "Session is valid but user does not exist",
+      message: "Session is valid but user does not exist",
     });
   }
 

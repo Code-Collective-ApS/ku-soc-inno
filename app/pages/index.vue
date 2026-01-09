@@ -12,7 +12,18 @@
         },
         {
           label: 'Opret ny case',
-          to: '/cases/new',
+          // to: '/cases/new',
+          onClick: () => {
+            if (!loggedIn) {
+              const q = { ...(route.query || {}), redirectTo: '/cases/new' };
+              console.log('pushing query!');
+              router.push({ path: '/', query: q });
+              openLoginModal();
+            } else {
+              navigateTo('/cases/new');
+            }
+          },
+          class: 'cursor-pointer',
           color: 'secondary',
           variant: 'subtle',
         },
@@ -26,10 +37,14 @@
 import { useCasesStore } from "~/stores/useCasesStore";
 import { useVersionStore } from "~/stores/useVersionStore";
 
+const { loggedIn } = useUserSession();
 useToasters();
+const { openLoginModal } = useModals();
 const casesStore = useCasesStore();
 const casesOffset = ref(0);
 const casesTake = ref(6);
+const route = useRoute();
+const router = useRouter();
 const { error } = await useAsyncData(
   "cases",
   () => casesStore.fetchCases(casesTake, casesOffset),

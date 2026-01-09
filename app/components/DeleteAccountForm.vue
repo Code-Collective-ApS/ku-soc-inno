@@ -33,25 +33,20 @@
 </template>
 
 <script setup lang="ts">
-import { ConfirmModal } from "#components";
-
 const { fetch } = useUserSession();
-const overlay = useOverlay();
-const modalConfirm = overlay.create(ConfirmModal, {
-  props: {
-    title: "Bekræft sletning af data",
-    description:
-      "Er du sikker på at du vil slette din konto ? Denne handling kan ikke fortydes.",
-  },
-});
+const { openConfirmModal } = useModals();
 const loading = ref(false);
 const errorMsg = ref("");
 const toast = useToast();
+const { $csrfFetch } = useNuxtApp();
 
 async function confirmDeleteAccount() {
-  const ok = await modalConfirm.open();
+  const ok = await openConfirmModal(
+    "Bekræft sletning af data",
+    "Er du sikker på at du vil slette din konto ? Denne handling kan ikke fortydes.",
+  );
   if (ok) {
-    $fetch("/api/users/delete-my-account", {
+    $csrfFetch("/api/users/delete-my-account", {
       method: "DELETE",
       onResponse: async (ctx) => {
         if (ctx.response.status !== 204) {

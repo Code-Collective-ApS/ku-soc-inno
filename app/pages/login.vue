@@ -11,7 +11,7 @@ const redirectTo = computed(() =>
   typeof route.query.redirectTo === "string" &&
   route.query.redirectTo.startsWith("/")
     ? route.query.redirectTo
-    : "/cases",
+    : "/cases/browse",
 );
 
 await callOnce(async () => {
@@ -29,7 +29,7 @@ onMounted(async () => {
     await navigateTo(redirectTo.value);
   } else {
     await navigateTo({
-      path: "/cases",
+      path: "/cases/browse",
       query: {
         redirectTo: redirectTo.value,
       },

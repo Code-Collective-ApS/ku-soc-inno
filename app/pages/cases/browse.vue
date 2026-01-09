@@ -17,7 +17,7 @@ const breadcrumb = ref<BreadcrumbItem[]>([
   {
     label: "Cases",
     icon: "i-lucide-book-open",
-    to: "/cases",
+    to: "/cases/browse",
   },
   {
     label: "Browse",

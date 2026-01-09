@@ -1,13 +1,14 @@
 import { generateMail, escapeHTML } from "../template";
 
 export const forgotPasswordEmailTemplate = (
-  username: string,
+  name: string,
+  email: string,
   forgotPasswordLink: string,
 ): string => {
   const content = `
-    <p>Hej ${escapeHTML(username)}, og velkommen!</p>
-    <p>Tryk på dette link for at vælge et nyt password til din Soc-Inno konto.</p>
-    <p>Hvis du ikke har anmodet om et nyt password, bedes du kontakte administratorerne af Soc-inno.</p>
+    <p>Hej ${escapeHTML(name)}.</p>
+    <p>Du har anmodet om at gendanne dit password på din Soc-Inno konto.</p>
+    <p>Hvis du ikke har gjort dette, bedes du kontakte administratorerne af Soc-inno så hurtigt som muligt.</p>
     <table role="presentation" border="0" cellpadding="0" cellspacing="0" class="btn btn-primary">
       <tbody>
         <tr>
@@ -29,7 +30,7 @@ export const forgotPasswordEmailTemplate = (
     "Glemt password på Soc-Inno konto",
     content,
     previewText,
-    undefined,
+    email,
   );
   return fullHtml;
 };

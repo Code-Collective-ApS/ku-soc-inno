@@ -105,7 +105,7 @@ const profileItems = ref<NavigationMenuItem[][]>([
       class: "cursor-pointer",
       onSelect: async () => {
         await clear();
-        navigateTo("/cases?logged_out=1"); // TODO: implement noti
+        navigateTo("/?loggedOut=1");
       },
     },
   ],

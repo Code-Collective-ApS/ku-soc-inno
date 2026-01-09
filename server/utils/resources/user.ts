@@ -22,3 +22,24 @@ export function setEmailVerified(userId: number) {
 export function deleteUserAccount(userId: number) {
   return db.delete(users).where(eq(users.id, userId));
 }
+
+export function setForgotPasswordRequested(userId: number) {
+  console.info(
+    "updating `forgot_password_requested_at` on user..",
+    userId,
+    "to",
+    new Date(),
+  );
+  return db
+    .update(users)
+    .set({ forgot_password_requested_at: new Date() })
+    .where(eq(users.id, userId));
+}
+
+export function setVerifyEmailRequested(userId: number) {
+  console.info("updating `email_verification_requested_at` on user..", userId);
+  return db
+    .update(users)
+    .set({ email_verification_requested_at: new Date() })
+    .where(eq(users.id, userId));
+}

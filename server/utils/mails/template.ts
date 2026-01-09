@@ -136,7 +136,6 @@ export const generateMail = (
             margin: 0;
             padding: 12px 24px;
             text-decoration: none;
-            text-transform: capitalize;
           }
 
           .btn-primary table td {
@@ -307,7 +306,7 @@ export const generateMail = (
                   >
                     <tr>
                       <td class="content-block">
-                        <span>
+                        <p>
                         ${
                           isAdminNotification
                             ? `
@@ -325,13 +324,11 @@ export const generateMail = (
                               : `
                               Du modtager denne email fordi du har anmodet om en
                               Soc-inno konto.
-                          <br />
-                          <br />
                         `
                         }
-                        </span>
+                        </p>
                         <p>If anything seems wrong, please contact the maintainers at
-                        <a href="mailto:hello@codecollective.dk">hello@codecollective.dk</a>.
+                        <a href="mailto:hello@codecollective.dk">hej@codecollective.dk</a>.
                         </p>
                         <span class="apple-link">
                           Soc-inno &copy ${new Date().getFullYear()} Sociologisk Institut, Københavns Universitet

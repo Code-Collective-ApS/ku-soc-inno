@@ -21,7 +21,7 @@ export default defineEventHandler(async (event) => {
 
   if (!sols.length) {
     throw createError({
-      statusMessage: "Solution not found",
+      message: "Solution not found",
       statusCode: 404,
     });
   }
@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
     sol.primaryPdfPublic || (user && user.id === sol.userId);
   if (!canDownloadPdf) {
     throw createError({
-      statusMessage: "You are not allowed to view this pdf",
+      message: "You are not allowed to view this pdf",
       statusCode: 403,
     });
   }

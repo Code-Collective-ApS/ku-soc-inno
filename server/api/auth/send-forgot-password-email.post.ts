@@ -1,25 +1,27 @@
 import { users } from "~~/server/db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { ForgotPasswordValidityMs } from "~~/server/utils/forgot-password";
 
 const bodySchema = z.object({
   email: z.email(),
 });
 
-const EmailValidity = 1000 * 60 * 5; // 5 minutes
-
 export default defineEventHandler(async (event) => {
   const { email } = await readValidatedBody(event, bodySchema.parse);
 
   const beginTime = new Date().getTime();
+  const config = useRuntimeConfig();
 
+  // fetch user with the email provided
   const userRes = await db
     .select({
+      name: users.fullName,
       email: users.email,
       password: users.password,
       id: users.id,
       emailVerifiedAt: users.emailVerifiedAt,
-      forgotPasswordAt: users.email_verification_requested_at,
+      forgotPasswordAt: users.forgot_password_requested_at,
     })
     .from(users)
     .where(eq(users.email, email));
@@ -30,7 +32,7 @@ export default defineEventHandler(async (event) => {
     await waitABit(beginTime);
     throw createError({
       statusCode: 401,
-      statusMessage: "Wrong email or password",
+      message: "Wrong email or password",
     });
   }
 
@@ -38,26 +40,45 @@ export default defineEventHandler(async (event) => {
 
   // ensure user does not spam us
   if (user.forgotPasswordAt) {
-    if (Date.now() < user.forgotPasswordAt.getTime() + EmailValidity) {
+    console.log("user forgot password is set to", user.forgotPasswordAt);
+    const minTime = user.forgotPasswordAt.getTime() + ForgotPasswordValidityMs;
+    if (Date.now() < minTime) {
       await waitABit(beginTime);
+
+      const minutesLeft = Math.round((minTime - Date.now()) / 1000 / 60);
       throw createError({
         statusCode: 400,
-        statusMessage:
-          "You cannot request a new email, as long as the last one is active",
+        message: `Du kan først sende en ny glemt-password mail om ${minutesLeft} minutter`,
       });
     }
   }
 
-  // TODO: send forgot password email
+  // send email
+  try {
+    console.info("sending forgot password email to", user.email, "..");
+    await sendForgotPasswordEmail(
+      config.publicHost,
+      config.forgotPasswordSecret,
+      user.id,
+      user.name,
+      user.email,
+    );
+  } catch (err: unknown) {
+    console.error(err);
+    // TODO: report error!
+    await waitABit(beginTime);
+    throw createError({
+      statusCode: 500,
+      message:
+        "Det lykkes os ikke at sende emailen. Fejlen er rapporteret og vi kigger på sagen snarest.",
+    });
+  }
 
-  // update database
-  console.info("updating `forgot_password_requested_at` on user..");
-  await db
-    .update(users)
-    .set({ forgot_password_requested_at: new Date() })
-    .where(eq(users.id, user.id));
+  // update forgot password request date in db
+  await setForgotPasswordRequested(user.id);
 
-  console.info("forgot-password-email endpoint finish");
+  // make sure there is at least some response time (to avoid timing attacks)
+  await waitABit(beginTime);
 
-  return { success: true };
+  setResponseStatus(event, 204);
 });

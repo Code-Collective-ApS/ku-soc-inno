@@ -5,6 +5,7 @@ import { cases } from "~~/server/db/schema";
 import { db, type Doc } from "../db";
 import { type SwapDatesWithStrings, serializeDates } from "../datetime";
 import type { PgPreparedQuery, PreparedQueryConfig } from "drizzle-orm/pg-core";
+import { createError } from "h3";
 
 const caseResponseColumns = {
   challengeDescription: true,
@@ -155,7 +156,10 @@ export function serializeCase(
   } satisfies CaseSerialized;
 }
 
-export function serializeCases(_cases: CaseResponse[], _userId?: number | undefined): CaseSerialized[] {
+export function serializeCases(
+  _cases: CaseResponse[],
+  _userId?: number | undefined,
+): CaseSerialized[] {
   return _cases.map((c) => serializeCase(c, _userId));
 }
 
@@ -174,7 +178,7 @@ export function requireCaseEditingPermissions(
   if (caseRes.userId !== userId) {
     throw createError({
       statusCode: 403,
-      statusMessage: "Du har ikke adgang til at redigere i denne case",
+      message: "Du har ikke adgang til at redigere i denne case",
     });
   }
 }

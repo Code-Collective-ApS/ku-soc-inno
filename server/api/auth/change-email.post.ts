@@ -15,7 +15,7 @@ export default defineEventHandler(async (event) => {
     await waitABit(beginTime);
     throw createError({
       statusCode: 400,
-      statusMessage: "Du kan ikke skifte til en identisk email",
+      message: "Du kan ikke skifte til en identisk email",
     });
   }
 
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     await waitABit(beginTime);
     throw createError({
       statusCode: 400,
-      statusMessage: "Du kan ikke skifte til denne email, da den er i brug",
+      message: "Du kan ikke skifte til denne email, da den er i brug",
     });
   }
 

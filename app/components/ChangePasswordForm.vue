@@ -81,21 +81,14 @@
 </template>
 
 <script setup lang="ts">
-import {
-  isStrongEnough,
-  type PasswordValidationRule,
-} from "~~/shared/utils/password_validation";
+import { validatePassword } from "~~/shared/utils/password_validation";
 
 const { $csrfFetch } = useNuxtApp();
-
-// password validation rules
-const minimumLength = 6; // TODO: import this from some config
-const rule: PasswordValidationRule = "upper_digit"; // TODO: import this from some config
 
 const readyToSubmit = computed<boolean>(() => {
   if (!payload.old || !payload.new || !payload.repeat) return false;
   if (payload.new !== payload.repeat) return false;
-  const validationErr = isStrongEnough(payload.new, minimumLength, rule);
+  const validationErr = validatePassword(payload.new);
   if (validationErr) return false;
   return true;
 });
@@ -128,7 +121,7 @@ function validateNewPassword(): boolean {
     return false;
   };
 
-  const validationErr = isStrongEnough(payload.new, minimumLength, rule);
+  const validationErr = validatePassword(payload.new);
   if (validationErr) return err(validationErr);
 
   if (!payload.old) return err("Du mangler at indtaste dit nuværende password");

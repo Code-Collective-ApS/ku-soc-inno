@@ -99,7 +99,7 @@ export default defineEventHandler(async (event) => {
   if (!caseRes) {
     throw createError({
       statusCode: 404,
-      statusMessage: "Case was not found",
+      message: "Case was not found",
     });
   }
 
@@ -112,7 +112,7 @@ export default defineEventHandler(async (event) => {
 
   const parsedFields = await getFields(fields).catch((e) => {
     console.error(e);
-    const msg = e?.message || 'Unknown error';
+    const msg = e?.message || "Unknown error";
     throw createError({
       statusCode: 400,
       message: msg,
@@ -174,7 +174,7 @@ export default defineEventHandler(async (event) => {
     // TODO: report error!
     throw createError({
       statusCode: 500,
-      statusMessage: "Something went wrong when uploading the files",
+      message: "Something went wrong when uploading the files",
     });
   }
 

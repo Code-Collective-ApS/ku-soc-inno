@@ -42,14 +42,14 @@ const solutionId = parseInt((route.params?.solutionId as string) || "NaN");
 if (isNaN(caseId)) {
   // TODO: report error
   throw createError({
-    statusMessage: "Invalid case id",
+    message: "Invalid case id",
     statusCode: 400,
   });
 }
 if (isNaN(solutionId)) {
   // TODO: report error
   throw createError({
-    statusMessage: "Invalid solution id",
+    message: "Invalid solution id",
     statusCode: 400,
   });
 }

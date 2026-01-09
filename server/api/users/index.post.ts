@@ -1,10 +1,10 @@
 import { z } from "zod";
 import { eq, or } from "drizzle-orm";
 import { users } from "~~/server/db/schema";
-import { isStrongEnough } from "~~/shared/utils/password_validation";
+import { validatePassword } from "#shared/utils/password_validation";
 
 const bodySchema = z.strictObject({
-  password: z.string().min(6),
+  password: z.string().min(6), // using `validatePassword` for password validation later
   email: z.email(),
   organization: z.string().min(2),
   title: z.string().min(2),
@@ -12,16 +12,17 @@ const bodySchema = z.strictObject({
 });
 
 const debug = true;
-
 export default defineEventHandler(async (event) => {
   const { email, password, fullName, organization, title } =
     await readValidatedBody(event, bodySchema.parse);
 
-  const passwordValidationErr = isStrongEnough(password, 6, "upper_digit");
+  const config = useRuntimeConfig();
+
+  const passwordValidationErr = validatePassword(password);
   if (passwordValidationErr) {
     throw createError({
       statusCode: 400,
-      statusMessage: passwordValidationErr,
+      message: passwordValidationErr,
     });
   }
 
@@ -43,7 +44,7 @@ export default defineEventHandler(async (event) => {
     await waitABit(beginTime);
     throw createError({
       statusCode: 400,
-      statusMessage: msg,
+      message: msg,
     });
   }
 
@@ -68,7 +69,13 @@ export default defineEventHandler(async (event) => {
     if (!result[0]?.id) {
       throw new Error("User was not inserted");
     }
-    await sendVerifyEmailEmail(result[0]!.id, fullName, email);
+    await sendVerifyEmailEmail(
+      config.publicHost,
+      config.verifyEmailSecret,
+      result[0]!.id,
+      fullName,
+      email,
+    );
   } catch (e) {
     // remove user if mail sending went bad
     // TODO: report error!
@@ -83,7 +90,7 @@ export default defineEventHandler(async (event) => {
       await waitABit(beginTime);
       throw createError({
         statusCode: 500,
-        statusMessage:
+        message:
           "We we were unable to send emails. The error is reported. Please come back another time",
       });
     }

@@ -90,7 +90,7 @@ export async function selectSolutionById(id: number) {
   if (!solRes)
     throw createError({
       statusCode: 404,
-      statusMessage: "Solution was not found!",
+      message: "Solution was not found!",
     });
 
   type _SolutionResponse = typeof solRes & {
@@ -171,7 +171,7 @@ export async function serveSolutionFile<
     console.error("solution does not exist");
     throw createError({
       statusCode: 404,
-      statusMessage: "Requested resource does not exist",
+      message: "Requested resource does not exist",
     });
   }
 
@@ -182,7 +182,7 @@ export async function serveSolutionFile<
     console.error("could not find resource in solution");
     throw createError({
       statusCode: 404,
-      statusMessage: "Requested resource does not exist",
+      message: "Requested resource does not exist",
     });
   }
 

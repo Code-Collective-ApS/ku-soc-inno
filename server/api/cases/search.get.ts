@@ -55,7 +55,7 @@ export default defineEventHandler(async (event) => {
 
   // set limit and offset to respect pagination and already fetched full keyword match cases
   const textSearchLimit = Math.min(pageEnd - tagMatchesCount, pageSize);
-  const textSearchOffset = Math.max(pageBegin - tagMatchesCount, 0)
+  const textSearchOffset = Math.max(pageBegin - tagMatchesCount, 0);
   const filters = [notInArray(cases.id, tagMatchCaseIds)];
   if (query.organization_type) {
     filters.push(eq(cases.organizationType, query.organization_type));
@@ -74,12 +74,13 @@ export default defineEventHandler(async (event) => {
   }
 
   // make search query in db to fetch case ids
-  const textSearchTotal = (
-    await db
-      .select({ count: count() })
-      .from(cases)
-      .where(filters.length > 1 ? and(...filters) : filters[0])
-  )[0].count;
+  const textSearchTotal =
+    (
+      await db
+        .select({ count: count() })
+        .from(cases)
+        .where(filters.length > 1 ? and(...filters) : filters[0])
+    )?.[0]?.count || 0;
 
   // make search query in db to fetch case ids
   if (tagMatchCaseIds.length < pageEnd) {

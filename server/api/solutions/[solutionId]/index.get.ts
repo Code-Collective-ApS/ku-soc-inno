@@ -18,7 +18,7 @@ export default defineEventHandler(async (event) => {
   if (!solRes) {
     throw createError({
       statusCode: 404,
-      statusMessage: "Solution was not found",
+      message: "Solution was not found",
     });
   }
 

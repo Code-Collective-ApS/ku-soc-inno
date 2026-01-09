@@ -32,7 +32,7 @@ export default defineEventHandler(async (event) => {
     await waitABit(beginTime);
     throw createError({
       statusCode: 401,
-      statusMessage: "Wrong email or password",
+      message: "Wrong email or password",
     });
   }
 
@@ -42,7 +42,7 @@ export default defineEventHandler(async (event) => {
     await waitABit(beginTime);
     throw createError({
       statusCode: 401,
-      statusMessage: "Wrong email or password",
+      message: "Wrong email or password",
     });
   }
 

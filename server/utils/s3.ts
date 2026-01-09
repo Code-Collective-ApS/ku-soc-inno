@@ -64,7 +64,7 @@ export async function getUpload(
   // if no metadata, we hit the timeout error
   if (!promRes?.$metadata) {
     throw createError({
-      statusMessage: "S3 connection timed out",
+      message: "S3 connection timed out",
       statusCode: 400,
     });
   }
@@ -78,7 +78,7 @@ export async function getUpload(
   ) {
     throw createError({
       statusCode: res.$metadata.httpStatusCode,
-      statusMessage: "File could not be retrieved on server",
+      message: "File could not be retrieved on server",
     });
   }
 
@@ -96,7 +96,7 @@ export async function getUpload(
     destroy();
     throw createError({
       statusCode: 500,
-      statusMessage: _err.message,
+      message: _err.message,
     });
   });
 
@@ -140,7 +140,7 @@ export async function uploadFile(
       console.error("upload not succeeded!", res.$metadata);
       const err = createError({
         statusCode: res.$metadata.httpStatusCode,
-        statusMessage: "Unable to upload file",
+        message: "Unable to upload file",
       });
       // captureException(err);
       throw err;
@@ -153,7 +153,7 @@ export async function uploadFile(
     if (e instanceof Error) {
       throw createError({
         statusCode: 500,
-        statusMessage: "Internal server error",
+        message: "Internal server error",
       });
     } else {
       throw e;
@@ -177,7 +177,7 @@ export async function deleteFile(key: string): Promise<void> {
     // TODO: add details on captured error
     const err = createError({
       statusCode: deleteRes.$metadata.httpStatusCode,
-      statusMessage: "Unable to delete existing file",
+      message: "Unable to delete existing file",
     });
     // captureException(err, { data: { path: key, s3: true } });
     destroy();

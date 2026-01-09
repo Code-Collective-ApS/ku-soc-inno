@@ -16,9 +16,9 @@
         >
           Redigér case
         </UButton>
-        <UButton color="secondary" variant="subtle" to="/cases/new"
-          >Opret ny case</UButton
-        >
+        <UButton color="secondary" variant="subtle" @click="createNewCase">
+          Opret ny case
+        </UButton>
       </div>
     </div>
     <div v-if="currentCase">
@@ -81,13 +81,23 @@
 import type { BreadcrumbItem } from "@nuxt/ui";
 import { useCasesStore } from "~/stores/useCasesStore";
 const route = useRoute();
+const { loggedIn } = useUserSession();
+const { openLoginModal } = useModals();
 const caseId = parseInt((route.params?.caseId as string) || "NaN");
 if (isNaN(caseId)) {
   // TODO: report error
   throw createError({
-    statusMessage: "Invalid case id",
+    message: "Invalid case id",
     statusCode: 400,
   });
+}
+
+function createNewCase() {
+  if (!loggedIn.value) {
+    openLoginModal();
+  } else {
+    navigateTo("/cases/new");
+  }
 }
 
 // fetch case on load

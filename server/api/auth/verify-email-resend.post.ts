@@ -3,10 +3,11 @@ import { eq } from "drizzle-orm";
 const msPrMinute = 1000 * 60;
 
 export default defineEventHandler(async (event) => {
+  const config = useRuntimeConfig();
   const { user: userSess } = await requireUserSession(event);
   if (userSess.emailVerifiedAt) {
     throw createError({
-      statusMessage: "Din email er allerede verificeret",
+      message: "Din email er allerede verificeret",
       statusCode: 400,
     });
   }
@@ -30,20 +31,34 @@ export default defineEventHandler(async (event) => {
     );
     if (minutesAgo < 5) {
       throw createError({
-        statusMessage:
+        message:
           "You need to wait up to 5 minutes before you can send another email",
         statusCode: 403,
       });
     }
   }
 
-  console.info("sending email verification email to", userSess.email, "..");
-  await sendVerifyEmailEmail(userSess.id, userSess.fullName, userSess.email);
-  console.info("updating `email_verification_requested_at` on user..");
-  await db
-    .update(users)
-    .set({ email_verification_requested_at: new Date() })
-    .where(eq(users.id, userSess.id));
-  console.info("send-verify-email endpoint finish");
+  console.info("sending verify-email email to", userSess.email, "..");
+  try {
+    await sendVerifyEmailEmail(
+      config.publicHost,
+      config.verifyEmailSecret,
+      userSess.id,
+      userSess.fullName,
+      userSess.email,
+    );
+  } catch (err: unknown) {
+    console.error(err);
+    // TODO: report error!
+    throw createError({
+      statusCode: 500,
+      message:
+        "Det lykkes os ikke at sende emailen. Fejlen er rapporteret og vi kigger på sagen snarest.",
+    });
+  }
+  console.info("done sending verify-email email to", userSess.email, "..");
+
+  // update forgot password request date in db
+  await setVerifyEmailRequested(userSess.id);
   return { ok: true };
 });

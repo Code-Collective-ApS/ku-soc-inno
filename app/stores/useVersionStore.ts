@@ -21,11 +21,11 @@ export const useVersionStore = defineStore("versionStore", () => {
           pending.value = false;
           throw msg;
         } else {
-          console.info(
-            "api: got /version response:",
-            ctx.response.status,
-            // data,
-          );
+          // console.info(
+          //   "api: got /version response:",
+          //   ctx.response.status,
+          //   // data,
+          // );
           version.value = data.version;
           pending.value = false;
         }

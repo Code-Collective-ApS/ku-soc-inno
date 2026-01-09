@@ -17,7 +17,7 @@ export default defineEventHandler(async (event) => {
   if (existingCase) {
     throw createError({
       statusCode: 400,
-      statusMessage: "The case title is already in use. It must be unique.",
+      message: "Titlen på casen er allerede i brug. Den skal være unik.",
     });
   }
 

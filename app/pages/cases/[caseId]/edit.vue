@@ -18,7 +18,7 @@ const caseId = parseInt((route.params?.caseId as string) || "NaN");
 if (isNaN(caseId)) {
   // TODO: report error
   throw createError({
-    statusMessage: "Invalid case id",
+    message: "Invalid case id",
     statusCode: 400,
   });
 }
@@ -41,7 +41,7 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => [
   {
     label: "Cases",
     icon: "i-lucide-book-open",
-    to: "/cases",
+    to: "/cases/browse",
   },
   {
     label: currentCase.value?.title,

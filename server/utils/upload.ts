@@ -13,7 +13,7 @@ export function readFormidableFormFiles(
   allowedTypes?: string[],
 ): File[] {
   const resultFiles: File[] = [];
-  for (const f of (files || [])) {
+  for (const f of files || []) {
     let lastModified = new Date(f.lastModifiedDate).getTime();
     let fileName = f.originalFilename;
     const size = f.size;
@@ -44,7 +44,7 @@ export function readFormidableFormFiles(
               : "unknown";
       throw createError({
         statusCode: 500,
-        statusMessage: `Unable to read ${missing} from file upload. Halting operation.`,
+        message: `Unable to read ${missing} from file upload. Halting operation.`,
       });
     }
 
@@ -52,7 +52,7 @@ export function readFormidableFormFiles(
     if (allowedTypes && !allowedTypes.includes(mimetype)) {
       throw createError({
         statusCode: 400,
-        statusMessage:
+        message:
           "Invalid file type. Allowed types are: " +
           allowedTypes.join(", ") +
           ".",
@@ -63,7 +63,7 @@ export function readFormidableFormFiles(
     if (size > maxFileSize) {
       throw createError({
         statusCode: 400,
-        statusMessage: `File size ${prettyByteSize(size)} is too large. Max allowed is ${prettyByteSize(maxFileSize)}`,
+        message: `File size ${prettyByteSize(size)} is too large. Max allowed is ${prettyByteSize(maxFileSize)}`,
       });
     }
 
@@ -92,7 +92,7 @@ export async function fetchFileUpload(fileUploadId: number) {
     // TODO: report error
     throw createError({
       statusCode: 404,
-      statusMessage: "File does not exist",
+      message: "File does not exist",
     });
   }
 

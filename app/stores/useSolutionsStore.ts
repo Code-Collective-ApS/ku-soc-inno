@@ -42,7 +42,7 @@ export const useSolutionsStore = defineStore("solutions", () => {
           const msg = await parseApiError(ctx.response);
           throw createError({
             statusCode: ctx.response.status,
-            statusMessage: msg,
+            message: msg,
           });
         }
       },

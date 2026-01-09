@@ -22,7 +22,7 @@ const ruleErrors: Record<PasswordValidationRule, string> = {
 /**
  * Returns undefined if the password is strong enough, and returns a validation error message if not
  */
-export function isStrongEnough(
+function _validatePassword(
   pw: string,
   minLen: number,
   rule: PasswordValidationRule = "upper_digit_symbol",
@@ -35,9 +35,16 @@ export function isStrongEnough(
     return `Passwordet skal være minimum ${minLen} karakterer langt`;
 
   if (regex.test(pw)) {
-    console.log("isStrongEnough returning error message:", errMsg);
+    console.log("validatePassword returning error message:", errMsg);
     return errMsg;
   } else {
-    console.log("isStrongEnough password validation success", { regex, pw });
+    // console.log("validatePassword password validation success", { regex, pw });
   }
+}
+
+/**
+ * NOTE: these are the global password validation rules
+ */
+export function validatePassword(pw: string) {
+  return _validatePassword(pw, 8, "upper_digit");
 }

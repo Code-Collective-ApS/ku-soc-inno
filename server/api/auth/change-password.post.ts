@@ -2,7 +2,7 @@ import { users } from "../../db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
 import { updatePassword } from "~~/server/utils/resources/user";
-import { isStrongEnough } from "~~/shared/utils/password_validation";
+import { validatePassword } from "~~/shared/utils/password_validation";
 
 const bodySchema = z.object({
   old: z.string().min(2),
@@ -30,7 +30,7 @@ export default defineEventHandler(async (event) => {
     await waitABit(beginTime);
     throw createError({
       statusCode: 401,
-      statusMessage: "Din konto eksisterer ikke længere",
+      message: "Din konto eksisterer ikke længere",
     });
   }
 
@@ -43,16 +43,16 @@ export default defineEventHandler(async (event) => {
     await waitABit(beginTime);
     throw createError({
       statusCode: 401,
-      statusMessage: "The old password was wrong",
+      message: "The old password was wrong",
     });
   }
 
   // validate password
-  const newPasswordError = isStrongEnough(passwords["new"], 6, "upper_digit");
+  const newPasswordError = validatePassword(passwords["new"]);
   if (newPasswordError) {
     throw createError({
       statusCode: 400,
-      statusMessage: newPasswordError,
+      message: newPasswordError,
     });
   }
 

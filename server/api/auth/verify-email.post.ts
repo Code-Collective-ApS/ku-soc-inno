@@ -7,28 +7,27 @@ const bodyDto = z.strictObject({
 });
 
 export default defineEventHandler(async (event) => {
+  const beginTime = new Date().getTime();
   const sess = await getUserSession(event);
   const user = sess.user;
   if (!user) {
     throw createError({
       status: 401,
-      statusMessage:
-        "You need to be logged in, to be able to verify your email",
+      message: "You need to be logged in, to be able to verify your email",
     });
   }
 
   if (user.emailVerifiedAt) {
     throw createError({
       statusCode: 204,
-      statusMessage:
-        "Din konto er allerede verificeret " + user.emailVerifiedAt,
+      message: "Din konto er allerede verificeret " + user.emailVerifiedAt,
     });
   }
 
   const config = useRuntimeConfig();
   try {
     const body = await readValidatedBody(event, bodyDto.parse);
-    const { error, payload } = parseJwt(config.verificationSecret, body.jwt);
+    const { error, payload } = parseJwt(config.verifyEmailSecret, body.jwt);
     if (error) throw new Error(error);
     if (payload?.userId !== user.id) {
       throw new Error("Payload has no user id");
@@ -37,14 +36,16 @@ export default defineEventHandler(async (event) => {
     console.info("successfully verified user", user.email);
     await refreshUserSession(event, user.id);
 
+    await waitABit(beginTime);
     return {
       isValid: true,
     };
   } catch (e) {
     console.error(e);
+    await waitABit(beginTime);
     throw createError({
       statusCode: 400,
-      statusMessage: "Invalid signature",
+      message: "Invalid signature",
     });
   }
 });

@@ -1,7 +1,10 @@
 import { eq, ne, and } from "drizzle-orm";
 import { barriers, cases, categoryTags } from "../../../db/schema";
 import { patchCaseSchema } from "~~/shared/schemas/patchCaseSchema";
-import { requireCaseEditingPermissions, selectCaseById } from "~~/server/utils/resources/case";
+import {
+  requireCaseEditingPermissions,
+  selectCaseById,
+} from "~~/server/utils/resources/case";
 import * as z from "zod";
 const paramDto = z.strictObject({
   caseId: z.coerce.number().positive(),
@@ -16,7 +19,7 @@ export default defineEventHandler(async (event) => {
   if (!caseRes) {
     throw createError({
       statusCode: 404,
-      statusMessage: "Case was not found",
+      message: "Case was not found",
     });
   }
 
@@ -25,18 +28,15 @@ export default defineEventHandler(async (event) => {
 
   // check for duplicate titles if user modifies title into an existing one
   const duplicateTitle = await db.query.cases.findFirst({
-    where: and(
-      ne(cases.id, caseRes.id),
-      eq(cases.title, body.title),
-    ),
+    where: and(ne(cases.id, caseRes.id), eq(cases.title, body.title)),
     columns: {
       id: true,
     },
   });
   if (duplicateTitle) {
     throw createError({
-      statusCode: 404,
-      statusMessage: "The case title is already in use. It must be unique.",
+      statusCode: 400,
+      message: "Titlen på casen er allerede i brug. Den skal være unik.",
     });
   }
 
@@ -77,7 +77,7 @@ export default defineEventHandler(async (event) => {
 
   // remove existing category tags + add new
   await db.transaction(async (tx) => {
-    await tx.delete(categoryTags).where(eq(categoryTags.caseId, caseId))
+    await tx.delete(categoryTags).where(eq(categoryTags.caseId, caseId));
     await tx.insert(categoryTags).values(newTags).returning({
       id: categoryTags.id,
       tag: categoryTags.tag,

@@ -15,6 +15,8 @@
 const route = useRoute();
 const { fetch: refreshUser, user } = useUserSession();
 const jwt = route.query?.jwt;
+// const emailRaw = route.query?.email;
+// const email = (emailRaw && typeof emailRaw === 'string') ? fromBase64Url(emailRaw) : null;
 
 await callOnce(async () => {
   if (user.value?.emailVerifiedAt) {
@@ -25,7 +27,7 @@ await callOnce(async () => {
 if (!jwt) {
   throw createError({
     statusCode: 400,
-    statusMessage: "You need to provide the correct query parameters",
+    message: "You need to provide the correct query parameters",
   });
 }
 
