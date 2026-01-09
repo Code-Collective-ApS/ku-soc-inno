@@ -3,7 +3,7 @@
     :title="title"
     :close="{ onClick: () => emit('close', false) }"
     :description="description || undefined"
-    @update:open="(o) => !o && emit('close', false)"
+    @update:open="(o: boolean) => !o && emit('close', false)"
   >
     <template #footer>
       <div class="flex items-center gap-x-2 justify-end w-full">
@@ -29,6 +29,17 @@
 </template>
 
 <script lang="ts" setup>
+// NOTE: for some reason it is required in this file for `yarn nuxt typecheck`
+import type { PropType } from "vue";
+type _Color =
+  | "error"
+  | "primary"
+  | "secondary"
+  | "success"
+  | "info"
+  | "warning"
+  | "neutral";
+
 defineProps({
   title: {
     type: String,
@@ -39,16 +50,7 @@ defineProps({
     required: true,
   },
   color: {
-    type: String as PropType<
-      | "error"
-      | "primary"
-      | "secondary"
-      | "success"
-      | "info"
-      | "warning"
-      | "neutral"
-      | undefined
-    >,
+    type: String as PropType<_Color | undefined>,
     required: false,
     default: () => "error",
   },
