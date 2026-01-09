@@ -33,8 +33,10 @@
 
     <!-- Search result meta text -->
     <p v-if="!errorMsg" class="text-sm text-muted mb-3">
-      Viser {{ (page - 1) * pageSize }}-{{ Math.min(page * pageSize, total) }} ud af
-      {{ total }} resultater
+      Viser {{ (page - 1) * pageSize }}-{{
+        Math.min(page * pageSize, total)
+      }}
+      ud af {{ total }} resultater
     </p>
     <p v-if="errorMsg" class="text-sm text-error-500 mb-3">{{ errorMsg }}</p>
 
@@ -95,11 +97,12 @@ const lastSearchTookMs = ref(0);
 const loading = ref(true);
 const errorMsg = ref("");
 const page = ref(1);
+const { $csrfFetch } = useNuxtApp();
 
 async function search() {
   loading.value = true;
   const beginTime = Date.now();
-  await $fetch(`/api/cases/search`, {
+  await $csrfFetch(`/api/cases/search`, {
     query: {
       text: payload.text || "",
       sector: payload.sector || null,
