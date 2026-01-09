@@ -107,22 +107,22 @@ async function onSubmit(event: Event) {
       headers: {
         "Content-Type": "application/json",
       },
-      onResponseError: async (res) => {
-        console.error(res);
-        error.value = await parseApiError(res);
-      },
-      onResponse: async (res) => {
-        if (res.response.status === 200) {
+      onResponse: async (ctx) => {
+        if (ctx.response.status === 200) {
           resetInputs();
           successMsg.value =
             "Success! We've sent you an email to finish account setup";
           emit("create-account-success");
+        } else {
+          const msg = await parseApiError(ctx.error || ctx.response._data);
+          throw new Error(msg);
         }
       },
     });
   } catch (e: unknown) {
     console.error(e);
-    error.value = await parseApiError(e as Error);
+    error.value = (e as Error).message || "Ukendt fejl";
+    // TODO: report error
   } finally {
     loading.value = false;
   }
