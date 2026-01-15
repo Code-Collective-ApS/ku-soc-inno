@@ -2,8 +2,8 @@ import * as z from "zod";
 import { serveSolutionFile } from "~~/server/utils/resources/solution";
 
 const paramDto = z.strictObject({
-  solutionId: z.coerce.number().positive(),
-  attachmentId: z.coerce.number().positive(),
+  solutionId: z.coerce.number().positive().max(2147483647), // sane max
+  attachmentId: z.coerce.number().positive().max(2147483647), // sane max
 });
 
 export default defineEventHandler(async (event) => {

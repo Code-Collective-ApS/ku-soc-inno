@@ -1,7 +1,7 @@
 import * as z from "zod";
 import { selectCaseById, serializeCase } from "~~/server/utils/resources/case";
 const paramDto = z.strictObject({
-  caseId: z.coerce.number().positive(),
+  caseId: z.coerce.number().positive().max(2147483647), // sane max
 });
 
 export default defineEventHandler(async (event) => {

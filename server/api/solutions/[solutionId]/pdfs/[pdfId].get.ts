@@ -4,8 +4,8 @@ import { serveSolutionFile } from "~~/server/utils/resources/solution";
 import { eq } from "drizzle-orm";
 
 const paramDto = z.strictObject({
-  solutionId: z.coerce.number().positive(),
-  pdfId: z.coerce.number().positive(),
+  solutionId: z.coerce.number().positive().max(2147483647), // sane max
+  pdfId: z.coerce.number().positive().max(2147483647), // sane max
 });
 
 export default defineEventHandler(async (event) => {
