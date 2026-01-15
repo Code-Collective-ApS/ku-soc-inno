@@ -16,7 +16,6 @@
           onClick: () => {
             if (!loggedIn) {
               const q = { ...(route.query || {}), redirectTo: '/cases/new' };
-              console.log('pushing query!');
               router.push({ path: '/', query: q });
               openLoginModal();
             } else {
