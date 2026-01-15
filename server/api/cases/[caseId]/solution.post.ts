@@ -65,9 +65,9 @@ function getFiles(
 
   const dispose = async () => {
     const paths = [
-      ...rawAttachments.map((f: Files) => f.filepath as string),
-      ...rawIllustrations.map((f: Files) => f.filepath as string),
-      ...rawPrimaryPdf.map((f: Files) => f.filepath as string),
+      ...(rawAttachments || []).map((f: Files) => f.filepath as string),
+      ...(rawIllustrations || []).map((f: Files) => f.filepath as string),
+      ...(rawPrimaryPdf || []).map((f: Files) => f.filepath as string),
     ];
 
     for (const p of paths) {
@@ -179,34 +179,38 @@ export default defineEventHandler(async (event) => {
   }
 
   // insert attachment fileuploads
-  const insertedAttachmentFileUploads = (
-    await db.insert(fileUploads).values(attachmentObjects).returning({
-      id: fileUploads.id,
-    })
-  ).map((x) => x.id);
+  if (attachmentObjects?.length) {
+    const insertedAttachmentFileUploads = (
+      await db.insert(fileUploads).values(attachmentObjects).returning({
+        id: fileUploads.id,
+      })
+    ).map((x) => x.id);
 
-  // attach attachments to solution
-  await db.insert(solutionAttachments).values(
-    insertedAttachmentFileUploads.map((fileUploadId) => ({
-      fileUploadId,
-      solutionId: insertedId,
-    })),
-  );
+    // attach attachments to solution
+    await db.insert(solutionAttachments).values(
+      insertedAttachmentFileUploads.map((fileUploadId) => ({
+        fileUploadId,
+        solutionId: insertedId,
+      })),
+    );
+  }
 
-  // insert illustration fileuploads
-  const insertedIllustrationFileUploads = (
-    await db.insert(fileUploads).values(illustrationObjects).returning({
-      id: fileUploads.id,
-    })
-  ).map((x) => x.id);
+  if (illustrationObjects?.length) {
+    // insert illustration fileuploads
+    const insertedIllustrationFileUploads = (
+      await db.insert(fileUploads).values(illustrationObjects).returning({
+        id: fileUploads.id,
+      })
+    ).map((x) => x.id);
 
-  // attach illustrations to solution
-  await db.insert(solutionIllustrations).values(
-    insertedIllustrationFileUploads.map((fileUploadId) => ({
-      fileUploadId,
-      solutionId: insertedId,
-    })),
-  );
+    // attach illustrations to solution
+    await db.insert(solutionIllustrations).values(
+      insertedIllustrationFileUploads.map((fileUploadId) => ({
+        fileUploadId,
+        solutionId: insertedId,
+      })),
+    );
+  }
 
   // insert pdf fileuploads
   const insertedPdfFileUpload = (
@@ -230,12 +234,6 @@ export default defineEventHandler(async (event) => {
       solutionId: res[0]!.id,
     })),
   );
-
-  console.log({
-    insertedIllustrationFileUploads,
-    insertedAttachmentFileUploads,
-    insertedPdfFileUpload,
-  });
 
   // remove temporary files if any
   await dispose();
