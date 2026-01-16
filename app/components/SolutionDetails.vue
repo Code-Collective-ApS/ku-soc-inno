@@ -1,6 +1,6 @@
 <template>
   <div class="[&>*>p]:font-bold flex flex-col gap-y-3">
-    <div class="flex justify-between mt-6 items-center">
+    <div class="flex justify-between mt-3 items-center">
       <h1 class="text-3xl font-serif">
         Løsning på case: {{ relatedCase.title }}
       </h1>
@@ -87,33 +87,37 @@
     </div>
 
     <div v-if="pdfs.length > 0">
-      <p>Rapport (PDF)</p>
+      <div class="flex items-center gap-1 mt-3 mb-1.5">
+        <UIcon class="text-lg" name="mdi:file-pdf-outline" />
+        <p class="font-bold">Rapport (PDF)</p>
+      </div>
       <div v-for="pdf in pdfs" :key="pdf.id">
         <UButton
           :to="pdf.url"
           variant="subtle"
-          size="lg"
-          color="secondary"
+          color="neutral"
           class="mt-1.5"
           target="_blank"
-          icon="i-mdi-download-outline"
+          icon="material-symbols:download-rounded"
         >
-          Download
+          Download pdf
         </UButton>
       </div>
     </div>
 
     <div v-if="attachments.length > 0">
-      <p>Andre bilag</p>
+      <div class="flex items-center gap-1 mt-3 mb-1.5">
+        <UIcon class="text-lg" name="mdi:file-multiple-outline" />
+        <p class="font-bold">Andre bilag</p>
+      </div>
       <div v-for="att in attachments" :key="att.id">
         <UButton
           :to="att.url"
           variant="subtle"
-          size="lg"
-          color="secondary"
+          color="neutral"
           class="mt-1.5"
           target="_blank"
-          icon="i-mdi-download-outline"
+          icon="material-symbols:download-rounded"
         >
           {{ att.fileName }}
         </UButton>

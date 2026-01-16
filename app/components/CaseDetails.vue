@@ -1,7 +1,29 @@
 <template>
   <div class="[&>*>p]:font-bold flex flex-col gap-y-3">
-    <div>
-      <h1 class="text-3xl font-serif mt-6">Case: {{ currentCase.title }}</h1>
+    <div class="flex justify-between mt-3 items-center">
+      <div>
+        <h1 class="text-3xl font-serif">Case: {{ currentCase.title }}</h1>
+      </div>
+      <div class="flex gap-3 items-center">
+        <UButton
+          v-if="currentCase && currentCase.isOwned"
+          variant="subtle"
+          color="neutral"
+          icon="i-mdi-pencil"
+          :to="`/cases/${currentCase.id}/edit`"
+        >
+          Redigér case
+        </UButton>
+        <UButton
+          v-if="currentCase && currentCase.isOwned"
+          variant="subtle"
+          color="error"
+          icon="i-mdi-trash-outline"
+          @click="removeCase"
+        >
+          Slet case
+        </UButton>
+      </div>
     </div>
 
     <div>
@@ -33,7 +55,7 @@
       </div>
     </div>
 
-    <div class="mb-3">
+    <div class="mb-3 mt-3">
       <p>Hvad er casens udfordring kort for talt ?</p>
       <div class="whitespace-pre-line">
         {{ currentCase.challengeDescription }}
@@ -92,11 +114,48 @@
   </div>
 </template>
 <script lang="ts" setup>
-defineProps({
+const props = defineProps({
   currentCase: {
     type: Object as PropType<CaseSerialized>,
     required: true,
   },
 });
 const { user } = useUserSession();
+const { $csrfFetch } = useNuxtApp();
+const toast = useToast();
+const { openConfirmModal } = useModals();
+
+async function removeCase() {
+  const result = await openConfirmModal(
+    "Bekræft sletning",
+    "Er du sikker på at du vil slette denne case? Tilhørende løsninger vil også blive slettet.",
+  );
+  if (!result) return;
+
+  try {
+    await $csrfFetch(`/api/cases/${props.currentCase.id}`, {
+      method: "DELETE",
+      onResponse: async (ctx) => {
+        if ([204].includes(ctx.response.status)) {
+          toast.add({
+            title: "Casen blev slettet",
+            icon: "i-mdi-check",
+            color: "success",
+          });
+          await navigateTo("/cases/browse");
+        } else {
+          const msg = await parseApiError(
+            ctx.response?._data || ctx.error || ctx.response || "Unknown error",
+          );
+          throw new Error(msg);
+        }
+      },
+    });
+  } catch (e: unknown) {
+    toast.add({
+      title: (e as Error)?.message || "Unknown error",
+      color: "error",
+    });
+  }
+}
 </script>

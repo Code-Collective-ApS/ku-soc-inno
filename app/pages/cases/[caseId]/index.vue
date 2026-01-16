@@ -6,26 +6,6 @@
         :items="breadcrumb"
         class="mb-3"
       />
-      <div class="flex gap-3">
-        <UButton
-          v-if="currentCase && currentCase.isOwned"
-          variant="subtle"
-          color="neutral"
-          icon="i-mdi-pencil"
-          :to="`/cases/${currentCase.id}/edit`"
-        >
-          Redigér case
-        </UButton>
-        <UButton
-          v-if="currentCase && currentCase.isOwned"
-          variant="subtle"
-          color="error"
-          icon="i-mdi-trash-outline"
-          @click="removeCase"
-        >
-          Slet case
-        </UButton>
-      </div>
     </div>
     <div v-if="currentCase">
       <CaseDetails :current-case="currentCase" />

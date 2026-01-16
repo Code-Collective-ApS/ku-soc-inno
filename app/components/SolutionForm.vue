@@ -151,6 +151,8 @@ import {
 } from "~~/shared/schemas/createSolutionSchema";
 const loading = ref(false);
 
+const emit = defineEmits<{ "created:solution": [] }>();
+
 const isTestedRadios = ref([
   { label: "Ja", value: true },
   { label: "Nej", value: false },
@@ -229,6 +231,7 @@ async function onSubmit(
             "Create solution endpoint did not return inserted id",
           );
         }
+        emit("created:solution");
         navigateTo(`/cases/${props.caseId}/solutions/${insertedId}`);
       } else if (ctx.response.ok) {
         loading.value = false;

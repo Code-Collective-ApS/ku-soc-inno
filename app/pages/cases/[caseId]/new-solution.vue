@@ -6,7 +6,7 @@
       class="mb-3"
     />
     <PageTitle>Opret ny løsning</PageTitle>
-    <SolutionForm :case-id="caseId" />
+    <SolutionForm :case-id="caseId" @created:solution="onSolutionCreated" />
   </UContainer>
 </template>
 
@@ -26,7 +26,7 @@ useToasters();
 
 // fetch case on load
 const casesStore = useCasesStore();
-const { data } = await useAsyncData(
+const { data, refresh } = await useAsyncData(
   "case",
   () => casesStore.fetchCase(caseId),
   {
@@ -50,6 +50,11 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => [
     label: "Opret ny løsning",
   },
 ]);
+
+// refetch case if solution was created
+function onSolutionCreated() {
+  refresh();
+}
 
 definePageMeta({
   middleware: ["auth"],
