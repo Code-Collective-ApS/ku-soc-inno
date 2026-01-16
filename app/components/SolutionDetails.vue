@@ -1,9 +1,19 @@
 <template>
   <div class="[&>*>p]:font-bold flex flex-col gap-y-3">
-    <div>
-      <h1 class="text-3xl font-serif mt-6">
+    <div class="flex justify-between mt-6 items-center">
+      <h1 class="text-3xl font-serif">
         Løsning på case: {{ relatedCase.title }}
       </h1>
+      <div>
+        <UButton
+          variant="subtle"
+          color="secondary"
+          icon="i-mdi-arrow-up-left"
+          class="cursor-pointer"
+          :to="`/cases/${relatedCase.id}`"
+          >Gå til case</UButton
+        >
+      </div>
     </div>
 
     <div>
@@ -33,7 +43,7 @@
       </div>
     </div>
 
-    <div class="flex flex-col gap-9 mb-12">
+    <div v-if="illustrationUrls.length > 0" class="flex flex-col gap-9 mb-12">
       <UCarousel
         v-slot="{ item }"
         :arrows="illustrationUrls.length > 3"
@@ -48,13 +58,6 @@
       <p>Beskrivelse af løsningen</p>
       <div class="whitespace-pre-line">
         {{ solution?.solutionDescription }}
-      </div>
-    </div>
-
-    <div class="mb-3">
-      <p>Fri tekst</p>
-      <div class="whitespace-pre-line">
-        {{ solution?.freeText }}
       </div>
     </div>
 
@@ -76,8 +79,15 @@
       </div>
     </div>
 
+    <div v-if="solution.freeText" class="mb-3">
+      <p>Opmærksomhedspunkter omkring test og/eller implementering</p>
+      <div class="whitespace-pre-line">
+        {{ solution?.freeText }}
+      </div>
+    </div>
+
     <div v-if="pdfs.length > 0">
-      <p>Hovedopgave</p>
+      <p>Rapport (PDF)</p>
       <div v-for="pdf in pdfs" :key="pdf.id">
         <UButton
           :to="pdf.url"
@@ -94,7 +104,7 @@
     </div>
 
     <div v-if="attachments.length > 0">
-      <p>Bilag</p>
+      <p>Andre bilag</p>
       <div v-for="att in attachments" :key="att.id">
         <UButton
           :to="att.url"

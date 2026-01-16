@@ -2,7 +2,7 @@
   <div>
     <UPageHero
       :headline="`soc-inno v${pkgVersion}`"
-      title="Udforsk sociologiske cases"
+      title="Udforsk sociale problemer og sociologiske løsninger"
       description="Soc-inno er et offentligt arkiv over sociologiske cases og tilhørende løsninger."
       :links="[
         {
