@@ -1,5 +1,5 @@
 import { users } from "~~/server/db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and, isNull } from "drizzle-orm";
 import { z } from "zod";
 
 // TODO: remove autoimported imports when it works in editor...
@@ -25,7 +25,7 @@ export default defineEventHandler(async (event) => {
       emailVerifiedAt: users.emailVerifiedAt,
     })
     .from(users)
-    .where(eq(users.email, email));
+    .where(and(eq(users.email, email), isNull(users.removedAt)));
 
   if (!user[0]) {
     console.log("User does not exist");

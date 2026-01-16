@@ -1,7 +1,5 @@
-import { users } from "~~/server/db/schema";
-import { updateEmail } from "~~/server/utils/resources/user";
+import { updateEmail, getUserByEmail } from "~~/server/utils/resources/user";
 import { changeEmailSchema } from "~~/shared/schemas/changeEmailSchema";
-import { eq } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   const { user } = await requireUserSession(event);
@@ -20,11 +18,7 @@ export default defineEventHandler(async (event) => {
   }
 
   // ensure no other user uses this email
-  const userWithSameEmail = await db.query.users.findFirst({
-    where: eq(users.email, body.email),
-    columns: { id: true },
-  });
-
+  const userWithSameEmail = await getUserByEmail(body.email);
   if (userWithSameEmail) {
     // TODO: report error
     await waitABit(beginTime);

@@ -1,8 +1,8 @@
-import { desc, eq, sql, inArray } from "drizzle-orm";
+import { eq, desc, isNull, and, sql, inArray } from "drizzle-orm";
 import type { OrganizationSector } from "~~/shared/utils/organization_sector";
 import type { OrganizationType } from "~~/shared/utils/organization_type";
-import { cases } from "~~/server/db/schema";
-import { db, type Doc } from "../db";
+import { cases, solutions } from "~~/server/db/schema";
+import { db, type Transaction, type Doc } from "../db";
 import { type SwapDatesWithStrings, serializeDates } from "../datetime";
 import type { PgPreparedQuery, PreparedQueryConfig } from "drizzle-orm/pg-core";
 import { createError } from "h3";
@@ -53,6 +53,7 @@ const caseResponseWith = {
       solutionDescription: true,
       updatedAt: true,
     },
+    where: isNull(solutions.removedAt),
   },
 };
 
@@ -95,6 +96,7 @@ export const selectNewestCases = db.query.cases
     offset: sql.placeholder("offset"),
     with: caseResponseWith,
     orderBy: desc(cases.createdAt),
+    where: isNull(cases.removedAt),
   })
   .prepare("select_cases") as PgPreparedQuery<
   PreparedQueryConfig & {
@@ -104,7 +106,7 @@ export const selectNewestCases = db.query.cases
 
 export const selectCaseById = db.query.cases
   .findFirst({
-    where: eq(cases.id, sql.placeholder("id")),
+    where: and(eq(cases.id, sql.placeholder("id")), isNull(cases.removedAt)),
     columns: caseResponseColumns,
     with: caseResponseWith,
   })
@@ -117,7 +119,7 @@ export const selectCaseById = db.query.cases
 export const selectCasesByIds = (ids: number[]) =>
   db.query.cases
     .findMany({
-      where: inArray(cases.id, ids),
+      where: and(inArray(cases.id, ids), isNull(cases.removedAt)),
       columns: caseResponseColumns,
       with: caseResponseWith,
     })
@@ -152,6 +154,7 @@ export function serializeCase(
     solutions: serializedCase.solutions,
     title: serializedCase.title,
     updatedAt: serializedCase.updatedAt,
+    removedAt: serializedCase.removedAt,
     isOwned: _userId ? _case.userId === _userId : false,
   } satisfies CaseSerialized;
 }
@@ -163,12 +166,44 @@ export function serializeCases(
   return _cases.map((c) => serializeCase(c, _userId));
 }
 
+export function removeCase(_case: CaseResponse) {
+  const solutionIds = _case.solutions.map((x) => x.id);
+  return db.transaction(async (tx) => {
+    if (solutionIds.length > 0) {
+      await tx
+        .update(solutions)
+        .set({ removedAt: new Date() })
+        .where(inArray(solutions.id, solutionIds));
+    }
+    await tx
+      .update(cases)
+      .set({ removedAt: new Date() })
+      .where(eq(cases.id, _case.id));
+  });
+}
+
 export function stripCaseForContactInfo(_case: CaseResponse): CaseResponse {
   _case.contactName = "";
   _case.contactEmail = "";
   _case.contactOrganization = "";
   _case.contactTitle = "";
   return _case;
+}
+
+export function anonymizeCasesBelongingToUser(
+  userId: number,
+  transaction?: Transaction,
+) {
+  return (transaction || db)
+    .update(cases)
+    .set({
+      contactName: "",
+      contactEmail: "",
+      contactOrganization: "",
+      contactTitle: "",
+      contactPublic: false,
+    })
+    .where(eq(cases.userId, userId));
 }
 
 export function requireCaseEditingPermissions(

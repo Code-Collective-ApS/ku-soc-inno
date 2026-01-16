@@ -1,4 +1,4 @@
-import { eq } from "drizzle-orm";
+import { and, eq, isNull } from "drizzle-orm";
 import type { H3Event } from "h3";
 import { setResponseHeader, createError } from "h3";
 import {
@@ -9,7 +9,7 @@ import {
   solutions,
 } from "~~/server/db/schema";
 import { type SwapDatesWithStrings, serializeManyDates } from "../datetime";
-import { db } from "../db";
+import { db, type Transaction } from "../db";
 import { fetchFileUpload } from "~~/server/utils/upload";
 
 export function selectSolutionIllustrations(solutionId: number) {
@@ -84,7 +84,7 @@ export async function selectSolutionById(id: number) {
         },
       },
     },
-    where: eq(solutions.id, id),
+    where: and(eq(solutions.id, id), isNull(solutions.removedAt)),
   });
 
   if (!solRes)
@@ -105,6 +105,19 @@ export async function selectSolutionById(id: number) {
   solution.solutionPdfs = await selectSolutionPdfs(id);
   solution.attachments = await selectSolutionAttachments(id);
   return solution as _SolutionResponse;
+}
+
+export function removeSolutionsByUserId(
+  userId: number,
+  transaction?: Transaction,
+) {
+  return (transaction || db)
+    .update(solutions)
+    .set({
+      removedAt: new Date(),
+      primaryPdfPublic: false,
+    })
+    .where(eq(solutions.userId, userId));
 }
 
 export type SolutionResponse = Awaited<ReturnType<typeof selectSolutionById>>;
@@ -150,6 +163,13 @@ export function stripSolutionForPdfs(
     _solution["attachments"] = [];
   }
   return _solution;
+}
+
+export function removeSolution(solutionId: number) {
+  return db
+    .update(solutions)
+    .set({ removedAt: new Date() })
+    .where(eq(solutions.id, solutionId));
 }
 
 export async function serveSolutionFile<

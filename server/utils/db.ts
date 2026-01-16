@@ -1,9 +1,23 @@
-import { drizzle } from "drizzle-orm/postgres-js";
+import {
+  drizzle,
+  type PostgresJsQueryResultHKT,
+} from "drizzle-orm/postgres-js";
 import postgres from "postgres";
-import type { InferInsertModel, InferSelectModel } from "drizzle-orm";
-import type { PgTableWithColumns } from "drizzle-orm/pg-core";
-
+import type {
+  ExtractTablesWithRelations,
+  InferInsertModel,
+  InferSelectModel,
+} from "drizzle-orm";
+import type { PgTransaction, PgTableWithColumns } from "drizzle-orm/pg-core";
+// import type { NodePgQueryResultHKT } from "drizzle-orm/node-postgres";
 import * as schema from "../db/schema";
+
+export type Transaction = PgTransaction<
+  // NodePgQueryResultHKT,
+  PostgresJsQueryResultHKT,
+  typeof schema,
+  ExtractTablesWithRelations<typeof schema>
+>;
 
 const pgUri = process.env.DATABASE_URL as string;
 const queryClient = postgres(pgUri, {});

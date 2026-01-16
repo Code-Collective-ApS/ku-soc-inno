@@ -104,7 +104,10 @@ export const useCasesStore = defineStore("cases", () => {
           );
 
           pending.value = false;
-          throw await parseApiError(ctx.response);
+          const msg = await parseApiError(
+            ctx.response?._data || ctx.error || ctx.response,
+          );
+          throw new Error(msg);
         }
       },
       onResponseError: (ctx: FetchCaseContext) => {
@@ -118,6 +121,7 @@ export const useCasesStore = defineStore("cases", () => {
         // TODO: report error
       },
     });
+
     return res as Promise<{ case: CaseSerialized }>;
   }
 

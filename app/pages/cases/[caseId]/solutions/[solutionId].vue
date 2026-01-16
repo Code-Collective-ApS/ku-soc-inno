@@ -26,7 +26,7 @@
       v-if="!solutionPending && !casePending && (caseError || solutionError)"
       class="my-6 text-red-500"
     >
-      error: {{ caseError || solutionError }}
+      {{ caseError || solutionError }}
     </div>
   </UContainer>
 </template>

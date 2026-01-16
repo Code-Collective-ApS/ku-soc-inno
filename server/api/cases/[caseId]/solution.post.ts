@@ -18,7 +18,7 @@ import { eq } from "drizzle-orm";
 import * as fs from "node:fs";
 
 const paramDto = z.strictObject({
-  caseId: z.coerce.number().positive(),
+  caseId: z.coerce.number().positive().max(2147483647), // sane max
 });
 
 function getFields(fields: Fields) {

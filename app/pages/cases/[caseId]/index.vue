@@ -16,8 +16,14 @@
         >
           Redigér case
         </UButton>
-        <UButton color="secondary" variant="subtle" @click="createNewCase">
-          Opret ny case
+        <UButton
+          v-if="currentCase && currentCase.isOwned"
+          variant="subtle"
+          color="error"
+          icon="i-mdi-trash-outline"
+          @click="removeCase"
+        >
+          Slet case
         </UButton>
       </div>
     </div>
@@ -81,9 +87,10 @@
 import type { BreadcrumbItem } from "@nuxt/ui";
 import { useCasesStore } from "~/stores/useCasesStore";
 const route = useRoute();
-const { loggedIn } = useUserSession();
-const { openLoginModal } = useModals();
+const toast = useToast();
+const { openConfirmModal } = useModals();
 const caseId = parseInt((route.params?.caseId as string) || "NaN");
+
 if (isNaN(caseId)) {
   // TODO: report error
   throw createError({
@@ -92,16 +99,9 @@ if (isNaN(caseId)) {
   });
 }
 
-function createNewCase() {
-  if (!loggedIn.value) {
-    openLoginModal();
-  } else {
-    navigateTo("/cases/new");
-  }
-}
-
 // fetch case on load
 const casesStore = useCasesStore();
+const { $csrfFetch } = useNuxtApp();
 const { data } = await useAsyncData(
   "case",
   () => casesStore.fetchCase(caseId),
@@ -122,4 +122,38 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => [
     label: currentCase.value?.title,
   },
 ]);
+
+async function removeCase() {
+  const result = await openConfirmModal(
+    "Bekræft sletning",
+    "Er du sikker på at du vil slette denne case? Tilhørende løsninger vil også blive slettet.",
+  );
+  if (!result) return;
+
+  try {
+    await $csrfFetch(`/api/cases/${caseId}`, {
+      method: "DELETE",
+      onResponse: async (ctx) => {
+        if ([204].includes(ctx.response.status)) {
+          toast.add({
+            title: "Casen blev slettet",
+            icon: "i-mdi-check",
+            color: "success",
+          });
+          await navigateTo("/cases/browse");
+        } else {
+          const msg = await parseApiError(
+            ctx.response?._data || ctx.error || ctx.response || "Unknown error",
+          );
+          throw new Error(msg);
+        }
+      },
+    });
+  } catch (e: unknown) {
+    toast.add({
+      title: (e as Error)?.message || "Unknown error",
+      color: "error",
+    });
+  }
+}
 </script>

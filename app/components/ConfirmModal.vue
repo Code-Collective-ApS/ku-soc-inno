@@ -9,7 +9,7 @@
       <div class="flex items-center gap-x-2 justify-end w-full">
         <UButton
           class="cursor-pointer"
-          variant="outline"
+          variant="subtle"
           :color="color"
           @click="() => emit('close', true)"
         >
@@ -17,7 +17,7 @@
         </UButton>
         <UButton
           class="cursor-pointer"
-          variant="outline"
+          variant="subtle"
           color="neutral"
           @click="() => emit('close', false)"
         >

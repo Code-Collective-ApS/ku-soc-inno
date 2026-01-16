@@ -1,7 +1,7 @@
 import type { EventHandlerRequest, H3Event } from "h3";
 import type { UserSession } from "#auth-utils";
 import { users } from "../db/schema";
-import { eq } from "drizzle-orm";
+import { eq, and, isNull } from "drizzle-orm";
 import { db } from "./db";
 
 export async function refreshUserSession(
@@ -19,7 +19,7 @@ export async function refreshUserSession(
       emailVerifiedAt: users.emailVerifiedAt,
     })
     .from(users)
-    .where(eq(users.id, userId));
+    .where(and(eq(users.id, userId), isNull(users.removedAt)));
 
   if (!user[0]) {
     await clearUserSession(event);

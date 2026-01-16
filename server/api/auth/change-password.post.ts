@@ -1,7 +1,8 @@
-import { users } from "../../db/schema";
-import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { updatePassword } from "~~/server/utils/resources/user";
+import {
+  getUserPassword,
+  updatePassword,
+} from "~~/server/utils/resources/user";
 import { validatePassword } from "~~/shared/utils/password_validation";
 
 const bodySchema = z.object({
@@ -17,12 +18,7 @@ export default defineEventHandler(async (event) => {
   const beginTime = new Date().getTime();
 
   // retrieve the user's password
-  const user = await db
-    .select({
-      password: users.password,
-    })
-    .from(users)
-    .where(eq(users.id, _user.id));
+  const user = await getUserPassword(_user.id);
 
   // mostly for typescript sake. We know the user id is in db because it is in session
   if (!user[0]) {

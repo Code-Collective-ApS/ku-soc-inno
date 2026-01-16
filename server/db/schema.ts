@@ -33,6 +33,7 @@ export const users = pgTable("users", {
   forgot_password_requested_at: timestamp({ withTimezone: true }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  removedAt: timestamp("removed_at"),
 });
 
 // --- Case Table ---
@@ -52,6 +53,7 @@ export const cases = pgTable(
     contactPublic: boolean("contact_public").default(false),
     createdAt: timestamp("created_at").notNull().defaultNow(),
     updatedAt: timestamp("updated_at").notNull().defaultNow(),
+    removedAt: timestamp("removed_at"),
     sector: varchar("sector").notNull(),
     organizationType: varchar("organization_type").notNull(),
     userId: integer("user_id").references(() => users.id, {
@@ -99,6 +101,7 @@ export const solutions = pgTable("solutions", {
   freeText: text("free_text"),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  removedAt: timestamp("removed_at"),
   userId: integer("user_id").references(() => users.id, {
     onDelete: "set null",
   }),

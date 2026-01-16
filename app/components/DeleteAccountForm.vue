@@ -33,7 +33,7 @@
 </template>
 
 <script setup lang="ts">
-const { fetch } = useUserSession();
+const { fetch, clear } = useUserSession();
 const { openConfirmModal } = useModals();
 const loading = ref(false);
 const errorMsg = ref("");
@@ -59,6 +59,7 @@ async function confirmDeleteAccount() {
             icon: "i-mdi-check",
             duration: 60000, // one full minute
           });
+          clear();
           fetch();
           navigateTo("/");
         }
