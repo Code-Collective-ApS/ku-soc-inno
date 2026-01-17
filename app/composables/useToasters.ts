@@ -6,7 +6,6 @@ export function useToasters() {
   const toast = useToast();
   const _path = computed(() => route.path);
   const _query = computed(() => route.query);
-  const { openLoginModal } = useModals();
 
   watch(
     [_path, _query],
@@ -38,15 +37,12 @@ export function useToasters() {
           color: "success",
         });
         await navigateTo(path);
-      } else if (query?.openLoginModal === "1") {
-        openLoginModal();
-        if (query.resetPassword === "1") {
-          toast.add({
-            title: "Du kan nu logge ind med dit nye password",
-            color: "info",
-            icon: "mdi:information-circle-outline",
-          });
-        }
+      } else if (query.resetPassword === "1") {
+        toast.add({
+          title: "Du kan nu logge ind med dit nye password",
+          color: "info",
+          icon: "mdi:information-circle-outline",
+        });
       }
     },
     { immediate: true },

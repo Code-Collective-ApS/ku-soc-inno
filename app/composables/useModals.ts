@@ -3,10 +3,14 @@ import LoginModal from "../components/LoginModal.vue";
 import FancyImageModal from "../components/FancyImageModal.vue";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import ForgotPasswordModal from "../components/ForgotPasswordModal.vue";
-import { useOverlay } from "#imports";
+import { useOverlay, useRoute, computed, watch } from "#imports";
 import ResetPasswordModal from "~/components/ResetPasswordModal.vue";
+import type { LocationQuery } from "vue-router";
 
 export function useModals() {
+  const route = useRoute();
+  const _path = computed(() => route.path);
+  const _query = computed(() => route.query);
   const overlay = useOverlay();
   const loginModal = overlay.create(LoginModal);
   const createAccountModal = overlay.create(CreateAccountModal);
@@ -54,6 +58,16 @@ export function useModals() {
     const result = await modalInstance.result;
     return result;
   }
+
+  watch(
+    [_path, _query],
+    ([_, query]: [string, LocationQuery]) => {
+      if (query?.openLoginModal === "1") {
+        return openLoginModal();
+      }
+    },
+    { immediate: true },
+  );
 
   return {
     openLoginModal,

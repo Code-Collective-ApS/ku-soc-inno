@@ -111,6 +111,7 @@ export function removeSolutionsByUserId(
   userId: number,
   transaction?: Transaction,
 ) {
+  // TODO: consider actually deleting files, or give it as an option
   return (transaction || db)
     .update(solutions)
     .set({
