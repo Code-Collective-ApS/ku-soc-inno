@@ -115,7 +115,7 @@ export async function uploadFile(
   const { s3, destroy } = getS3();
 
   try {
-    let fetchDone = false;
+    console.info("begin uploading file:", config.s3Prefix + key, "..");
     const resProm = s3
       .send(
         new PutObjectCommand({
@@ -125,16 +125,18 @@ export async function uploadFile(
         }),
       )
       .then((_res) => {
-        fetchDone = true;
+        // console.info("finish uploading file:", config.s3Prefix + key);
         return _res;
       });
-    const timeoutProm = new Promise<void>((ok, reject) =>
+    const timeoutProm = new Promise<void>((_ok, reject) =>
       setTimeout(() => {
-        if (!fetchDone) reject("S3 File upload timeout error");
-        ok();
+        reject("S3 File upload timeout error");
       }, 10000),
     );
-    const [res] = await Promise.all([resProm, timeoutProm]);
+    const res = await Promise.race([resProm, timeoutProm]);
+    if (!res) {
+      throw new Error("res was not returned from s3 fetch promise");
+    }
 
     if (res.$metadata.httpStatusCode !== 200) {
       console.error("upload not succeeded!", res.$metadata);
@@ -145,10 +147,11 @@ export async function uploadFile(
       // captureException(err);
       throw err;
     } else {
-      console.info("upload succeeded", key);
+      console.info("upload succeeded", config.s3Prefix + key);
     }
   } catch (e) {
     console.error(e);
+    // TODO: report error
     // captureException(e);
     if (e instanceof Error) {
       throw createError({
