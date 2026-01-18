@@ -34,3 +34,10 @@ export const SOLUTION_CATEGORIES: Record<
 export const SOLUTION_CATEGORIES_VALUES = Object.keys(
   SOLUTION_CATEGORIES,
 ) as SolutionCategory[];
+
+export function getPrettySolutionCategory(
+  s: SolutionCategory | string | undefined,
+) {
+  if (!s) return "";
+  return SOLUTION_CATEGORIES[s as SolutionCategory]?.human || s;
+}

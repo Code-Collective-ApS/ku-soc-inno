@@ -27,16 +27,7 @@
     </div>
 
     <div>
-      <div class="flex gap-1.5">
-        <UBadge
-          v-for="cat in solution?.solutionCategories"
-          :key="cat.id"
-          :label="cat.solutionCategory"
-          size="md"
-          variant="soft"
-          color="secondary"
-        />
-      </div>
+      <SolutionTags :solution="solution" />
     </div>
 
     <div class="mb-6">
