@@ -1,0 +1,1 @@
+ALTER TABLE "solutions" ADD COLUMN "title" text DEFAULT 'Ikke navngivet' NOT NULL;

@@ -94,6 +94,7 @@ export const barriers = pgTable("barriers", {
 export const solutions = pgTable("solutions", {
   id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
   caseId: integer("case_id").references(() => cases.id),
+  title: text("title").notNull().default("Ikke navngivet"),
   solutionDescription: text("solution_description").notNull(),
   isTested: boolean("is_tested").default(false).notNull(),
   testingText: text("testing_text"),

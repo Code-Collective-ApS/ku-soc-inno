@@ -11,6 +11,10 @@
         <h2 class="font-bold">Løsning specifikation</h2>
         <UCard variant="subtle" class="mt-4">
           <div class="flex flex-col gap-y-3">
+            <UFormField name="title" label="Titel på løsning">
+              <UInput v-model="state.title" placeholder="Indtast titel" />
+            </UFormField>
+
             <UFormField
               label="Skriv minimum 1 nøgleord som beskriver typen af løsning"
               name="solutionCategory"
@@ -178,6 +182,7 @@ const state = reactive<Partial<CreateSolutionSchema>>({
   primaryPdf: undefined,
   attachments: [],
   illustrations: [],
+  title: "",
   solutionCategories: [],
   solutionDescription: "",
   testingText: "",
@@ -196,6 +201,7 @@ async function onSubmit(
 
   const body = new FormData();
   body.append("isTested", !!state.isTested + "");
+  body.append("title", state.title + "");
   body.append("primaryPdfPublic", !!state.primaryPdfPublic + "");
   body.append(
     "solutionCategories",

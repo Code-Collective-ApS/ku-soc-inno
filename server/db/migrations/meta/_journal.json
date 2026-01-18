@@ -169,6 +169,13 @@
       "when": 1768489832921,
       "tag": "0023_large_ink",
       "breakpoints": true
+    },
+    {
+      "idx": 24,
+      "version": "7",
+      "when": 1768637011942,
+      "tag": "0024_light_richard_fisk",
+      "breakpoints": true
     }
   ]
 }

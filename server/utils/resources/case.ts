@@ -50,6 +50,7 @@ const caseResponseWith = {
     },
     columns: {
       id: true,
+      title: true,
       solutionDescription: true,
       updatedAt: true,
     },
@@ -66,7 +67,7 @@ type CaseResponseSolutionColumns = Pick<
   Doc<"solutions"> & {
     solutionCategories: CaseResponseSolutionCategoryColumns[];
   },
-  "id" | "updatedAt" | "solutionDescription" | "solutionCategories"
+  "id" | "updatedAt" | "solutionDescription" | "solutionCategories" | "title"
 >;
 
 type CaseResponseBarrierColumns = Pick<Doc<"barriers">, "barrier" | "id">;
@@ -79,13 +80,16 @@ export type CaseResponse = Doc<"cases"> & {
   barriers: CaseResponseBarrierColumns[];
 };
 
+export type CaseResponseSolution =
+  SwapDatesWithStrings<CaseResponseSolutionColumns>;
+
 export type CaseSerialized = Omit<
   SwapDatesWithStrings<CaseResponse>,
   "userId"
 > & {
   organizationType: OrganizationType;
   sector: OrganizationSector;
-  solutions: SwapDatesWithStrings<CaseResponseSolutionColumns>[];
+  solutions: CaseResponseSolution[];
   isOwned: boolean;
 };
 

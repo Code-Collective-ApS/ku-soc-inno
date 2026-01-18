@@ -66,6 +66,7 @@ export async function selectSolutionById(id: number) {
   const solRes = await db.query.solutions.findFirst({
     columns: {
       id: true,
+      title: true,
       userId: true,
       caseId: true,
       solutionDescription: true,

@@ -22,41 +22,12 @@
           >
         </div>
         <div class="flex flex-col gap-9">
-          <UPageCard
+          <SolutionCard
             v-for="s in currentCase?.solutions"
             :key="s.id"
-            class="shadow-md"
-            variant="subtle"
-          >
-            <div class="flex justify-between items-start">
-              <div class="overflow-hidden -mr-3 pr-6 relative">
-                <pre
-                  class="font-sans text-sm w-full max-w-4xl whitespace-pre-line"
-                  >{{
-                    s.solutionDescription.length > 200
-                      ? s.solutionDescription.slice(0, 640) + "..."
-                      : s.solutionDescription
-                  }}</pre
-                >
-              </div>
-              <UButton
-                variant="ghost"
-                class="cursor-pointer"
-                trailing-icon="mdi-chevron-right"
-                :to="`/cases/${caseId}/solutions/${s.id}`"
-                >Open</UButton
-              >
-            </div>
-            <div class="flex gap-3">
-              <UBadge
-                v-for="cat in s.solutionCategories"
-                :key="cat.id"
-                color="secondary"
-                variant="soft"
-                >{{ cat.solutionCategory }}</UBadge
-              >
-            </div>
-          </UPageCard>
+            :case-id="currentCase.id"
+            :solution="s"
+          />
         </div>
       </div>
     </div>

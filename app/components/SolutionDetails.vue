@@ -1,9 +1,19 @@
 <template>
   <div class="[&>*>p]:font-bold flex flex-col gap-y-3">
     <div class="flex justify-between mt-3 items-center">
-      <h1 class="text-3xl font-serif">
-        Løsning på case: {{ relatedCase.title }}
-      </h1>
+      <div class="flex flex-col">
+        <h1 class="text-3xl font-serif">
+          {{ solution.title }}
+        </h1>
+        <h2>
+          Løsning på
+          <a
+            class="text-sky-600 hover:text-sky-400 cursor-pointer transition-colors"
+            :href="`/cases/${relatedCase.id}`"
+            >{{ relatedCase.title }}</a
+          >
+        </h2>
+      </div>
       <div>
         <UButton
           variant="subtle"
