@@ -103,9 +103,11 @@ export const solutions = pgTable("solutions", {
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   removedAt: timestamp("removed_at"),
-  userId: integer("user_id").references(() => users.id, {
-    onDelete: "set null",
-  }),
+  userId: integer("user_id")
+    .notNull()
+    .references(() => users.id, {
+      onDelete: "set null",
+    }),
 });
 
 export const solutionCategories = pgTable("solution_cats", {

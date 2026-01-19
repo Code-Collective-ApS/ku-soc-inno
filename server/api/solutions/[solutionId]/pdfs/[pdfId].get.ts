@@ -27,7 +27,6 @@ export default defineEventHandler(async (event) => {
   }
 
   const sol = sols[0]!;
-
   const canDownloadPdf =
     sol.primaryPdfPublic || (user && user.id === sol.userId);
   if (!canDownloadPdf) {

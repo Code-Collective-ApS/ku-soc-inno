@@ -30,6 +30,6 @@ export default defineEventHandler(async (event) => {
 
   // typescript makes me crazy sometimes
   return {
-    solution: serializeSolution(solRes),
+    solution: serializeSolution(solRes, user?.id),
   } as { solution: SolutionSerialized };
 });

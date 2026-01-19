@@ -56,11 +56,11 @@ function errFromJson(txt: string) {
     let msg = obj?.message || "Error could not be parsed";
     const zodErrPath = obj?.path?.[0];
     if (zodErrPath) {
-      console.log("error is zod path!");
+      console.log("error is zod path!", { zodErrPath, msg });
       // msg = `[${zodErrPath}] ${msg}`;
       msg = `${msg}`;
     }
-    console.log("final msg is ", msg);
+    // console.log("final msg is ", msg);
     return msg;
   } catch {
     return txt;

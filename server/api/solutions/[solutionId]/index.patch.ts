@@ -3,14 +3,15 @@ import { readFiles } from "h3-formidable";
 import {
   addSolutionCategories,
   addSolutionFileRows,
-  createSolutionRow,
   getSolutionFields,
   getSolutionFiles,
+  removeSolutionCategories,
+  updateSolutionRow,
   uploadSolutionFiles,
 } from "~~/server/utils/resources/solution";
 
 const paramDto = z.strictObject({
-  caseId: z.coerce.number().positive().max(2147483647), // sane max
+  solutionId: z.coerce.number().positive().max(2147483647), // sane max
 });
 
 export default defineEventHandler(async (event) => {
@@ -21,7 +22,22 @@ export default defineEventHandler(async (event) => {
   const maxPdfSize = config.maxPdfSize;
   const params = await getValidatedRouterParams(event, paramDto.parse);
 
-  const caseRes = await selectCaseById.execute({ id: params.caseId });
+  const solution = await selectSolutionById(params.solutionId);
+  if (!solution) {
+    throw createError({
+      statusCode: 404,
+      message: "Solution was not found",
+    });
+  }
+
+  if (solution.userId !== user.id) {
+    throw createError({
+      message: "You dont have permission to edit this solution",
+      statusCode: 403,
+    });
+  }
+
+  const caseRes = await selectCaseById.execute({ id: solution.caseId });
   if (!caseRes) {
     throw createError({
       statusCode: 404,
@@ -53,27 +69,26 @@ export default defineEventHandler(async (event) => {
   );
 
   const parsedFiles = await parse();
-  const insertedId = await createSolutionRow(
-    parsedFields,
-    user.id,
-    params.caseId,
-  );
+
+  await updateSolutionRow(solution.id, parsedFields);
 
   const { attachmentObjects, illustrationObjects, primaryPdf } =
-    await uploadSolutionFiles(insertedId, parsedFiles);
+    await uploadSolutionFiles(solution.id, parsedFiles);
 
   await db.transaction(async (tx) => {
+    await removeAllSolutionFileRows(tx, solution.id);
     await addSolutionFileRows(
       tx,
-      insertedId,
+      solution.id,
       attachmentObjects,
       illustrationObjects,
       primaryPdf,
     );
 
+    await removeSolutionCategories(tx, solution.id);
     await addSolutionCategories(
       tx,
-      insertedId,
+      solution.id,
       parsedFields.solutionCategories,
     );
   });
@@ -81,7 +96,5 @@ export default defineEventHandler(async (event) => {
   // remove temporary files if any
   await dispose();
 
-  setResponseStatus(event, 201);
-
-  return { solutionId: insertedId };
+  setResponseStatus(event, 204);
 });

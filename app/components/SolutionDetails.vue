@@ -14,7 +14,16 @@
           >
         </h2>
       </div>
-      <div>
+      <div class="flex gap-1.5">
+        <UButton
+          v-if="solution && solution.isOwned"
+          variant="subtle"
+          color="neutral"
+          icon="i-mdi-pencil"
+          :to="`/cases/${relatedCase.id}/solutions/${solution.id}/edit`"
+        >
+          Redigér løsning
+        </UButton>
         <UButton
           variant="subtle"
           color="secondary"

@@ -1,0 +1,1 @@
+ALTER TABLE "solutions" ALTER COLUMN "user_id" SET NOT NULL;
