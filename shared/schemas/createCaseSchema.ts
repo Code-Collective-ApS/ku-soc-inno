@@ -41,8 +41,8 @@ export const createCaseSchema = z.strictObject({
     .min(1, "Du skal tilføje minimum 1 løsningsbarriere")
     .max(300),
   organizationType: z
-    .string()
-    .min(2, "Du mangler at tilføje en organisationstype")
+    .string("Du mangler at vælge en organisationstype")
+    .min(2, "Du mangler at vælge en organisationstype")
     .max(300),
   organizationSector: z.enum(
     ORGANIZATION_SECTORS_VALUES,
