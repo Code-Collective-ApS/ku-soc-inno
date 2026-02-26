@@ -1,4 +1,12 @@
-import { count, and, eq, notInArray, sql, countDistinct } from "drizzle-orm";
+import {
+  count,
+  and,
+  eq,
+  notInArray,
+  sql,
+  countDistinct,
+  isNull,
+} from "drizzle-orm";
 import * as z from "zod";
 import { cases, categoryTags } from "~~/server/db/schema";
 import {
@@ -56,7 +64,10 @@ export default defineEventHandler(async (event) => {
   // set limit and offset to respect pagination and already fetched full keyword match cases
   const textSearchLimit = Math.min(pageEnd - tagMatchesCount, pageSize);
   const textSearchOffset = Math.max(pageBegin - tagMatchesCount, 0);
-  const filters = [notInArray(cases.id, tagMatchCaseIds)];
+  const filters = [
+    notInArray(cases.id, tagMatchCaseIds),
+    isNull(cases.removedAt),
+  ];
   if (query.organization_type) {
     filters.push(eq(cases.organizationType, query.organization_type));
   }
@@ -65,11 +76,12 @@ export default defineEventHandler(async (event) => {
   }
 
   if (query.text) {
+    const words = searchText.split(" ");
     const textQuery = sql`(
         setweight(to_tsvector('danish', ${cases.title}), 'A') ||
         setweight(to_tsvector('danish', ${cases.challengeDescription}), 'B') ||
         setweight(to_tsvector('danish', ${cases.importanceDescription}), 'C')
-        ) @@ to_tsquery('danish', ${searchText})`;
+    ) @@ to_tsquery('danish', (${words.join(" | ")}))`;
     filters.push(textQuery);
   }
 

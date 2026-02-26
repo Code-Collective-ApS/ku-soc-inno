@@ -43,7 +43,27 @@
     <!-- Search results -->
     <div class="flex gap-6 flex-col">
       <div v-for="c in searchResult" :key="c.id">
-        <CaseSearchResultCard :shown-case="c" />
+        <CaseSearchResultCard
+          :shown-case="c"
+          @click:orgsector="
+            (s) => {
+              payload.sector = s;
+              search();
+            }
+          "
+          @click:orgtype="
+            (s) => {
+              payload.organization_type = s;
+              search();
+            }
+          "
+          @click:tag="
+            (s) => {
+              payload.text = s;
+              search();
+            }
+          "
+        />
       </div>
       <div v-if="searchResult?.length" class="flex justify-center">
         <UPagination
@@ -86,8 +106,8 @@ import type { CaseSerialized } from "~~/server/utils/resources/case";
 
 const payload = reactive({
   text: "",
-  sector: undefined,
-  organization_type: undefined,
+  sector: undefined as OrganizationSector | undefined,
+  organization_type: undefined as OrganizationType | undefined,
 });
 
 const total = ref(0);
@@ -97,11 +117,14 @@ const lastSearchTookMs = ref(0);
 const loading = ref(true);
 const errorMsg = ref("");
 const page = ref(1);
+const route = useRoute();
+const router = useRouter();
 const { $csrfFetch } = useNuxtApp();
 
 async function search() {
   loading.value = true;
   const beginTime = Date.now();
+  updateQueryWithSearch();
   await $csrfFetch(`/api/cases/search`, {
     query: {
       text: payload.text || "",
@@ -117,11 +140,10 @@ async function search() {
       } else {
         const resultTime = Date.now();
         lastSearchTookMs.value = Math.floor(resultTime - beginTime) / 1000;
-        setTimeout(() => {
-          total.value = ctx.response._data.total;
-          searchResult.value = ctx.response._data.cases;
-          loading.value = false;
-        }, 50);
+        total.value = ctx.response._data.total;
+        searchResult.value = ctx.response._data.cases;
+        loading.value = false;
+        errorMsg.value = "";
       }
     },
     onResponseError: async (ctx) => {
@@ -131,9 +153,57 @@ async function search() {
   });
 }
 
-watch(page, search);
-
-onMounted(async () => {
-  await search();
+onMounted(() => {
+  updateSearchWithQuery();
+  search();
 });
+watch(
+  page,
+  (_p) => {
+    console.log("page updated to", _p);
+    updateQueryWithSearch();
+    search();
+  },
+  { immediate: true },
+);
+watch(payload, updateQueryWithSearch);
+
+function updateQueryWithSearch() {
+  const newQuery: Record<string, string> = {};
+  if (payload.text) {
+    newQuery.query = payload.text + "";
+  }
+  if (payload.sector) {
+    newQuery.sector = (payload.sector + "") as OrganizationSector;
+  }
+  if (payload.organization_type) {
+    newQuery.organization_type = (payload.organization_type +
+      "") as OrganizationType;
+  }
+  if (page.value) {
+    console.log("updateQueryWithSearch got page.value", page.value);
+    newQuery.page = page.value + "";
+  }
+  router.push({
+    path: route.path,
+    query: newQuery,
+    replace: true,
+  });
+}
+
+function updateSearchWithQuery() {
+  const q = route.query;
+  if (q.query) {
+    payload.text = q.query + "";
+  }
+  if (q.sector) {
+    payload.sector = (q.sector + "") as OrganizationSector;
+  }
+  if (q.organization_type) {
+    payload.organization_type = (q.organization_type + "") as OrganizationType;
+  }
+  if (q.page) {
+    page.value = Number(q.page);
+  }
+}
 </script>
