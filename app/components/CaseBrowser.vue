@@ -160,11 +160,10 @@ onMounted(() => {
 watch(
   page,
   (_p) => {
-    console.log("page updated to", _p);
     updateQueryWithSearch();
     search();
   },
-  { immediate: true },
+  { immediate: false },
 );
 watch(payload, updateQueryWithSearch);
 
@@ -181,7 +180,6 @@ function updateQueryWithSearch() {
       "") as OrganizationType;
   }
   if (page.value) {
-    console.log("updateQueryWithSearch got page.value", page.value);
     newQuery.page = page.value + "";
   }
   router.push({
