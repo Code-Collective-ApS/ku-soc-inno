@@ -54,6 +54,9 @@ export default defineNuxtConfig({
       ),
       adminName: process.env.NUXT_PUBLIC_ADMIN_NAME,
       adminEmail: process.env.NUXT_PUBLIC_ADMIN_EMAIL,
+      webmasterName: process.env.NUXT_PUBLIC_WEBMASTER_NAME,
+      webmasterLink: process.env.NUXT_PUBLIC_WEBMASTER_LINK,
+      webmasterEmail: process.env.NUXT_PUBLIC_WEBMASTER_EMAIL,
     },
   },
 });

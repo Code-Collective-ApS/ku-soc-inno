@@ -18,27 +18,45 @@
               target="_blank"
               icon="mdi:github"
               aria-label="GitHub repository"
-              >Github</UButton
             >
+              Github
+            </UButton>
           </p>
         </UTooltip>
-        <p class="text-sm text-gray-500">
-          Københavns Universitet &copy;
-          <span v-text="new Date().getFullYear()" />
-        </p>
       </div>
       <div class="flex flex-col gap-6 items-center">
-        <KULogo class="mt-6" />
+        <KULogo />
         <ClientOnly>
-          <div
-            v-if="dataIsClear"
-            class="flex flex-col text-center text-xs text-gray-500"
-          >
-            <p class="mb-1">Administrator:</p>
-            <p>{{ name }}</p>
-            <p>{{ email }}</p>
+          <div class="flex gap-x-6 xl:gap-x-12 mt-3">
+            <div
+              v-if="dataIsClear"
+              class="flex flex-col text-center text-xs text-gray-500"
+            >
+              <p class="mb-1">Administrator:</p>
+              <p>{{ name }}</p>
+              <p>{{ email }}</p>
+            </div>
+            <div
+              v-if="dataIsClear"
+              class="flex flex-col text-center text-xs text-gray-500"
+            >
+              <p class="mb-1">Webmaster:</p>
+              <p>
+                <a :href="webmasterLink" target="_blank">
+                  {{ webmasterName }}
+                </a>
+              </p>
+              <p>{{ webmasterEmail }}</p>
+            </div>
           </div>
         </ClientOnly>
+      </div>
+      <div class="text-center">
+        <p class="text-sm text-gray-500">
+          Soc-inno &copy;
+          <span v-text="new Date().getFullYear()" />
+          Københavns Universitet
+        </p>
       </div>
     </div>
   </UFooter>
@@ -49,10 +67,15 @@ const dataIsClear = ref(false);
 const config = useRuntimeConfig().public;
 const name = ref(btoa(config.adminName));
 const email = ref(btoa(config.adminEmail));
+const webmasterName = ref(btoa(config.webmasterName));
+const webmasterEmail = ref(btoa(config.webmasterEmail));
+const webmasterLink = ref(config.webmasterLink);
 
 onBeforeMount(() => {
   email.value = atob(email.value);
   name.value = atob(name.value);
+  webmasterEmail.value = atob(webmasterEmail.value);
+  webmasterName.value = atob(webmasterName.value);
   dataIsClear.value = true;
 });
 </script>
