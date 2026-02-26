@@ -133,7 +133,7 @@
             {{ errorMsg }}
           </UAlert>
 
-          <div class="mt-6">
+          <div class="mt-6 flex gap-x-3">
             <UButton
               size="xl"
               class="cursor-pointer"
@@ -142,6 +142,16 @@
               @click="(e) => onSubmit(e)"
             >
               {{ isEditing ? "Gem" : "Opret" }} løsning
+            </UButton>
+            <UButton
+              v-if="isEditing"
+              size="xl"
+              variant="subtle"
+              class="cursor-pointer"
+              color="error"
+              @click="deleteSolution"
+            >
+              Slet løsning
             </UButton>
           </div>
         </UCard>
@@ -162,7 +172,12 @@ const loading = ref(false);
 const { $csrfFetch } = useNuxtApp();
 const toast = useToast();
 const enabled = ref(true);
-const emit = defineEmits<{ "created:solution": []; "updated:solution": [] }>();
+const emit = defineEmits<{
+  "created:solution": [];
+  "updated:solution": [];
+  "removed:solution": [];
+}>();
+const { openConfirmModal } = useModals();
 const isTestedRadios = ref([
   { label: "Ja", value: true },
   { label: "Nej", value: false },
@@ -365,5 +380,42 @@ async function onSubmit(
       loading.value = false;
     },
   });
+}
+
+async function deleteSolution() {
+  const ok = await openConfirmModal(
+    "Bekræft sletning af data",
+    "Er du sikker på at du vil slette denne løsning ? Handlingen kan ikke fortydes.",
+  );
+  if (ok) {
+    if (!props.solution) {
+      // TODO: report error
+      throw new Error("Solution is not defined");
+    }
+    const caseId = props.caseId;
+    const solutionId = props.solution.id;
+    $csrfFetch(`/api/solutions/${solutionId}`, {
+      method: "DELETE",
+      onResponse: async (ctx) => {
+        if (ctx.response.status !== 204) {
+          const msg = await parseApiError(ctx.error || ctx.response._data);
+          errorMsg.value = msg;
+        } else {
+          toast.add({
+            title: "Løsningen blev slettet",
+            color: "success",
+            icon: "i-mdi-check",
+          });
+          emit("removed:solution");
+          navigateTo(`/cases/${caseId}`);
+        }
+        loading.value = false;
+      },
+      onResponseError: async (ctx) => {
+        errorMsg.value = await parseApiError(ctx.error || ctx.response._data);
+        loading.value = false;
+      },
+    });
+  }
 }
 </script>

@@ -50,7 +50,7 @@ if (isNaN(caseId)) {
 
 // fetch case on load
 const casesStore = useCasesStore();
-const { data } = await useAsyncData(
+const { data, refresh, pending } = await useAsyncData(
   "case",
   () => casesStore.fetchCase(caseId),
   {
@@ -58,6 +58,13 @@ const { data } = await useAsyncData(
     server: true,
   },
 );
+
+onMounted(() => {
+  if (!pending.value) {
+    refresh();
+  }
+});
+
 const currentCase = computed(() => data?.value?.case);
 
 const breadcrumb = computed<BreadcrumbItem[]>(() => [

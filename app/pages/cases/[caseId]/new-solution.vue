@@ -6,7 +6,12 @@
       class="mb-3"
     />
     <PageTitle>Opret ny løsning</PageTitle>
-    <SolutionForm :case-id="caseId" @created:solution="onSolutionCreated" />
+    <SolutionForm
+      :case-id="caseId"
+      @created:solution="onSolutionCreated"
+      @removed:solution="onSolutionRemoved"
+      @updated:solution="onSolutionUpdated"
+    />
   </UContainer>
 </template>
 
@@ -34,6 +39,7 @@ const { data, refresh } = await useAsyncData(
     server: false,
   },
 );
+
 const currentCase = computed(() => data?.value?.case);
 
 const breadcrumb = computed<BreadcrumbItem[]>(() => [
@@ -54,6 +60,16 @@ const breadcrumb = computed<BreadcrumbItem[]>(() => [
 // refetch case if solution was created
 function onSolutionCreated() {
   refresh();
+}
+
+// refetch case if solution was removed
+function onSolutionRemoved() {
+  refresh();
+}
+
+// refetch case if solution was updated
+function onSolutionUpdated() {
+  // refresh(); // already refreshing
 }
 
 definePageMeta({
