@@ -1,7 +1,7 @@
 <template>
   <UFooter class="bg-secondary-50 py-12">
     <div class="flex flex-col gap-12">
-      <div class="flex flex-col items-center gap-3">
+      <div class="flex flex-col items-center gap-3 text-center">
         <UTooltip text="Open GitHub repository in new tab">
           <p class="text-sm text-gray-500">
             This application is open source, and you are welcome to help
@@ -25,7 +25,12 @@
         </UTooltip>
       </div>
       <div class="flex flex-col gap-6 items-center">
-        <KULogo />
+        <div
+          class="flex flex-col md:flex-row justify-center items-center gap-9"
+        >
+          <KULogo />
+          <FFELogo />
+        </div>
         <ClientOnly>
           <div class="flex gap-x-6 xl:gap-x-12 mt-3">
             <div

@@ -3,7 +3,6 @@
     <UPageHero
       :headline="`soc-inno v${pkgVersion}`"
       title="Udforsk sociale problemer og sociologiske løsninger"
-      description="Soc-inno er et offentligt arkiv over sociologiske cases og tilhørende løsninger."
       :links="[
         {
           label: 'Browse cases',
@@ -27,7 +26,20 @@
           variant: 'subtle',
         },
       ]"
-    />
+    >
+      <template #description>
+        <p>
+          Soc-inno er et offentligt arkiv over sociologiske cases og tilhørende
+          løsninger.
+        </p>
+        <p>
+          Projektet er medfinansieret af
+          <a href="https://ffefonden.dk/" target="_blank" class="text-sky-400">
+            Fonden for entrepenørskab</a
+          >
+        </p>
+      </template>
+    </UPageHero>
     <div v-if="error" class="text-center text-error-500" v-text="error" />
   </div>
 </template>

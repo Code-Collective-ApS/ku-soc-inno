@@ -1,3 +1,3 @@
 <template>
-  <img src="/logo.svg" class="max-w-[200px]" />
+  <img src="/logo.svg" class="max-w-50" />
 </template>
