@@ -20,6 +20,8 @@ export default defineEventHandler(async (event) => {
     caseRes.userId === user?.id || caseRes.contactPublic;
   if (!includeContactInfo) {
     stripCaseForContactInfo(caseRes);
+  } else {
+    makeContactInfoObscure(caseRes);
   }
 
   // typescript makes me crazy sometimes
@@ -27,3 +29,11 @@ export default defineEventHandler(async (event) => {
     case: serializeCase(caseRes, user?.id),
   } satisfies { case: CaseSerialized };
 });
+
+function makeContactInfoObscure(c: CaseResponse): CaseResponse {
+  c.contactEmail = btoa(c.contactEmail);
+  c.contactName = btoa(c.contactName);
+  c.contactOrganization = btoa(c.contactOrganization);
+  c.contactTitle = btoa(c.contactTitle);
+  return c;
+}

@@ -90,7 +90,7 @@
       <p>Andet, der er relevant at nævne?</p>
       <div class="whitespace-pre-line">{{ currentCase.freeText }}</div>
     </div>
-    <div v-if="!currentCase.contactPublic || (user && currentCase.isOwned)">
+    <div v-if="!currentCase.contactPublic || !(user && currentCase.isOwned)">
       <p>Kontakt information</p>
       <div>
         Kontaktinformationer er kun tilgængelige for Københavns Universitet
@@ -101,13 +101,13 @@
       <div class="inline-block">
         <div class="grid grid-cols-2 mt-1.5">
           <div>Navn</div>
-          <div>{{ currentCase.contactName }}</div>
+          <div>{{ contactName }}</div>
           <div>Titel</div>
-          <div>{{ currentCase.contactTitle }}</div>
+          <div>{{ contactTitle }}</div>
           <div>Organisation</div>
-          <div>{{ currentCase.contactOrganization }}</div>
+          <div>{{ contactOrganization }}</div>
           <div>Email</div>
-          <div>{{ currentCase.contactEmail }}</div>
+          <div>{{ contactEmail }}</div>
         </div>
       </div>
     </div>
@@ -124,6 +124,11 @@ const { user } = useUserSession();
 const { $csrfFetch } = useNuxtApp();
 const toast = useToast();
 const { openConfirmModal } = useModals();
+
+const contactName = ref(props.currentCase.contactName);
+const contactTitle = ref(props.currentCase.contactTitle);
+const contactOrganization = ref(props.currentCase.contactOrganization);
+const contactEmail = ref(props.currentCase.contactEmail);
 
 async function removeCase() {
   const result = await openConfirmModal(
@@ -158,4 +163,13 @@ async function removeCase() {
     });
   }
 }
+
+onMounted(() => {
+  setTimeout(() => {
+    contactName.value = atob(contactName.value || "");
+    contactTitle.value = atob(contactTitle.value || "");
+    contactOrganization.value = atob(contactOrganization.value || "");
+    contactEmail.value = atob(contactEmail.value || "");
+  }, 20);
+});
 </script>
