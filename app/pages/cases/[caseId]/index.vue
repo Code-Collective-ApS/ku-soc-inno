@@ -18,15 +18,24 @@
             size="xl"
             variant="subtle"
             :to="`/cases/${caseId}/new-solution`"
-            >Opret løsning på denne case</UButton
           >
+            Opret løsning på denne case
+          </UButton>
         </div>
-        <div class="flex flex-col gap-9">
+        <div v-if="currentCase?.solutions.length" class="flex flex-col gap-9">
           <SolutionCard
             v-for="s in currentCase?.solutions"
             :key="s.id"
             :case-id="currentCase.id"
             :solution="s"
+          />
+        </div>
+        <div v-else>
+          <UAlert
+            icon="i-mdi-information-circle-outline"
+            title="Der er ingen publicerede løsninger på denne case"
+            variant="subtle"
+            color="info"
           />
         </div>
       </div>
