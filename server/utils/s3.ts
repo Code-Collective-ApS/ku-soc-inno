@@ -15,21 +15,26 @@ import * as fs from "node:fs";
 const config = useRuntimeConfig() || {};
 
 function getS3() {
-  const s3 = new S3Client({
-    tls: config.s3UseSsl === "true",
-    region: config.s3Region,
-    credentials: {
-      accessKeyId: config.s3AccessKey as string,
-      secretAccessKey: config.s3SecretAccessKey as string,
-    },
-    endpoint: config.s3Endpoint as string,
-    forcePathStyle: true,
-  });
+  try {
+    const s3 = new S3Client({
+      tls: config.s3UseSsl === "true",
+      region: config.s3Region,
+      credentials: {
+        accessKeyId: config.s3AccessKey as string,
+        secretAccessKey: config.s3SecretAccessKey as string,
+      },
+      endpoint: config.s3Endpoint as string,
+      forcePathStyle: true,
+    });
 
-  return {
-    s3,
-    destroy: () => s3.destroy(),
-  };
+    return {
+      s3,
+      destroy: () => s3.destroy(),
+    };
+  } catch (e: unknown) {
+    console.error(e);
+    throw new Error((e as Error)?.message || "Unknown s3 error");
+  }
 }
 
 export async function getUpload(
@@ -42,8 +47,6 @@ export async function getUpload(
   // console.log('begin listen:', key)
   const fullPath = config.s3Prefix + key;
   const { s3, destroy } = getS3();
-
-  // console.log("getting upload:", { bucket: config.s3BucketName, fullPath });
 
   const resProm = s3.send(
     new GetObjectCommand({
@@ -59,13 +62,20 @@ export async function getUpload(
     }, 2000),
   );
 
-  const promRes = await Promise.race([resProm, timeoutProm]);
+  const promRes = await Promise.race([resProm, timeoutProm]).catch((e) => {
+    // TODO: report error
+    console.error(e);
+    throw createError({
+      message: "Unable to connect to file server",
+      statusCode: 500,
+    });
+  });
 
   // if no metadata, we hit the timeout error
   if (!promRes?.$metadata) {
     throw createError({
       message: "S3 connection timed out",
-      statusCode: 400,
+      statusCode: 500,
     });
   }
 
