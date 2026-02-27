@@ -70,7 +70,7 @@ export function setForgotPasswordRequested(userId: number) {
   );
   return db
     .update(users)
-    .set({ forgot_password_requested_at: new Date() })
+    .set({ forgotPasswordRequestedAt: new Date() })
     .where(and(eq(users.id, userId), isNull(users.removedAt)));
 }
 
@@ -78,6 +78,6 @@ export function setVerifyEmailRequested(userId: number) {
   console.info("updating `email_verification_requested_at` on user..", userId);
   return db
     .update(users)
-    .set({ email_verification_requested_at: new Date() })
+    .set({ emailVerificationRequestedAt: new Date() })
     .where(and(eq(users.id, userId), isNull(users.removedAt)));
 }

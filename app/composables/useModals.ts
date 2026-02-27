@@ -41,8 +41,12 @@ export function useModals() {
     const result = await modalInstance.result;
     return result;
   }
-  async function openResetPasswordModal(jwt: string): Promise<boolean> {
-    const modalInstance = resetPasswordModal.open({ jwt: jwt });
+  async function openResetPasswordModal(
+    resetPasswordToken: string,
+  ): Promise<boolean> {
+    const modalInstance = resetPasswordModal.open({
+      token: resetPasswordToken,
+    });
     const result = await modalInstance.result;
     return result;
   }

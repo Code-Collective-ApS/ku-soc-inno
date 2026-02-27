@@ -1,7 +1,10 @@
 import { users } from "~~/server/db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
-import { ForgotPasswordValidityMs } from "~~/server/utils/forgot-password";
+import {
+  createResetPasswordToken,
+  ForgotPasswordTokenMinIntervalMs,
+} from "~~/server/utils/tokens";
 
 const bodySchema = z.object({
   email: z.email(),
@@ -21,7 +24,7 @@ export default defineEventHandler(async (event) => {
       password: users.password,
       id: users.id,
       emailVerifiedAt: users.emailVerifiedAt,
-      forgotPasswordAt: users.forgot_password_requested_at,
+      forgotPasswordAt: users.forgotPasswordRequestedAt,
     })
     .from(users)
     .where(eq(users.email, email));
@@ -41,7 +44,8 @@ export default defineEventHandler(async (event) => {
   // ensure user does not spam us
   if (user.forgotPasswordAt) {
     console.log("user forgot password is set to", user.forgotPasswordAt);
-    const minTime = user.forgotPasswordAt.getTime() + ForgotPasswordValidityMs;
+    const minTime =
+      user.forgotPasswordAt.getTime() + ForgotPasswordTokenMinIntervalMs;
     if (Date.now() < minTime) {
       await waitABit(beginTime);
 
@@ -53,15 +57,18 @@ export default defineEventHandler(async (event) => {
     }
   }
 
+  // create reset password token
+  const resetPasswordToken = await createResetPasswordToken(user.id);
+
   // send email
   try {
     console.info("sending forgot password email to", user.email, "..");
     await sendForgotPasswordEmail(
       config.publicHost,
-      config.forgotPasswordSecret,
       user.id,
       user.name,
       user.email,
+      resetPasswordToken.token,
     );
   } catch (err: unknown) {
     console.error(err);

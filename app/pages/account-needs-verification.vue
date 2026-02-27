@@ -1,7 +1,7 @@
 <template>
-  <div>
+  <UContainer class="pt-9">
     <div v-if="!hasSentMail" class="mb-6">
-      You still need to verify your email.
+      Du mangler stadigvæk at verificere din email.
     </div>
     <div class="mb-6 flex items-center gap-x-3">
       <UButton
@@ -10,11 +10,11 @@
         color="info"
         size="lg"
         @click="resendEmail"
-        >Resend email</UButton
+        >Send ny email</UButton
       >
       <div v-if="hasSentMail" class="flex items-center gap-x-2">
         <UIcon class="text-xl text-success-500" name="i-mdi-check" />
-        <p>We sent you an email ! Remember to check spam</p>
+        <p>Vi har sendt dig verifikationsemailen ! Husk at checke spam</p>
       </div>
     </div>
     <UAlert
@@ -24,7 +24,7 @@
       variant="subtle"
       :description="error"
     />
-  </div>
+  </UContainer>
 </template>
 
 <script lang="ts" setup>

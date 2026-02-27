@@ -27,13 +27,32 @@ export const users = pgTable("users", {
   title: varchar("title").notNull(),
   email: varchar("email").notNull(),
   emailVerifiedAt: timestamp("email_verified_at"),
-  email_verification_requested_at: timestamp({ withTimezone: true })
+  emailVerificationRequestedAt: timestamp("email_verification_requested_at", {
+    withTimezone: true,
+  })
     .defaultNow()
     .notNull(),
-  forgot_password_requested_at: timestamp({ withTimezone: true }),
+  forgotPasswordRequestedAt: timestamp("forgot_password_requested_at", {
+    withTimezone: true,
+  }),
   createdAt: timestamp("created_at").notNull().defaultNow(),
   updatedAt: timestamp("updated_at").notNull().defaultNow(),
   removedAt: timestamp("removed_at"),
+});
+
+export const tokens = pgTable("tokens", {
+  id: integer("id").primaryKey().generatedAlwaysAsIdentity(),
+  createdAt: timestamp("created_at").notNull().defaultNow(),
+  updatedAt: timestamp("updated_at").notNull().defaultNow(),
+  usedAt: timestamp("used_at"),
+  expiresAt: timestamp("revoked_at").notNull(),
+  tokenType: varchar("token_type").notNull(),
+  token: varchar("token").notNull(),
+  userId: integer("user_id")
+    .references(() => users.id, {
+      onDelete: "cascade", // delete tokens permanently when a user is deleted
+    })
+    .notNull(),
 });
 
 // --- Case Table ---

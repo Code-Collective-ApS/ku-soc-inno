@@ -12,14 +12,14 @@
     }"
   >
     <template #body>
-      <ResetPasswordForm :jwt="jwt" @close="() => emit('close', true)" />
+      <ResetPasswordForm :token="token" @close="() => emit('close', true)" />
     </template>
   </UModal>
 </template>
 
 <script setup lang="ts">
 defineProps({
-  jwt: {
+  token: {
     type: String,
     required: true,
   },

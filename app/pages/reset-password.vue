@@ -13,21 +13,21 @@
 <script lang="ts" setup>
 const route = useRoute();
 const error = ref("");
-const jwt = ref("");
+const token = ref("");
 const email = ref("");
-const jwtRaw = route.query?.jwt;
+const tokenRaw = route.query?.token;
 const emailRaw = route.query?.email;
 const { openResetPasswordModal } = useModals();
 
 onMounted(() => {
-  if (!jwtRaw || !emailRaw || typeof jwtRaw !== "string") {
+  if (!tokenRaw || !emailRaw || typeof tokenRaw !== "string") {
     error.value = "Ugyldig URL";
     // TODO: report
     // await navigateTo('/');
   } else {
-    jwt.value = jwtRaw as string;
+    token.value = tokenRaw as string;
     email.value = fromBase64Url(emailRaw as string);
-    openResetPasswordModal(jwtRaw as string);
+    openResetPasswordModal(tokenRaw as string);
   }
 });
 </script>

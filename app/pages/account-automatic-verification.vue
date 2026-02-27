@@ -1,22 +1,31 @@
 <template>
-  <div class="text-sm font-mono">
-    <p v-if="pending">Verifing email..</p>
-    <div v-else>
-      <p v-if="data?.isValid">Verification successfull!</p>
-      <p v-else>Verification failed!</p>
-      <pre>signature: {{ jwt }}</pre>
-      <pre>response: {{ JSON.stringify(data, null, 4) }}</pre>
+  <UContainer class="mt-9">
+    <div class="text-sm font-mono">
+      <p v-if="pending">Verificerer email..</p>
+      <div v-else-if="status !== 'idle'">
+        <p v-if="data?.isValid">Verifikaation af email lykkedes!</p>
+        <p v-else>Verifikation af email fejlede :-(</p>
+        <pre>token: {{ verifyEmailToken }}</pre>
+        <pre>response: {{ JSON.stringify(data, null, 4) }}</pre>
+      </div>
+      <div v-if="error" class="text-red-500">{{ error }}</div>
+      <div v-if="!pending" class="mt-3">
+        <UButton
+          to="/account-needs-verification"
+          variant="subtle"
+          color="secondary"
+        >
+          Prøv igen
+        </UButton>
+      </div>
     </div>
-    <div v-if="error" class="text-red-500">{{ error }}</div>
-  </div>
+  </UContainer>
 </template>
 
 <script lang="ts" setup>
 const route = useRoute();
 const { fetch: refreshUser, user } = useUserSession();
-const jwt = route.query?.jwt;
-// const emailRaw = route.query?.email;
-// const email = (emailRaw && typeof emailRaw === 'string') ? fromBase64Url(emailRaw) : null;
+const verifyEmailToken = route.query?.token;
 
 await callOnce(async () => {
   if (user.value?.emailVerifiedAt) {
@@ -24,20 +33,20 @@ await callOnce(async () => {
   }
 });
 
-if (!jwt) {
+if (!verifyEmailToken) {
   throw createError({
     statusCode: 400,
     message: "You need to provide the correct query parameters",
   });
 }
 
-const { data, pending, error, refresh } = await useCsrfFetch(
+const { data, pending, error, refresh, status } = await useCsrfFetch(
   `/api/auth/verify-email`,
   {
     immediate: false,
     method: "POST",
     body: {
-      jwt: jwt,
+      verify_email_token: verifyEmailToken,
     },
     onResponse: async (ctx) => {
       console.log("got verify-email response:", ctx.response?._data);

@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, parseApiError, useRequestFetch, createError } from "#imports";
+import type { SolutionSerialized } from "#shared/types/resource";
 
 export const useSolutionsStore = defineStore("solutions", () => {
   const solutions = ref<SolutionSerialized[]>([]);

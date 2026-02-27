@@ -63,6 +63,9 @@ export default defineEventHandler(async (event) => {
     })
     .returning({ id: users.id });
 
+  // create verify email token
+  const verifyEmailToken = await createVerifyEmailToken(result[0]!.id);
+
   console.log("sending email to request user verification..");
 
   try {
@@ -71,10 +74,10 @@ export default defineEventHandler(async (event) => {
     }
     await sendVerifyEmailEmail(
       config.publicHost,
-      config.verifyEmailSecret,
       result[0]!.id,
       fullName,
       email,
+      verifyEmailToken.token,
     );
   } catch (e) {
     // remove user if mail sending went bad

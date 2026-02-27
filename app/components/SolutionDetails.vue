@@ -137,8 +137,10 @@
 </template>
 
 <script setup lang="ts">
-import type { CaseSerialized } from "~~/server/utils/resources/case";
-import type { SolutionSerialized } from "~~/server/utils/resources/solution";
+import type {
+  CaseSerialized,
+  SolutionSerialized,
+} from "#shared/types/resource";
 
 const props = defineProps({
   solution: {

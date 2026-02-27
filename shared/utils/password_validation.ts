@@ -29,7 +29,6 @@ function _validatePassword(
 ): string | undefined {
   const regex = ruleMap[rule];
   const errMsg = ruleErrors[rule];
-  console.log(errMsg);
 
   if (pw.length < minLen)
     return `Passwordet skal være minimum ${minLen} karakterer langt`;

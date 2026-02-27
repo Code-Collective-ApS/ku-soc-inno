@@ -1,19 +1,19 @@
 <template>
   <div>
     <form class="flex flex-col gap-y-3" @submit.prevent="onSubmit">
-      <label for="newPassword">New password</label>
+      <label for="newPassword">Nyt password</label>
       <UInput
         id="newPassword"
         v-model="newPassword"
         type="password"
-        placeholder="Enter password"
+        placeholder="Indtast password"
       />
-      <label for="emailInput">Repeat password</label>
+      <label for="emailInput">Gentag nyt password</label>
       <UInput
         id="repeatPassword"
         v-model="repeatPassword"
         type="password"
-        placeholder="Repeat new password"
+        placeholder="Indtast password"
       />
       <div v-if="error">
         <div class="text-sm text-error-500">
@@ -48,7 +48,7 @@ const { $csrfFetch } = useNuxtApp();
 const emit = defineEmits<{ close: [] }>();
 
 const props = defineProps({
-  jwt: {
+  token: {
     type: String,
     required: true,
   },
@@ -74,14 +74,17 @@ async function onSubmit() {
   try {
     await $csrfFetch("/api/auth/reset-password", {
       method: "POST",
-      body: { new_password: newPassword.value, jwt: props.jwt },
+      body: {
+        new_password: newPassword.value,
+        reset_password_token: props.token,
+      },
       onResponse: async (ctx) => {
         if (ctx.response.status !== 204) {
           const msg = await parseApiError(ctx.error || ctx.response._data);
           throw new Error(msg);
         } else {
           successMsg.value =
-            "Success! Dit password er opdateret. Redirecter til login siden..";
+            "Succes! Dit password er opdateret. Redirecter til login siden..";
 
           setTimeout(async () => {
             emit("close");
@@ -93,7 +96,6 @@ async function onSubmit() {
     });
   } catch (e) {
     const msg = await parseApiError(e);
-    console.log("3 set api error to", msg, e);
     error.value = msg;
     loading.value = false;
   }

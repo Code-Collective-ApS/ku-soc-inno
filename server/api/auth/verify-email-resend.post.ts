@@ -1,9 +1,10 @@
+import { VerifyEmailTokenMinIntervalMs } from "~~/server/utils/tokens";
 import { users } from "../../db/schema";
-import { eq } from "drizzle-orm";
-const msPrMinute = 1000 * 60;
+import { eq, isNull, and } from "drizzle-orm";
 
 export default defineEventHandler(async (event) => {
   const config = useRuntimeConfig();
+  const beginTime = new Date().getTime();
   const { user: userSess } = await requireUserSession(event);
   if (userSess.emailVerifiedAt) {
     throw createError({
@@ -11,41 +12,55 @@ export default defineEventHandler(async (event) => {
       statusCode: 400,
     });
   }
-  const user = await db
+  const userRes = await db
     .select({
-      email_verification_requested_at: users.email_verification_requested_at,
+      id: users.id,
+      email_verification_requested_at: users.emailVerificationRequestedAt,
     })
     .from(users)
-    .where(eq(users.id, userSess.id));
+    .where(and(eq(users.id, userSess.id), isNull(users.removedAt)));
+
+  if (!userRes[0]) {
+    console.log("User does not exist");
+    await waitABit(beginTime);
+    throw createError({
+      statusCode: 401,
+      message: "Wrong email or password",
+    });
+  }
+
+  const user = userRes[0];
 
   // 5 minute cooldown, just to avoid email spam
-  const lastVerifyReq = user[0]?.email_verification_requested_at;
+  const lastVerifyReq = user.email_verification_requested_at;
   console.log(lastVerifyReq);
   if (lastVerifyReq) {
     const d = lastVerifyReq.getTime();
-    const minutesAgo = Math.round((Date.now() - d) / msPrMinute);
-    console.log(
-      "last verify-request was sent",
-      Math.round(minutesAgo),
-      "minutes ago",
-    );
-    if (minutesAgo < 5) {
+    const msAgo = Math.round(Date.now() - d);
+    const minutesAgo = Math.round(msAgo / 60000);
+    console.log("last verify-request was sent", minutesAgo, "minutes ago");
+    if (msAgo < VerifyEmailTokenMinIntervalMs) {
+      const minutesLeft = Math.floor(
+        (VerifyEmailTokenMinIntervalMs - msAgo) / 60000,
+      );
       throw createError({
-        message:
-          "You need to wait up to 5 minutes before you can send another email",
+        message: `You need to wait ${minutesLeft} minutes before you can send another email`,
         statusCode: 403,
       });
     }
   }
 
+  // create verify email token
+  const verifyEmailToken = await createVerifyEmailToken(user.id);
+
   console.info("sending verify-email email to", userSess.email, "..");
   try {
     await sendVerifyEmailEmail(
       config.publicHost,
-      config.verifyEmailSecret,
       userSess.id,
       userSess.fullName,
       userSess.email,
+      verifyEmailToken.token,
     );
   } catch (err: unknown) {
     console.error(err);
