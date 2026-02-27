@@ -12,7 +12,11 @@
         <UCard variant="subtle" class="mt-4">
           <div class="flex flex-col gap-y-3">
             <UFormField name="title" label="Titel på løsning">
-              <UInput v-model="state.title" placeholder="Indtast titel" />
+              <UInput
+                v-model="state.title"
+                class="w-full"
+                placeholder="Indtast titel"
+              />
             </UFormField>
 
             <UFormField
