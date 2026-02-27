@@ -72,12 +72,7 @@
       <div class="inline-block">
         <div class="flex flex-col gap-3">
           <div v-for="barrier in currentCase.barriers" :key="barrier.id">
-            <div
-              :key="barrier.id"
-              class="bg-indigo-50 px-2 py-1 items-center flex justify-between rounded-lg border border-indigo-300"
-            >
-              <span>{{ barrier.barrier }} </span>
-            </div>
+            <BarrierItem :key="barrier.id" :barrier="barrier.barrier" />
           </div>
         </div>
       </div>

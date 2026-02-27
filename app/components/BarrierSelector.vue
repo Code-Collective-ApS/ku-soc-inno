@@ -2,18 +2,12 @@
   <div class="w-full max-w-md space-y-4">
     <div v-if="value.length > 0" class="flex flex-col gap-2">
       <div v-for="barrier in value" :key="barrier">
-        <div
+        <BarrierItem
           :key="barrier"
-          class="bg-indigo-50 p-3 items-center flex justify-between rounded-lg border border-indigo-300"
-        >
-          <span>{{ barrier }} </span>
-          <UButton
-            class="rounded-full bg-transparent border border-indigo-500 text-indigo-500 hover:bg-indigo-200 active:bg-indigo-300 cursor-pointer"
-            icon="i-mdi-close"
-            size="xs"
-            @click="() => removeBarrier(barrier)"
-          />
-        </div>
+          :barrier="barrier"
+          removable
+          @barrier:remove="() => removeBarrier(barrier)"
+        />
       </div>
     </div>
 
