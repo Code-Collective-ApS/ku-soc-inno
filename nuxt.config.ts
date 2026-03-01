@@ -69,11 +69,17 @@ export default defineNuxtConfig({
         process.env.NUXT_MAX_ATTACHMENT_SIZE,
         10 * mb,
       ),
+      plausibleUrl: process.env.NUXT_PUBLIC_PLAUSIBLE_URL,
       adminName: process.env.NUXT_PUBLIC_ADMIN_NAME,
       adminEmail: process.env.NUXT_PUBLIC_ADMIN_EMAIL,
       webmasterName: process.env.NUXT_PUBLIC_WEBMASTER_NAME,
       webmasterLink: process.env.NUXT_PUBLIC_WEBMASTER_LINK,
       webmasterEmail: process.env.NUXT_PUBLIC_WEBMASTER_EMAIL,
+    },
+  },
+  routeRules: {
+    "/_plausible/api/event": {
+      csurf: false,
     },
   },
 });
