@@ -8,6 +8,14 @@ function getNumEnvOrDefault(inp: string | undefined, def: number): number {
 
 const mb = 1024 * 1024;
 
+const plausibleUrl = process.env.NUXT_PLAUSIBLE_HOST;
+
+if (plausibleUrl) {
+  console.info("> using plausible host:", plausibleUrl);
+} else {
+  console.info("> not using plausible integration (missing env)");
+}
+
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
@@ -17,26 +25,37 @@ export default defineNuxtConfig({
     "nuxt-auth-utils",
     "nuxt-csurf",
     "@pinia/nuxt",
+    "@nuxtjs/plausible",
   ],
   css: ["~/assets/css/main.css"],
   ui: {
     colorMode: false,
   },
+  plausible: {
+    enabled: !!plausibleUrl,
+    ignoredHostnames: ["localhost"],
+    proxy: true,
+    apiHost: plausibleUrl,
+    formSubmissions: true,
+    fileDownloads: true,
+    autoPageviews: true,
+  },
   runtimeConfig: {
+    plausibleUrl,
     publicHost: process.env.NUXT_PUBLIC_HOST || "https://localhost",
+    s3AccessKey: process.env.NUXT_S3_ACCESS_KEY,
+    s3BucketName: process.env.NUXT_S3_BUCKET_NAME,
+    s3Endpoint: process.env.NUXT_S3_ENDPOINT,
+    s3Prefix: process.env.NUXT_S3_PREFIX,
+    s3Region: process.env.NUXT_S3_REGION,
+    s3SecretAccessKey: process.env.NUXT_S3_SECRET_KEY,
+    s3UseSsl: process.env.NUXT_S3_USE_SSL,
+    smtpFrom: process.env.NUXT_SMTP_FROM,
     smtpHost: process.env.NUXT_SMTP_HOST,
+    smtpPass: process.env.NUXT_SMTP_PASS,
+    smtpPort: process.env.NUXT_SMTP_PORT,
     smtpTlsHost: process.env.NUXT_SMTP_HOST_TLS,
     smtpUser: process.env.NUXT_SMTP_USER,
-    smtpPass: process.env.NUXT_SMTP_PASS,
-    smtpFrom: process.env.NUXT_SMTP_FROM,
-    smtpPort: process.env.NUXT_SMTP_PORT,
-    s3AccessKey: process.env.NUXT_S3_ACCESS_KEY,
-    s3SecretAccessKey: process.env.NUXT_S3_SECRET_KEY,
-    s3BucketName: process.env.NUXT_S3_BUCKET_NAME,
-    s3UseSsl: process.env.NUXT_S3_USE_SSL,
-    s3Region: process.env.NUXT_S3_REGION,
-    s3Prefix: process.env.NUXT_S3_PREFIX,
-    s3Endpoint: process.env.NUXT_S3_ENDPOINT,
     public: {
       maxAttachmentSize: getNumEnvOrDefault(
         process.env.NUXT_MAX_ATTACHMENT_SIZE,
