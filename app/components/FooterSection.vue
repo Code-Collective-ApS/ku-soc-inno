@@ -56,6 +56,13 @@
           </div>
         </ClientOnly>
       </div>
+      <div v-if="config.plausibleUrl" class="text-center text-sm text-sky-500">
+        <p>
+          <NuxtLink external target="_blank" :to="config.plausibleUrl">
+            Usage analytics
+          </NuxtLink>
+        </p>
+      </div>
       <div class="text-center">
         <p class="text-sm text-gray-500">
           Soc-inno &copy;

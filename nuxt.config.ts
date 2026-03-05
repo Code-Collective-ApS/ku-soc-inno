@@ -80,6 +80,8 @@ export default defineNuxtConfig({
   routeRules: {
     "/_plausible/api/event": {
       csurf: false,
-    },
+      // TODO: csurf is not recognized as type, but it works
+      // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    } as any,
   },
 });
