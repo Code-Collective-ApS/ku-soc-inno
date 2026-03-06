@@ -167,6 +167,7 @@
 </template>
 
 <script lang="ts" setup>
+import { captureException } from "@sentry/nuxt";
 import type { FormSubmitEvent } from "#ui/types";
 import {
   createSolutionSchema,
@@ -286,7 +287,7 @@ onMounted(async () => {
     console.error("Unable to fetch files!");
     console.error(e);
     console.error((e as Error)?.message);
-    // report error
+    captureException(e);
     toast.add({
       title: "Unable to fetch files",
       description: "You cannot edit the solution at the moment",
@@ -380,7 +381,7 @@ async function onSubmit(
       );
 
       errorMsg.value = msg;
-      // TODO: report error
+      captureException(msg);
       loading.value = false;
     },
   });
@@ -393,8 +394,9 @@ async function deleteSolution() {
   );
   if (ok) {
     if (!props.solution) {
-      // TODO: report error
-      throw new Error("Solution is not defined");
+      const err = new Error("Solution is not defined");
+      captureException(err);
+      throw err;
     }
     const caseId = props.caseId;
     const solutionId = props.solution.id;

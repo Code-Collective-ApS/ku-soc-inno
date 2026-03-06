@@ -23,6 +23,7 @@ import {
   createSolutionFieldsSchema,
   createSolutionFilesSchema,
 } from "~~/shared/schemas/createSolutionSchema";
+import { captureException } from "@sentry/nuxt";
 
 export type FileUploadRow = ReturnType<typeof generateFileUploadRow>;
 
@@ -247,7 +248,7 @@ export async function uploadSolutionFiles(
     // if uploading went wrong, delete the posted solution
     await db.delete(solutions).where(eq(solutions.id, solutionId));
 
-    // TODO: report error!
+    captureException(e);
     throw createError({
       statusCode: 500,
       message: "Something went wrong when uploading the files",

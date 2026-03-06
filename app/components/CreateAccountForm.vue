@@ -62,6 +62,7 @@
 </template>
 
 <script setup lang="ts">
+import { captureException } from "@sentry/nuxt";
 const password = ref("");
 const email = ref("");
 const fullName = ref("");
@@ -122,7 +123,7 @@ async function onSubmit(event: Event) {
   } catch (e: unknown) {
     console.error(e);
     error.value = (e as Error).message || "Ukendt fejl";
-    // TODO: report error
+    captureException(e);
   } finally {
     loading.value = false;
   }

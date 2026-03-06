@@ -2,6 +2,7 @@ import { eq } from "drizzle-orm";
 import { tokens } from "../db/schema";
 import crypto from "crypto";
 import { createError } from "h3";
+import { captureException } from "@sentry/nuxt";
 
 export const VerifyEmailTokenMinIntervalMs = 5 * 60 * 1000; // 5 minutes
 export const ForgotPasswordTokenMinIntervalMs = 15 * 60 * 1000; // 15 minutes
@@ -78,11 +79,12 @@ export async function requireTokenByToken(rawToken: string) {
   });
 
   if (!t) {
-    // TODO: report error
-    throw createError({
+    const err = createError({
       statusCode: 404,
       statusMessage: "Token does not exist",
     });
+    captureException(err);
+    throw err;
   }
 
   return t;

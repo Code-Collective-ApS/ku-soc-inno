@@ -19,6 +19,7 @@ if (plausibleUrl) {
 export default defineNuxtConfig({
   compatibilityDate: "2025-07-15",
   devtools: { enabled: true },
+
   modules: [
     "@nuxt/eslint",
     "@nuxt/ui",
@@ -26,11 +27,15 @@ export default defineNuxtConfig({
     "nuxt-csurf",
     "@pinia/nuxt",
     "@nuxtjs/plausible",
+    "@sentry/nuxt/module",
   ],
+
   css: ["~/assets/css/main.css"],
+
   ui: {
     colorMode: false,
   },
+
   plausible: {
     enabled: !!plausibleUrl,
     ignoredHostnames: ["localhost"],
@@ -40,6 +45,7 @@ export default defineNuxtConfig({
     fileDownloads: true,
     autoPageviews: true,
   },
+
   runtimeConfig: {
     plausibleUrl,
     publicHost: process.env.NUXT_PUBLIC_HOST || "https://localhost",
@@ -69,6 +75,7 @@ export default defineNuxtConfig({
         process.env.NUXT_MAX_ATTACHMENT_SIZE,
         10 * mb,
       ),
+      sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN,
       plausibleUrl: process.env.NUXT_PUBLIC_PLAUSIBLE_URL,
       adminName: process.env.NUXT_PUBLIC_ADMIN_NAME,
       adminEmail: process.env.NUXT_PUBLIC_ADMIN_EMAIL,
@@ -77,11 +84,24 @@ export default defineNuxtConfig({
       webmasterEmail: process.env.NUXT_PUBLIC_WEBMASTER_EMAIL,
     },
   },
+
   routeRules: {
     "/_plausible/api/event": {
       csurf: false,
       // TODO: csurf is not recognized as type, but it works
       // eslint-disable-next-line @typescript-eslint/no-explicit-any
     } as any,
+  },
+
+  sentry: {
+    enabled: process.env.NUXT_SENTRY_ENABLE == "true",
+    project: process.env.NUXT_SENTRY_PROJECT,
+    org: process.env.NUXT_SENTRY_ORG,
+    sentryUrl: process.env.NUXT_SENTRY_URL,
+    telemetry: false,
+  },
+
+  sourcemap: {
+    client: "hidden",
   },
 });

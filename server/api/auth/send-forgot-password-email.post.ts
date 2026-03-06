@@ -1,6 +1,7 @@
 import { users } from "~~/server/db/schema";
 import { eq } from "drizzle-orm";
 import { z } from "zod";
+import { captureException } from "@sentry/nuxt";
 import {
   createResetPasswordToken,
   ForgotPasswordTokenMinIntervalMs,
@@ -72,7 +73,7 @@ export default defineEventHandler(async (event) => {
     );
   } catch (err: unknown) {
     console.error(err);
-    // TODO: report error!
+    captureException(err);
     await waitABit(beginTime);
     throw createError({
       statusCode: 500,

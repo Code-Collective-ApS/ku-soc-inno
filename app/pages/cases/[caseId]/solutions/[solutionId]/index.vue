@@ -33,6 +33,7 @@
 
 <script lang="ts" setup>
 import type { BreadcrumbItem } from "@nuxt/ui";
+import { captureException } from "@sentry/nuxt";
 import { useCasesStore } from "~/stores/useCasesStore";
 import { useSolutionsStore } from "~/stores/useSolutionsStore";
 const route = useRoute();
@@ -40,18 +41,20 @@ const caseId = parseInt((route.params?.caseId as string) || "NaN");
 const solutionId = parseInt((route.params?.solutionId as string) || "NaN");
 
 if (isNaN(caseId)) {
-  // TODO: report error
-  throw createError({
+  const err = createError({
     message: "Invalid case id",
     statusCode: 400,
   });
+  captureException(err);
+  throw err;
 }
 if (isNaN(solutionId)) {
-  // TODO: report error
-  throw createError({
+  const err = createError({
     message: "Invalid solution id",
     statusCode: 400,
   });
+  captureException(err);
+  throw err;
 }
 
 // fetch case on load

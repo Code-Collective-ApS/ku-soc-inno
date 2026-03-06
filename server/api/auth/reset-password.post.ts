@@ -7,6 +7,7 @@ import {
   useToken,
   verifyToken,
 } from "~~/server/utils/tokens";
+import { captureException } from "@sentry/nuxt";
 
 const bodyDto = z.strictObject({
   reset_password_token: z.string().min(6),
@@ -39,7 +40,7 @@ export default defineEventHandler(async (event) => {
       // report and log the event but hide the error from the client
     } else {
       console.error(e);
-      // TODO: report error
+      captureException(e);
       await waitABit(beginTime);
       throw createError({
         statusCode: 400,
@@ -61,11 +62,12 @@ export default defineEventHandler(async (event) => {
     ),
   });
   if (!user) {
-    // TODO: report error
-    throw createError({
+    const err = createError({
       statusCode: 400,
       statusMessage: "User does not exist",
     });
+    captureException(err);
+    throw err;
   }
 
   // update the password

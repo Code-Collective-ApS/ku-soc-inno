@@ -10,6 +10,7 @@ import {
   DeleteObjectCommand,
 } from "@aws-sdk/client-s3";
 import * as fs from "node:fs";
+import { captureException } from "@sentry/nuxt";
 // import { captureException } from '@sentry/node';
 
 const config = useRuntimeConfig() || {};
@@ -161,7 +162,7 @@ export async function uploadFile(
     }
   } catch (e) {
     console.error(e);
-    // TODO: report error
+    captureException(e);
     // captureException(e);
     if (e instanceof Error) {
       throw createError({

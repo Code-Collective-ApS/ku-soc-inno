@@ -6,6 +6,7 @@ import { fileUploads } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
 import { getUpload } from "./s3";
+import { captureException } from "@sentry/nuxt";
 
 export function readFormidableFormFiles(
   files: Files,
@@ -89,11 +90,12 @@ export async function fetchFileUpload(fileUploadId: number) {
 
   const fileUrl = urlRes?.[0]?.fileUrl;
   if (!fileUrl) {
-    // TODO: report error
-    throw createError({
+    const err = createError({
       statusCode: 404,
       message: "File does not exist",
     });
+    captureException(err);
+    throw err;
   }
 
   return getUpload(fileUrl);

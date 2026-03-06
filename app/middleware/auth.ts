@@ -1,3 +1,5 @@
+import { captureException } from "@sentry/nuxt";
+
 export default defineNuxtRouteMiddleware((to, _from) => {
   const sess = useUserSession();
   const loggedIn = sess?.loggedIn?.value;
@@ -29,10 +31,11 @@ export default defineNuxtRouteMiddleware((to, _from) => {
     "/account-automatic-verification",
   ].includes(to.path);
   if (loggedIn && !emailVerifiedAt && !isVerificationPage) {
-    // TODO: report error
-    console.error(
+    const err = new Error(
       `auth middleware: [user:${user?.email}] email is not verified but user has session`,
     );
+    captureException(err);
+    console.error(err.message);
     return navigateTo("/account-needs-verification");
   }
 });

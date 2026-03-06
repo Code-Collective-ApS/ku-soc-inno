@@ -1,6 +1,7 @@
 import { defineStore } from "pinia";
 import { ref, parseApiError, useRequestFetch, createError } from "#imports";
 import type { SolutionSerialized } from "#shared/types/resource";
+import { captureException } from "@sentry/nuxt";
 
 export const useSolutionsStore = defineStore("solutions", () => {
   const solutions = ref<SolutionSerialized[]>([]);
@@ -50,12 +51,12 @@ export const useSolutionsStore = defineStore("solutions", () => {
       onResponseError: (ctx) => {
         console.error(ctx.error);
         pending.value = false;
-        // TODO: report error
+        captureException(ctx.error);
       },
       onRequestError: (ctx) => {
         console.error(ctx.error);
         pending.value = false;
-        // TODO: report error
+        captureException(ctx.error);
       },
     });
 

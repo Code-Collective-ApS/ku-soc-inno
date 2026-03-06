@@ -1,3 +1,4 @@
+import { captureException } from "@sentry/nuxt";
 import z from "zod";
 import { setEmailVerified } from "~~/server/utils/resources/user";
 
@@ -41,7 +42,7 @@ export default defineEventHandler(async (event) => {
       // report and log the event but hide the error from the client
     } else {
       console.error(e);
-      // TODO: report error
+      captureException(e);
       await waitABit(beginTime);
       throw createError({
         statusCode: 400,

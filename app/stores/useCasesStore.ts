@@ -2,6 +2,7 @@ import { defineStore } from "pinia";
 import type { CaseSerialized } from "~~/server/utils/resources/case";
 import { ref, parseApiError, useRequestFetch, type Ref } from "#imports";
 import type { FetchContext, FetchResponse, ResponseType } from "ofetch";
+import { captureException } from "@sentry/nuxt";
 
 type FetchCasesContext = FetchContext<
   { cases: CaseSerialized[] },
@@ -63,12 +64,12 @@ export const useCasesStore = defineStore("cases", () => {
       onResponseError: (ctx: FetchCasesContext) => {
         console.error(ctx.error);
         pending.value = false;
-        // TODO: report error
+        captureException(ctx.error);
       },
       onRequestError: (ctx: FetchCasesErrorContext) => {
         console.error(ctx.error);
         pending.value = false;
-        // TODO: report error
+        captureException(ctx.error);
       },
     });
   }
@@ -107,18 +108,20 @@ export const useCasesStore = defineStore("cases", () => {
           const msg = await parseApiError(
             ctx.response?._data || ctx.error || ctx.response,
           );
-          throw new Error(msg);
+          const err = new Error(msg);
+          captureException(err);
+          throw err;
         }
       },
       onResponseError: (ctx: FetchCaseContext) => {
         console.error(ctx.error);
         pending.value = false;
-        // TODO: report error
+        captureException(ctx.error);
       },
       onRequestError: (ctx: FetchCaseErrorContext) => {
         console.error(ctx.error);
         pending.value = false;
-        // TODO: report error
+        captureException(ctx.error);
       },
     });
 

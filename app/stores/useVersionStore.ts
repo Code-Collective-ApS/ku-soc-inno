@@ -1,5 +1,6 @@
 import { defineStore } from "pinia";
 import { ref, parseApiError, useRequestFetch } from "#imports";
+import { captureException } from "@sentry/nuxt";
 
 export const useVersionStore = defineStore("versionStore", () => {
   const version = ref("");
@@ -34,12 +35,12 @@ export const useVersionStore = defineStore("versionStore", () => {
       onResponseError: (ctx) => {
         console.error(ctx.error);
         pending.value = false;
-        // TODO: report error
+        captureException(ctx.error);
       },
       onRequestError: (ctx) => {
         console.error(ctx.error);
         pending.value = false;
-        // TODO: report error
+        captureException(ctx.error);
       },
     });
   }

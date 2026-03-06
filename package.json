@@ -20,6 +20,7 @@
     "@nuxt/ui": "4.2.0",
     "@nuxtjs/plausible": "3.0.2",
     "@pinia/nuxt": "^0.11.3",
+    "@sentry/nuxt": "^10",
     "@types/nodemailer": "^7.0.2",
     "drizzle-orm": "^0.44.6",
     "eslint": "^9.37.0",
@@ -44,5 +45,8 @@
     "drizzle-kit": "^0.31.5",
     "h3-formidable": "^1.0.0",
     "tsx": "^4.20.6"
+  },
+  "resolutions": {
+    "@vercel/nft": "^0.27.4"
   }
 }

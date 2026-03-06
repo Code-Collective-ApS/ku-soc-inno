@@ -2,6 +2,7 @@ import { z } from "zod";
 import { eq, or } from "drizzle-orm";
 import { users } from "~~/server/db/schema";
 import { validatePassword } from "#shared/utils/password_validation";
+import { captureException } from "@sentry/nuxt";
 
 const bodySchema = z.strictObject({
   password: z.string().min(6), // using `validatePassword` for password validation later
@@ -81,7 +82,7 @@ export default defineEventHandler(async (event) => {
     );
   } catch (e) {
     // remove user if mail sending went bad
-    // TODO: report error!
+    captureException(e);
     console.error(e);
     if (result.length) {
       console.log(

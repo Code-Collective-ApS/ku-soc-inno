@@ -1,3 +1,4 @@
+import { captureException } from "@sentry/nuxt";
 import * as z from "zod";
 
 const paramDto = z.strictObject({
@@ -29,11 +30,12 @@ export default defineEventHandler(async (event) => {
 
   if (solRes.userId !== user.id) {
     await waitABit(beginTime);
-    // TODO: report error
-    throw createError({
+    const err = createError({
       statusCode: 403,
       message: "You don't own this solution and cannot delete it.",
     });
+    captureException(err);
+    throw err;
   }
 
   // marks case and solutions as removed

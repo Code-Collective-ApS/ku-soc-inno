@@ -1,6 +1,7 @@
 import * as nodemailer from "nodemailer";
 import pkg from "~~/package.json";
 import type SMTPTransport from "nodemailer/lib/smtp-transport";
+import { captureException } from "@sentry/nuxt";
 
 let _mailer:
   | nodemailer.Transporter<SMTPTransport.SentMessageInfo, SMTPTransport.Options>
@@ -55,7 +56,7 @@ async function getMailer(
     console.info("nodemailer connection verified");
   } catch (err) {
     console.error("smtp server verification error", err);
-    // TODO: report error!
+    captureException(err);
   }
 
   return _mailer;

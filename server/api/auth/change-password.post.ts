@@ -1,3 +1,4 @@
+import { captureException } from "@sentry/nuxt";
 import { z } from "zod";
 import {
   getUserPassword,
@@ -24,10 +25,12 @@ export default defineEventHandler(async (event) => {
   if (!user[0]) {
     // TODO: report error
     await waitABit(beginTime);
-    throw createError({
+    const err = createError({
       statusCode: 401,
       message: "Din konto eksisterer ikke længere",
     });
+    captureException(err);
+    throw err;
   }
 
   // check if old password is correct
