@@ -38,6 +38,8 @@ export default defineEventHandler(async (event) => {
       statusCode: 403,
     });
     captureException(err);
+    captureException("not allowed test");
+    console.log("not allowed test");
     throw err;
   }
 
