@@ -86,6 +86,10 @@ export default defineNuxtConfig({
       webmasterLink: process.env.NUXT_PUBLIC_WEBMASTER_LINK,
       webmasterEmail: process.env.NUXT_PUBLIC_WEBMASTER_EMAIL,
     },
+    sentry: {
+      dsn: process.env.NUXT_SENTRY_DSN,
+      authToken: process.env.NUXT_SENTRY_AUTHTOKEN,
+    },
   },
 
   routeRules: {
@@ -101,6 +105,7 @@ export default defineNuxtConfig({
     project: process.env.NUXT_SENTRY_PROJECT,
     org: process.env.NUXT_SENTRY_ORG,
     sentryUrl: process.env.NUXT_SENTRY_URL,
+    authToken: process.env.NUXT_SENTRY_AUTHTOKEN,
     telemetry: false,
     debug: false,
   },
