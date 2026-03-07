@@ -64,7 +64,6 @@ async function onSubmit() {
     });
   } catch (e) {
     const msg = await parseApiError(e);
-    console.log("3 set api error to", msg, e);
     error.value = msg;
     loading.value = false;
   }
