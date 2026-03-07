@@ -75,7 +75,10 @@ export default defineNuxtConfig({
         process.env.NUXT_MAX_ATTACHMENT_SIZE,
         10 * mb,
       ),
-      sentryDsn: process.env.NUXT_PUBLIC_SENTRY_DSN,
+      sentry: {
+        dsn: process.env.NUXT_PUBLIC_SENTRY_DSN,
+      },
+      sentryEnabled: process.env.NUXT_PUBLIC_SENTRY_ENABLED == "true",
       plausibleUrl: process.env.NUXT_PUBLIC_PLAUSIBLE_URL,
       adminName: process.env.NUXT_PUBLIC_ADMIN_NAME,
       adminEmail: process.env.NUXT_PUBLIC_ADMIN_EMAIL,
@@ -94,11 +97,12 @@ export default defineNuxtConfig({
   },
 
   sentry: {
-    enabled: process.env.NUXT_SENTRY_ENABLE == "true",
+    enabled: process.env.NUXT_PUBLIC_SENTRY_ENABLED == "true",
     project: process.env.NUXT_SENTRY_PROJECT,
     org: process.env.NUXT_SENTRY_ORG,
     sentryUrl: process.env.NUXT_SENTRY_URL,
     telemetry: false,
+    debug: false,
   },
 
   sourcemap: {

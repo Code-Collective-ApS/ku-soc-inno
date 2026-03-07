@@ -4,6 +4,7 @@
   "private": true,
   "version": "0.1.1",
   "scripts": {
+    "start": "node --import ./.output/server/sentry.server.config.mjs .output/server/index.mjs",
     "build": "NODE_OPTIONS=--max-old-space-size=6144 nuxt build",
     "dev": "nuxt dev",
     "generate": "nuxt generate",

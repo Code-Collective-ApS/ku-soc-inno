@@ -76,7 +76,7 @@ export async function sendMail(
     html: html,
     xMailer: `Soc-inno v${pkg.version}`,
     from: config.smtpFrom,
-    debug: true,
+    debug: false,
     logger: true,
   });
 
