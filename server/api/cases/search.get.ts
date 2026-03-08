@@ -76,7 +76,10 @@ export default defineEventHandler(async (event) => {
   }
 
   if (query.text) {
-    const words = searchText.split(" ");
+    const words = searchText
+      .split(" ")
+      .map((t) => t.replace(/[^a-zA-Z0-9]/g, ""))
+      .filter((t) => !!t);
     const textQuery = sql`(
         setweight(to_tsvector('danish', ${cases.title}), 'A') ||
         setweight(to_tsvector('danish', ${cases.challengeDescription}), 'B') ||
