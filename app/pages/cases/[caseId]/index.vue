@@ -8,7 +8,12 @@
       />
     </div>
     <div v-if="currentCase">
-      <CaseDetails :current-case="currentCase" />
+      <CaseDetails
+        :current-case="currentCase"
+        @click:orgsector="(s) => handleSectorClick(s)"
+        @click:orgtype="(s) => handleOrgClick(s)"
+        @click:tag="(s) => handleTagClick(s)"
+      />
     </div>
     <div v-if="currentCase">
       <div class="mt-9">
@@ -48,6 +53,7 @@ import type { BreadcrumbItem } from "@nuxt/ui";
 import { captureException } from "@sentry/nuxt";
 import { useCasesStore } from "~/stores/useCasesStore";
 const route = useRoute();
+const router = useRouter();
 const caseId = parseInt((route.params?.caseId as string) || "NaN");
 
 if (isNaN(caseId)) {
@@ -75,6 +81,28 @@ onMounted(() => {
     refresh();
   }
 });
+
+function handleSectorClick(s: OrganizationSector) {
+  const newQuery = { sector: s };
+  router.push({
+    path: "/cases/browse",
+    query: newQuery,
+  });
+}
+function handleOrgClick(s: OrganizationType) {
+  const newQuery = { organization_type: s };
+  router.push({
+    path: "/cases/browse",
+    query: newQuery,
+  });
+}
+function handleTagClick(s: string) {
+  const newQuery = { query: s };
+  router.push({
+    path: "/cases/browse",
+    query: newQuery,
+  });
+}
 
 const currentCase = computed(() => data?.value?.case);
 

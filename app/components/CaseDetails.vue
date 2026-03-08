@@ -28,7 +28,12 @@
 
     <div>
       <div class="flex gap-1.5">
-        <CaseTags :c="currentCase" />
+        <CaseTags
+          :c="currentCase"
+          @click:orgsector="(s) => emit('click:orgsector', s)"
+          @click:orgtype="(s) => emit('click:orgtype', s)"
+          @click:tag="(s) => emit('click:tag', s)"
+        />
       </div>
     </div>
 
@@ -124,6 +129,12 @@ const contactName = ref(props.currentCase.contactName);
 const contactTitle = ref(props.currentCase.contactTitle);
 const contactOrganization = ref(props.currentCase.contactOrganization);
 const contactEmail = ref(props.currentCase.contactEmail);
+
+const emit = defineEmits<{
+  "click:orgsector": [OrganizationSector];
+  "click:orgtype": [OrganizationType];
+  "click:tag": [string];
+}>();
 
 async function removeCase() {
   const result = await openConfirmModal(
