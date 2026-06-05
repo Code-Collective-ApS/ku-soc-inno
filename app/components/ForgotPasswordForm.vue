@@ -54,7 +54,7 @@ async function onSubmit() {
       body: { email: email.value },
       onResponse: async (ctx) => {
         if (ctx.response.status !== 204) {
-          const msg = await parseApiError(ctx.error || ctx.response._data);
+          const msg = await parseApiError(ctx.response?._data || ctx.error);
           throw new Error(msg);
         } else {
           successMsg.value = "Success! Emailen er sendt";

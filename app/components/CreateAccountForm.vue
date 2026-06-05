@@ -115,7 +115,7 @@ async function onSubmit(event: Event) {
             "Success! We've sent you an email to finish account setup";
           emit("create-account-success");
         } else {
-          const msg = await parseApiError(ctx.error || ctx.response._data);
+          const msg = await parseApiError(ctx.response?._data || ctx.error);
           throw new Error(msg);
         }
       },

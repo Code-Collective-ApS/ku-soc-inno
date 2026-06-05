@@ -222,8 +222,13 @@ async function onSubmit(event: FormSubmitEvent<CreateCaseSchema>) {
       }
     },
     onResponseError: async (ctx) => {
+      console.log("THIS IS THE CONTEXT::::", ctx);
       const msg = await parseApiError(
-        ctx.error || ctx.response || ctx || "Unknown error",
+        ctx.response?._data ||
+          ctx.error?.message ||
+          ctx.response ||
+          ctx ||
+          "Unknown error",
       );
       toast.add({
         icon: "lucide:circle-alert",

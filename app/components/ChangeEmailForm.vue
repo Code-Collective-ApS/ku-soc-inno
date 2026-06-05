@@ -88,7 +88,7 @@ async function onSubmit() {
     body: payload,
     onResponse: async (ctx) => {
       if (ctx.response.status !== 204) {
-        const msg = await parseApiError(ctx.error || ctx.response._data);
+        const msg = await parseApiError(ctx.response?._data || ctx.error);
         successMsg.value = "";
         errorMsg.value = msg;
       } else {
@@ -100,7 +100,7 @@ async function onSubmit() {
     },
     onResponseError: async (ctx) => {
       successMsg.value = "";
-      errorMsg.value = await parseApiError(ctx.error || ctx.response._data);
+      errorMsg.value = await parseApiError(ctx.response?._data || ctx.error);
       loading.value = false;
     },
   });

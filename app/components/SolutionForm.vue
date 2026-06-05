@@ -233,7 +233,7 @@ function fetchSolutionFile(
           ok(file);
         } else {
           const msg = await parseApiError(
-            ctx.response._data || ctx.error || ctx.response,
+            ctx.response?._data || ctx.error || ctx.response,
           );
           throw new Error(msg);
         }
@@ -377,7 +377,11 @@ async function onSubmit(
     },
     onResponseError: async (ctx) => {
       const msg = await parseApiError(
-        ctx.error || ctx.response || ctx || "Unknown error",
+        ctx.response?._data ||
+          ctx.error ||
+          ctx.response ||
+          ctx ||
+          "Unknown error",
       );
 
       errorMsg.value = msg;
@@ -404,7 +408,7 @@ async function deleteSolution() {
       method: "DELETE",
       onResponse: async (ctx) => {
         if (ctx.response.status !== 204) {
-          const msg = await parseApiError(ctx.error || ctx.response._data);
+          const msg = await parseApiError(ctx.response?._data || ctx.error);
           errorMsg.value = msg;
         } else {
           toast.add({
@@ -418,7 +422,7 @@ async function deleteSolution() {
         loading.value = false;
       },
       onResponseError: async (ctx) => {
-        errorMsg.value = await parseApiError(ctx.error || ctx.response._data);
+        errorMsg.value = await parseApiError(ctx.response?._data || ctx.error);
         loading.value = false;
       },
     });
