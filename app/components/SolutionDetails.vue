@@ -108,7 +108,7 @@
           color="neutral"
           class="mt-1.5"
           target="_blank"
-          icon="material-symbols:download-rounded"
+          icon="lucide:download"
         >
           Download pdf
         </UButton>
@@ -127,7 +127,7 @@
           color="neutral"
           class="mt-1.5"
           target="_blank"
-          icon="material-symbols:download-rounded"
+          icon="lucide:download"
         >
           {{ att.fileName }}
         </UButton>

@@ -226,7 +226,7 @@ async function onSubmit(event: FormSubmitEvent<CreateCaseSchema>) {
         ctx.error || ctx.response || ctx || "Unknown error",
       );
       toast.add({
-        icon: "material-symbols:error-circle-rounded-outline-sharp",
+        icon: "lucide:circle-alert",
         title: msg,
         color: "error",
       });

@@ -17,8 +17,9 @@ if (plausibleUrl) {
 }
 
 export default defineNuxtConfig({
-  compatibilityDate: "2025-07-15",
-  devtools: { enabled: true },
+  // compatibilityDate: "2025-07-15",
+  compatibilityDate: "2026-06-05",
+  devtools: { enabled: process.env.NUXT_DEVTOOLS_ENABLE === "true" },
 
   modules: [
     "@nuxt/eslint",
@@ -112,5 +113,17 @@ export default defineNuxtConfig({
 
   sourcemap: {
     client: "hidden",
+  },
+
+  vite: {
+    optimizeDeps: {
+      include: [
+        "@plausible-analytics/tracker",
+        "zod",
+        ...(process.env.NUXT_DEVTOOLS_ENABLE === "true"
+          ? ["@vue/devtools-core", "@vue/devtools-kit"]
+          : []),
+      ],
+    },
   },
 });

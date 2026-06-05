@@ -39,7 +39,7 @@ export async function refreshUserSession(
       emailVerifiedAt: user[0].emailVerifiedAt,
     },
   };
-  await setUserSession(event, newSess);
+  await setUserSession(event, newSess.user);
   const sess = await requireUserSession(event);
   return sess;
 }

@@ -9,7 +9,7 @@
     <UNavigationMenu :items="navItems" />
 
     <template #right>
-      <div class="flex items-center gap-1.5">
+      <div class="flex items-center gap-2.5">
         <UButton
           v-if="!loggedIn"
           class="cursor-pointer"
@@ -43,7 +43,7 @@
             class="rounded-full bg-white hover:bg-white cursor-pointer hover:border-gray-400 border border-gray-300 transition-colors"
             color="neutral"
             variant="ghost"
-            icon="material-symbols:person-2-outline-rounded"
+            icon="lucide:user"
             aria-label="Profile menu"
           />
           <template #content>
