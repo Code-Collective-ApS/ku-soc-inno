@@ -9,6 +9,7 @@ function getNumEnvOrDefault(inp: string | undefined, def: number): number {
 const mb = 1024 * 1024;
 
 const plausibleUrl = process.env.NUXT_PLAUSIBLE_HOST;
+console.log("NODE_ENV = ", process.env.NODE_ENV);
 
 if (plausibleUrl) {
   console.info("> using plausible host:", plausibleUrl);
@@ -112,7 +113,8 @@ export default defineNuxtConfig({
   },
 
   sourcemap: {
-    client: "hidden",
+    client: process.env.NODE_ENV === "production" ? false : "hidden",
+    server: process.env.NODE_ENV === "production" ? false : true,
   },
 
   vite: {
