@@ -15,8 +15,8 @@
           onClick: () => {
             if (!loggedIn) {
               const q = { ...(route.query || {}), redirectTo: '/cases/new' };
-              router.push({ path: '/', query: q });
-              openLoginModal();
+              router.push({ path: '/login', query: q });
+              // openLoginModal();
             } else {
               navigateTo('/cases/new');
             }
@@ -50,7 +50,7 @@ import { useVersionStore } from "~/stores/useVersionStore";
 
 const { loggedIn } = useUserSession();
 useToasters();
-const { openLoginModal } = useModals();
+const { handleQuery } = useModals();
 const casesStore = useCasesStore();
 const casesOffset = ref(0);
 const casesTake = ref(6);
@@ -69,5 +69,8 @@ const { version: pkgVersion } = storeToRefs(versionStore);
 await useAsyncData("version", versionStore.refreshVersion, {
   immediate: true,
   server: true,
+});
+onBeforeMount(() => {
+  handleQuery(route.query);
 });
 </script>

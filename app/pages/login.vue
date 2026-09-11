@@ -14,14 +14,12 @@ const redirectTo = computed(() =>
     : "/cases/browse",
 );
 
-await callOnce(async () => {
-  const verifiedAt = user.value?.emailVerifiedAt;
-  if (loggedIn.value && verifiedAt) {
-    await navigateTo(redirectTo.value);
-  } else if (loggedIn.value && !verifiedAt) {
-    await navigateTo("/account-needs-verification");
-  }
-});
+const verifiedAt = user.value?.emailVerifiedAt;
+if (loggedIn.value && verifiedAt) {
+  await navigateTo(redirectTo.value);
+} else if (loggedIn.value && !verifiedAt) {
+  await navigateTo("/account-needs-verification");
+}
 
 onMounted(async () => {
   const result = await openLoginModal();

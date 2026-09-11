@@ -1,7 +1,7 @@
-import { createError } from "h3";
+import { createError, type H3Event } from "h3";
 import type { Files } from "h3-formidable";
 import * as fs from "node:fs";
-import { prettyByteSize } from "~~/shared/utils/text";
+import { prettyByteSize } from "#shared/utils/text";
 import { fileUploads } from "../db/schema";
 import { eq } from "drizzle-orm";
 import { db } from "./db";
@@ -80,7 +80,7 @@ export function readFormidableFormFiles(
   return resultFiles;
 }
 
-export async function fetchFileUpload(fileUploadId: number) {
+export async function fetchFileUpload(event: H3Event, fileUploadId: number) {
   const urlRes = await db
     .select({
       fileUrl: fileUploads.fileUrl,
@@ -98,5 +98,5 @@ export async function fetchFileUpload(fileUploadId: number) {
     throw err;
   }
 
-  return getUpload(fileUrl);
+  return getUpload(event, fileUrl);
 }

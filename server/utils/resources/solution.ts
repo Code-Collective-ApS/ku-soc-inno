@@ -350,7 +350,7 @@ export async function serveSolutionFile<
     });
   }
 
-  const { readable } = await fetchFileUpload(resource.fileUploadId);
+  const { readable } = await fetchFileUpload(event, resource.fileUploadId);
 
   setResponseHeader(event, "Content-Type", resource.mimeType);
   setResponseHeader(event, "Cache-Control", "Public, max-age=3600"); // one hour public cache

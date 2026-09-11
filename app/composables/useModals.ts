@@ -3,48 +3,46 @@ import LoginModal from "../components/LoginModal.vue";
 import FancyImageModal from "../components/FancyImageModal.vue";
 import ConfirmModal from "../components/ConfirmModal.vue";
 import ForgotPasswordModal from "../components/ForgotPasswordModal.vue";
-import { useOverlay, useRoute, computed, watch } from "#imports";
+import { useOverlay } from "#imports";
 import ResetPasswordModal from "~/components/ResetPasswordModal.vue";
 import type { LocationQuery } from "vue-router";
 
 export function useModals() {
-  const route = useRoute();
-  const _path = computed(() => route.path);
-  const _query = computed(() => route.query);
   const overlay = useOverlay();
-  const loginModal = overlay.create(LoginModal);
-  const createAccountModal = overlay.create(CreateAccountModal);
-  const imageModal = overlay.create(FancyImageModal);
-  const forgotPasswordModal = overlay.create(ForgotPasswordModal);
-  const confirmModal = overlay.create(ConfirmModal);
-  const resetPasswordModal = overlay.create(ResetPasswordModal);
+  const loginModal = shallowRef(overlay.create(LoginModal));
+  const createAccountModal = shallowRef(overlay.create(CreateAccountModal));
+  const imageModal = shallowRef(overlay.create(FancyImageModal));
+  const forgotPasswordModal = shallowRef(overlay.create(ForgotPasswordModal));
+  const confirmModal = shallowRef(overlay.create(ConfirmModal));
+  const resetPasswordModal = shallowRef(overlay.create(ResetPasswordModal));
 
   async function openLoginModal(): Promise<boolean> {
-    const modalInstance = loginModal.open({});
+    console.log("Open login modal called");
+    const modalInstance = loginModal.value.open({});
     const result = await modalInstance.result;
     return result;
   }
   async function openCreateAccountModal(): Promise<boolean> {
-    const modalInstance = createAccountModal.open();
+    const modalInstance = createAccountModal.value.open();
     const result = await modalInstance.result;
     return result;
   }
 
   async function openFancyImageModal(src: string): Promise<boolean> {
-    const modalInstance = imageModal.open({ src });
+    const modalInstance = imageModal.value.open({ src });
     const result = await modalInstance.result;
     return result;
   }
 
   async function openForgotPasswordModal(): Promise<boolean> {
-    const modalInstance = forgotPasswordModal.open();
+    const modalInstance = forgotPasswordModal.value.open();
     const result = await modalInstance.result;
     return result;
   }
   async function openResetPasswordModal(
     resetPasswordToken: string,
   ): Promise<boolean> {
-    const modalInstance = resetPasswordModal.open({
+    const modalInstance = resetPasswordModal.value.open({
       token: resetPasswordToken,
     });
     const result = await modalInstance.result;
@@ -55,7 +53,7 @@ export function useModals() {
     title: string,
     description: string,
   ): Promise<boolean> {
-    const modalInstance = confirmModal.open({
+    const modalInstance = confirmModal.value.open({
       title,
       description,
     });
@@ -63,15 +61,12 @@ export function useModals() {
     return result;
   }
 
-  watch(
-    [_path, _query],
-    ([_, query]: [string, LocationQuery]) => {
-      if (query?.openLoginModal === "1") {
-        return openLoginModal();
-      }
-    },
-    { immediate: true },
-  );
+  function handleQuery(q: LocationQuery) {
+    if (q.openLoginModal === "1") {
+      console.log("useModals on mounted openLoginModal()");
+      return openLoginModal();
+    }
+  }
 
   return {
     openLoginModal,
@@ -80,5 +75,6 @@ export function useModals() {
     openFancyImageModal,
     openForgotPasswordModal,
     openResetPasswordModal,
+    handleQuery,
   };
 }

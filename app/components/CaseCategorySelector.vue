@@ -50,7 +50,7 @@
 <script setup lang="ts">
 import { UButton } from "#components"; // Nuxt UI components
 
-const value = defineModel<string[]>({ default: [] });
+const value = defineModel<string[]>({ default: () => [] });
 const input = useTemplateRef("input");
 
 const emit = defineEmits<{

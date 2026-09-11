@@ -22,6 +22,7 @@ export async function refreshUserSession(
     .where(and(eq(users.id, userId), isNull(users.removedAt)));
 
   if (!user[0]) {
+    console.error("Session is valid but user does not exist");
     await clearUserSession(event);
     throw createError({
       statusCode: 401,
@@ -39,7 +40,6 @@ export async function refreshUserSession(
       emailVerifiedAt: user[0].emailVerifiedAt,
     },
   };
-  await setUserSession(event, newSess.user);
-  const sess = await requireUserSession(event);
+  const sess = await setUserSession(event, newSess.user);
   return sess;
 }
