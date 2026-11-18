@@ -6,19 +6,11 @@ declare module "#auth-utils" {
     fullName: string;
     organization: string;
     title: string;
-    emailVerifiedAt: string;
-  }
-
-  interface UserSession {
-    id: number;
-    email: string;
-    fullName: string;
-    organization: string;
-    title: string;
+    emailVerifiedAt: string | null;
   }
 
   interface SecureSessionData {
-    emailVerifiedAt: string;
+    emailVerifiedAt: string | null;
   }
 }
 

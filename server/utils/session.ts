@@ -37,9 +37,9 @@ export async function refreshUserSession(
       fullName: user[0].fullName,
       organization: user[0].organization,
       title: user[0].title,
-      emailVerifiedAt: user[0].emailVerifiedAt,
+      emailVerifiedAt: user[0].emailVerifiedAt?.toISOString() ?? null,
     },
   };
-  const sess = await setUserSession(event, newSess.user);
+  const sess = await setUserSession(event, newSess);
   return sess;
 }
