@@ -8,14 +8,7 @@ function getNumEnvOrDefault(inp: string | undefined, def: number): number {
 
 const mb = 1024 * 1024;
 
-const plausibleUrl = process.env.NUXT_PLAUSIBLE_HOST;
 console.log("NODE_ENV = ", process.env.NODE_ENV);
-
-if (plausibleUrl) {
-  console.info("> using plausible host:", plausibleUrl);
-} else {
-  console.info("> not using plausible integration (missing env)");
-}
 
 export default defineNuxtConfig({
   // compatibilityDate: "2025-07-15",
@@ -28,7 +21,6 @@ export default defineNuxtConfig({
     "nuxt-auth-utils",
     "nuxt-csurf",
     "@pinia/nuxt",
-    "@nuxtjs/plausible",
     "@sentry/nuxt/module",
   ],
 
@@ -38,18 +30,7 @@ export default defineNuxtConfig({
     colorMode: false,
   },
 
-  plausible: {
-    enabled: !!plausibleUrl,
-    ignoredHostnames: ["localhost"],
-    proxy: true,
-    apiHost: plausibleUrl,
-    formSubmissions: true,
-    fileDownloads: true,
-    autoPageviews: true,
-  },
-
   runtimeConfig: {
-    plausibleUrl,
     publicHost: process.env.NUXT_PUBLIC_HOST || "https://localhost",
     s3AccessKey: process.env.NUXT_S3_ACCESS_KEY,
     s3BucketName: process.env.NUXT_S3_BUCKET_NAME,
@@ -81,7 +62,6 @@ export default defineNuxtConfig({
         dsn: process.env.NUXT_PUBLIC_SENTRY_DSN,
       },
       sentryEnabled: process.env.NUXT_PUBLIC_SENTRY_ENABLED == "true",
-      plausibleUrl: process.env.NUXT_PUBLIC_PLAUSIBLE_URL,
       adminName: process.env.NUXT_PUBLIC_ADMIN_NAME,
       adminEmail: process.env.NUXT_PUBLIC_ADMIN_EMAIL,
       webmasterName: process.env.NUXT_PUBLIC_WEBMASTER_NAME,
@@ -92,14 +72,6 @@ export default defineNuxtConfig({
       dsn: process.env.NUXT_SENTRY_DSN,
       authToken: process.env.NUXT_SENTRY_AUTHTOKEN,
     },
-  },
-
-  routeRules: {
-    "/_plausible/api/event": {
-      csurf: false,
-      // TODO: csurf is not recognized as type, but it works
-      // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    } as any,
   },
 
   sentry: {
@@ -120,7 +92,6 @@ export default defineNuxtConfig({
   vite: {
     optimizeDeps: {
       include: [
-        "@plausible-analytics/tracker",
         "zod",
         ...(process.env.NUXT_DEVTOOLS_ENABLE === "true"
           ? ["@vue/devtools-core", "@vue/devtools-kit"]

@@ -1910,16 +1910,6 @@
     pkg-types "^1.2.1"
     semver "^7.6.3"
 
-"@nuxtjs/plausible@3.0.2":
-  version "3.0.2"
-  resolved "https://registry.yarnpkg.com/@nuxtjs/plausible/-/plausible-3.0.2.tgz#6bdfc1a66e57705045df3214cd574e3ee91f864a"
-  integrity sha512-6z01a7XbggSmI4CTWCkDDmLHQNm7wob2dx1QnvpIoo+YEV19298+GsuvlBclXVxXSk7op8r8qJpw25xKo8mzQQ==
-  dependencies:
-    "@nuxt/kit" "^4.3.1"
-    "@plausible-analytics/tracker" "^0.4.4"
-    defu "^6.1.4"
-    ufo "^1.6.3"
-
 "@opentelemetry/api-logs@0.220.0":
   version "0.220.0"
   resolved "https://registry.yarnpkg.com/@opentelemetry/api-logs/-/api-logs-0.220.0.tgz#b2ed235de4b5f3c1769adfa5f3bc247d82cdfbc9"
@@ -2017,11 +2007,6 @@
   version "0.11.0"
   resolved "https://registry.yarnpkg.com/@pkgjs/parseargs/-/parseargs-0.11.0.tgz#a77ea742fab25775145434eb1d2328cf5013ac33"
   integrity sha512-+1VkjdD0QBLPodGrJUeqarH8VAIvQODIbwh9XpP5Syisf7YoQgsJKPNFoqqLQlu+VQ/tVSshMR6loPMn8U+dPg==
-
-"@plausible-analytics/tracker@^0.4.4":
-  version "0.4.6"
-  resolved "https://registry.yarnpkg.com/@plausible-analytics/tracker/-/tracker-0.4.6.tgz#e77a2043fb8dee65508b568de7d6e7cfbcddd7d2"
-  integrity sha512-nbu6xGgSP6jeYuoVklZBzucUnIpo75tVu3Kr+R0EDycVKaMC/jF5Q/YCaM/8gR4fPZ1IDcXt6FdBJFZ1uZwEPA==
 
 "@polka/url@^1.0.0-next.24":
   version "1.0.0-next.29"
