@@ -60,7 +60,9 @@ export default defineEventHandler(async (event) => {
   );
 
   const { attachmentObjects, illustrationObjects, primaryPdf } =
-    await uploadSolutionFiles(insertedId, parsedFiles);
+    await uploadSolutionFiles(insertedId, parsedFiles, {
+      deleteSolutionOnFailure: true,
+    });
 
   await db.transaction(async (tx) => {
     await addSolutionFileRows(

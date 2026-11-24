@@ -210,6 +210,10 @@ export async function uploadSolutionFiles(
     illustrations: File[];
     primaryPdf?: File | undefined;
   },
+  opts?: {
+    // only set this when the solution row was inserted in the same request
+    deleteSolutionOnFailure?: boolean;
+  },
 ) {
   const attachmentObjects: FileUploadRow[] = [];
   const illustrationObjects: FileUploadRow[] = [];
@@ -243,8 +247,10 @@ export async function uploadSolutionFiles(
   } catch (e) {
     console.error("Unable to upload file!");
     console.error(e);
-    // if uploading went wrong, delete the posted solution
-    await db.delete(solutions).where(eq(solutions.id, solutionId));
+    // if uploading went wrong, delete the newly created solution (if allowed)
+    if (opts?.deleteSolutionOnFailure) {
+      await db.delete(solutions).where(eq(solutions.id, solutionId));
+    }
 
     captureException(e);
     throw createError({
