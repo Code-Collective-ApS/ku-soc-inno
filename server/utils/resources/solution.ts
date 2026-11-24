@@ -302,7 +302,7 @@ export function stripSolutionForPdfs(
   _solution: SolutionResponse,
 ): SolutionResponse {
   if (_solution) {
-    _solution["attachments"] = [];
+    _solution["solutionPdfs"] = [];
   }
   return _solution;
 }
