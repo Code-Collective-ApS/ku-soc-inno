@@ -146,7 +146,7 @@
               :disabled="!enabled"
               @click="(e) => onSubmit(e)"
             >
-              {{ isEditing ? "Gem" : "Opret" }} løsning
+              {{ isEditing ? "Gem" : "Publicér" }} løsning
             </UButton>
             <UButton
               v-if="isEditing"

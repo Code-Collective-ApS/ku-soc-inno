@@ -34,9 +34,18 @@ export default defineNuxtConfig({
     publicHost: process.env.NUXT_PUBLIC_HOST || "https://localhost",
     s3AccessKey: process.env.NUXT_S3_ACCESS_KEY,
     s3BucketName: process.env.NUXT_S3_BUCKET_NAME,
+    s3ConnectTimeoutMs: getNumEnvOrDefault(
+      process.env.NUXT_S3_CONNECT_TIMEOUT_MS,
+      5_000,
+    ),
     s3Endpoint: process.env.NUXT_S3_ENDPOINT,
+    s3MaxAttempts: getNumEnvOrDefault(process.env.NUXT_S3_MAX_ATTEMPTS, 2),
     s3Prefix: process.env.NUXT_S3_PREFIX,
     s3Region: process.env.NUXT_S3_REGION,
+    s3RequestTimeoutMs: getNumEnvOrDefault(
+      process.env.NUXT_S3_REQUEST_TIMEOUT_MS,
+      20_000,
+    ),
     s3SecretAccessKey: process.env.NUXT_S3_SECRET_KEY,
     s3UseSsl: process.env.NUXT_S3_USE_SSL,
     smtpFrom: process.env.NUXT_SMTP_FROM,

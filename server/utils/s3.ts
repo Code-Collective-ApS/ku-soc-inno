@@ -103,6 +103,20 @@ export function getS3() {
       },
       endpoint: config.s3Endpoint as string,
       forcePathStyle: true,
+      // fail fast when the endpoint is misconfigured,
+      // instead of hanging for a long time on stuck connections
+      requestHandler: {
+        // connection is expected to be established quickly (s3 is on the same network)
+        connectionTimeout: config.s3ConnectTimeoutMs as number,
+        // and requests (up to 20 mb uploads) should finish well within this
+        requestTimeout: config.s3RequestTimeoutMs as number,
+        // without this, exceeding requestTimeout only logs a warning
+        // instead of aborting the request
+        throwOnRequestTimeout: true,
+      },
+      // one retry - repeated attempts against a broken endpoint should not
+      // multiply the time it takes to discover the misconfiguration
+      maxAttempts: config.s3MaxAttempts as number,
     });
     _S3Global = s3;
   }
