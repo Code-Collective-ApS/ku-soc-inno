@@ -208,7 +208,7 @@ export async function uploadSolutionFiles(
   parsedFiles: {
     attachments: File[];
     illustrations: File[];
-    primaryPdf?: File | undefined;
+    primaryPdf?: File | undefined | null;
   },
   opts?: {
     // only set this when the solution row was inserted in the same request

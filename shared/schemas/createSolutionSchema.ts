@@ -49,7 +49,10 @@ export const createSolutionFilesSchema = z.strictObject({
     .array(z.file())
     .max(10, "Du kan vedhæfte maksimum 10 illustrationer"),
   attachments: z.array(z.file()).max(10, "Du kan vedhæfte maksimum 10 filer"),
-  primaryPdf: z.file("En hovedrapport skal være en gyldig fil").optional(),
+  primaryPdf: z
+    .file("En hovedrapport skal være en gyldig fil")
+    .optional()
+    .nullable(),
 });
 
 export const createSolutionSchema = z.strictObject({
