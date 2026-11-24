@@ -80,6 +80,7 @@
             </UFormField>
 
             <UFormField
+              v-if="!!state.primaryPdf"
               class="mb-6"
               label="Vil du offentliggøre rapporten?"
               name="primaryPdfPublic"
@@ -312,6 +313,15 @@ const state = reactive<Partial<CreateSolutionSchema>>({
   testingText: s.value?.testingText || "",
   freeText: s.value?.freeText || "",
 });
+
+// reset the publish toggle when the report is removed, so we never
+// submit a stale "publish" flag without an attached report
+watch(
+  () => state.primaryPdf,
+  (pdf) => {
+    if (!pdf) state.primaryPdfPublic = false;
+  },
+);
 
 async function onSubmit(
   event: undefined | MouseEvent | FormSubmitEvent<CreateSolutionSchema>,
