@@ -208,12 +208,12 @@ export async function uploadSolutionFiles(
   parsedFiles: {
     attachments: File[];
     illustrations: File[];
-    primaryPdf: File;
+    primaryPdf?: File | undefined;
   },
 ) {
   const attachmentObjects: FileUploadRow[] = [];
   const illustrationObjects: FileUploadRow[] = [];
-  let primaryPdf: FileUploadRow;
+  let primaryPdf: FileUploadRow | null = null;
 
   try {
     const prefix = "solution/" + solutionId;
@@ -234,14 +234,12 @@ export async function uploadSolutionFiles(
     }
 
     const pdf = parsedFiles.primaryPdf as File;
-    if (!pdf) {
-      throw new Error("Primary pdf is required");
+    if (pdf) {
+      const pdfBuf = await pdf.bytes();
+      const pdfUrl = prefix + "/primary-pdf.pdf";
+      await uploadFile(pdfUrl, pdfBuf);
+      primaryPdf = generateFileUploadRow(pdf, pdfUrl);
     }
-
-    const pdfBuf = await pdf.bytes();
-    const pdfUrl = prefix + "/primary-pdf.pdf";
-    await uploadFile(pdfUrl, pdfBuf);
-    primaryPdf = generateFileUploadRow(pdf, pdfUrl);
   } catch (e) {
     console.error("Unable to upload file!");
     console.error(e);
@@ -251,7 +249,7 @@ export async function uploadSolutionFiles(
     captureException(e);
     throw createError({
       statusCode: 500,
-      message: "Something went wrong when uploading the files",
+      message: "Der gik noget galt ved upload af filer",
     });
   }
 
@@ -425,7 +423,7 @@ export async function addSolutionFileRows(
   solutionId: number,
   attachmentObjects: FileUploadRow[],
   illustrationObjects: FileUploadRow[],
-  primaryPdf: FileUploadRow,
+  primaryPdf: FileUploadRow | null,
 ) {
   // insert attachment fileuploads
   if (attachmentObjects?.length) {
@@ -461,23 +459,27 @@ export async function addSolutionFileRows(
     );
   }
 
-  // insert pdf fileuploads
-  const insertedPdfFileUpload = await tx
-    .insert(fileUploads)
-    .values(primaryPdf)
-    .returning({
-      id: fileUploads.id,
+  if (primaryPdf) {
+    // insert pdf fileuploads
+    const insertedPdfFileUpload = await tx
+      .insert(fileUploads)
+      .values(primaryPdf)
+      .returning({
+        id: fileUploads.id,
+      });
+
+    const insertedPdfFileUploadId = insertedPdfFileUpload[0]?.id;
+    if (!insertedPdfFileUploadId)
+      throw new Error(
+        "Pdf file upload db row insert did not return inserted id",
+      );
+
+    // attach pdf to solution
+    await tx.insert(solutionPdfs).values({
+      fileUploadId: insertedPdfFileUploadId,
+      solutionId: solutionId,
     });
-
-  const insertedPdfFileUploadId = insertedPdfFileUpload[0]?.id;
-  if (!insertedPdfFileUploadId)
-    throw new Error("Pdf file upload db row insert did not return inserted id");
-
-  // attach pdf to solution
-  await tx.insert(solutionPdfs).values({
-    fileUploadId: insertedPdfFileUploadId,
-    solutionId: solutionId,
-  });
+  }
 }
 
 // add solution categories
